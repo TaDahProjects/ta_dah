@@ -1,6 +1,10 @@
 plugins {
     // Apply the application plugin to add support for building a CLI application in Java.
     id 'application'
+
+    // Spring
+    id 'org.springframework.boot' version '2.3.5.RELEASE'
+    id 'io.spring.dependency-management' version '1.0.10.RELEASE'
 }
 
 repositories {
@@ -15,8 +19,25 @@ dependencies {
     // Use JUnit Jupiter Engine for testing.
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
 
+    // AssertJ
+    testImplementation 'org.assertj:assertj-core:3.18.1'
+
+    // Mockito Core
+    testImplementation 'org.mockito:mockito-core:4.0.0'
+
+    // Mockito Inline
+    testImplementation 'org.mockito:mockito-inline:4.0.0'
+
     // This dependency is used by the application.
     implementation 'com.google.guava:guava:29.0-jre'
+
+    // Spring Web
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+
+    // Spring Boot Test
+    testImplementation('org.springframework.boot:spring-boot-starter-test') {
+        exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+    }
 }
 
 application {
