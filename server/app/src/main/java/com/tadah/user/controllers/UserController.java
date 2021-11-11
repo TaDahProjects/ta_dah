@@ -36,6 +36,6 @@ public final class UserController {
     @ResponseStatus(HttpStatus.CREATED)
     public User createUser(@RequestBody @Valid final UserData userData) {
         final User user = userData.toEntity();
-        return userService.saveUser(user);
+        return userService.registerUser(user);
     }
 }

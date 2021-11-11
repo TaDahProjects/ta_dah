@@ -75,14 +75,14 @@ public final class UserControllerTest {
 
         @BeforeEach
         public void beforeEach() {
-            when(userService.saveUser(any(User.class)))
+            when(userService.registerUser(any(User.class)))
                 .thenReturn(RIDER);
         }
 
         @AfterEach
         public void afterEach() {
             verify(userService, atMostOnce())
-                .saveUser(any(User.class));
+                .registerUser(any(User.class));
         }
 
         @Test

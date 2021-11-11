@@ -34,10 +34,10 @@ public final class UserServiceTest {
     private UserService userService;
 
     @Nested
-    @DisplayName("saveUser 메서드는")
-    public final class Describe_saveUser {
+    @DisplayName("registerUser 메서드는")
+    public final class Describe_registerUser {
         private User subject(final User user) {
-            return userService.saveUser(user);
+            return userService.registerUser(user);
         }
 
         @AfterEach
@@ -62,8 +62,8 @@ public final class UserServiceTest {
             }
 
             @Test
-            @DisplayName("사용자를 저장한다.")
-            public void it_saves_users() {
+            @DisplayName("사용자를 등록한다.")
+            public void it_registers_users() {
                 assertThat(subject(DRIVER))
                     .isInstanceOf(User.class);
             }
