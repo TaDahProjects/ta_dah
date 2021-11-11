@@ -2,6 +2,7 @@ package com.tadah.user.applications;
 
 import com.tadah.user.domain.entities.User;
 import com.tadah.user.domain.repositories.UserRepository;
+import com.tadah.user.exceptions.UserEmailDuplicationException;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -25,6 +26,9 @@ public class UserService {
      * @return 저장한 User
      */
     public User saveUser(final User user) {
+        if (this.userRepository.existsByEmail(user.getEmail())) {
+            throw new UserEmailDuplicationException();
+        }
         return this.userRepository.save(user);
     }
 }
