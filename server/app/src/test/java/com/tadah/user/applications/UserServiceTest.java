@@ -2,7 +2,7 @@ package com.tadah.user.applications;
 
 import com.tadah.user.domain.entities.User;
 import com.tadah.user.domain.repositories.UserRepository;
-import com.tadah.user.exceptions.UserEmailDuplicationException;
+import com.tadah.user.exceptions.UserEmailAlreadyExistException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -82,7 +82,7 @@ public final class UserServiceTest {
             @DisplayName("UserEmailDuplicationException을 던진다.")
             public void it_throws_user_email_duplication_exception() {
                 assertThatThrownBy(() -> subject(RIDER))
-                    .isInstanceOf(UserEmailDuplicationException.class);
+                    .isInstanceOf(UserEmailAlreadyExistException.class);
             }
         }
     }
