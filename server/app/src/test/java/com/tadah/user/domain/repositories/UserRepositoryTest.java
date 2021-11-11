@@ -58,4 +58,39 @@ public class UserRepositoryTest {
                 .matches(user -> DRIVER.getUserType().equals(user.getUserType()));
         }
     }
+
+    @Nested
+    @DisplayName("existsByEmail 메서드는")
+    public final class Describe_existsByEmail {
+        private boolean subject(final String email) {
+            return userRepository.existsByEmail(email);
+        }
+
+        @Nested
+        @DisplayName("이메일에 해당하는 사용자가 있는 경우")
+        public final class Context_userExist {
+            @BeforeEach
+            private void beforeEach() {
+                new Describe_save().subject(RIDER);
+            }
+
+            @Test
+            @DisplayName("사용자가 존재하는것을 알려준다.")
+            public void it_notifies_that_the_user_exists() {
+                assertThat(subject(RIDER.getEmail()))
+                    .isTrue();
+            }
+        }
+
+        @Nested
+        @DisplayName("이메일에 해당하는 사용자가 없는 경우")
+        public final class Context_userNotExist {
+            @Test
+            @DisplayName("사용자가 존재하지 않는것을 알려준다.")
+            public void it_notifies_that_user_does_not_exist() {
+                assertThat(subject(RIDER.getEmail()))
+                    .isFalse();
+            }
+        }
+    }
 }
