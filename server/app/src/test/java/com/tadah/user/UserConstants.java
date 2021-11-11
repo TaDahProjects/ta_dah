@@ -16,9 +16,9 @@ public interface UserConstants {
     String INVALID_PASSWORD_LOWER_CASE = "PASSWORD123!!";
     String INVALID_PASSWORD_NUMBER = "Password!!";
     String INVALID_PASSWORD_SPECIAL_CASE = "Password123";
-    User DRIVER = new User(EMAIL, NAME, PASSWORD, UserType.DRIER);
+    User DRIVER = new User(EMAIL, NAME, PASSWORD, UserType.DRIVER);
     User RIDER = new User(EMAIL, NAME, PASSWORD, UserType.RIDER);
-    UserData DRIVER_USER_DATA = new UserData(EMAIL, NAME, PASSWORD, UserType.DRIER);
+    UserData DRIVER_USER_DATA = new UserData(EMAIL, NAME, PASSWORD, UserType.DRIVER);
     UserData RIDER_USER_DATA = new UserData(EMAIL, NAME, PASSWORD, UserType.RIDER);
     String CREATE_USER_URL = "/users";
 }
