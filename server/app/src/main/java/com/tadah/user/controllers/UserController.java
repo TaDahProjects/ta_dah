@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
+
 /**
  * User 관련 요청을 담당한다.
  */
@@ -32,7 +34,7 @@ public final class UserController {
      */
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public User createUser(@RequestBody final UserData userData) {
+    public User createUser(@RequestBody @Valid final UserData userData) {
         final User user = userData.toEntity();
         return userService.saveUser(user);
     }
