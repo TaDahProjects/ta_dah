@@ -1,4 +1,4 @@
-package com.tadah.common.advice;
+package com.tadah.common.controllers;
 
 import com.tadah.common.dtos.ErrorResponse;
 import org.springframework.http.HttpStatus;
@@ -15,7 +15,7 @@ import javax.servlet.http.HttpServletRequest;
  * 컨트롤러에서 던져진 예외를 처리한다.
  */
 @RestControllerAdvice
-public final class ExceptionAdvice {
+public final class ControllerAdvice {
     /**
      * 입력 형식에 맞지 않는 경우
      * 해당 예외가 어디서 던져졌는지 리턴한다.
@@ -46,7 +46,8 @@ public final class ExceptionAdvice {
      * @param request 예외가 던져진 http 요청
      * @return 던져진 예외의 내용 및 위치
      */
-    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
+    @ResponseBody
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ErrorResponse handleParsingException(final HttpServletRequest request) {
         return new ErrorResponse(request, "유효하지 않은 입력형식입니다.");
