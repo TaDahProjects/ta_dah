@@ -4,7 +4,7 @@ import com.tadah.common.dtos.ErrorResponse;
 import com.tadah.user.applications.UserService;
 import com.tadah.user.domain.UserType;
 import com.tadah.user.domain.entities.User;
-import com.tadah.user.dto.UserData;
+import com.tadah.user.dto.RegisterUserData;
 import com.tadah.user.exceptions.UserEmailAlreadyExistException;
 import com.tadah.utils.Parser;
 import org.junit.jupiter.api.AfterEach;
@@ -38,7 +38,7 @@ import static com.tadah.user.UserConstants.INVALID_PASSWORD_UPPER_CASE;
 import static com.tadah.user.UserConstants.NAME;
 import static com.tadah.user.UserConstants.PASSWORD;
 import static com.tadah.user.UserConstants.RIDER;
-import static com.tadah.user.UserConstants.RIDER_USER_DATA;
+import static com.tadah.user.UserConstants.REGISTER_USER_DATA_RIDER;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.atMostOnce;
 import static org.mockito.Mockito.reset;
@@ -89,7 +89,7 @@ public final class UserControllerTest {
         @Test
         @DisplayName("User를 생성한다.")
         public void it_creates_the_user() throws Exception {
-            subject(Parser.toJson(RIDER_USER_DATA), status().isCreated())
+            subject(Parser.toJson(REGISTER_USER_DATA_RIDER), status().isCreated())
                 .andExpect(
                     content().string(
                         Parser.toJson(RIDER)
@@ -102,29 +102,29 @@ public final class UserControllerTest {
         public final class Context_invalidData {
             private Stream<Arguments> methodSource() throws Exception {
                 return Stream.of(
-                    Arguments.of(Parser.toJson(new UserData(null, NAME, PASSWORD, UserType.DRIVER)), "이메일이 입력되지 않았습니다."),
-                    Arguments.of(Parser.toJson(new UserData(null, NAME, PASSWORD, UserType.RIDER)), "이메일이 입력되지 않았습니다."),
-                    Arguments.of(Parser.toJson(new UserData("", NAME, PASSWORD, UserType.DRIVER)), "유효하지 않은 이메일 형식입니다."),
-                    Arguments.of(Parser.toJson(new UserData("", NAME, PASSWORD, UserType.RIDER)), "유효하지 않은 이메일 형식입니다."),
-                    Arguments.of(Parser.toJson(new UserData(INVALID_EMAIL, NAME, PASSWORD, UserType.DRIVER)), "유효하지 않은 이메일 형식입니다."),
-                    Arguments.of(Parser.toJson(new UserData(INVALID_EMAIL, NAME, PASSWORD, UserType.RIDER)), "유효하지 않은 이메일 형식입니다."),
-                    Arguments.of(Parser.toJson(new UserData(EMAIL, null, PASSWORD, UserType.DRIVER)), "이름이 입력되지 않았습니다."),
-                    Arguments.of(Parser.toJson(new UserData(EMAIL, "", PASSWORD, UserType.DRIVER)), "이름이 입력되지 않았습니다."),
-                    Arguments.of(Parser.toJson(new UserData(EMAIL, null, PASSWORD, UserType.RIDER)), "이름이 입력되지 않았습니다."),
-                    Arguments.of(Parser.toJson(new UserData(EMAIL, "", PASSWORD, UserType.RIDER)), "이름이 입력되지 않았습니다."),
-                    Arguments.of(Parser.toJson(new UserData(EMAIL, NAME, null, UserType.DRIVER)), "비밀번호가 입력되지 않았습니다."),
-                    Arguments.of(Parser.toJson(new UserData(EMAIL, NAME, null, UserType.RIDER)), "비밀번호가 입력되지 않았습니다."),
-                    Arguments.of(Parser.toJson(new UserData(EMAIL, NAME, "", UserType.DRIVER)), "최소 한개 이상의 대소문자와 숫자, 특수문자를 포함한 8자 이상의 비밀번호를 입력해야합니다."),
-                    Arguments.of(Parser.toJson(new UserData(EMAIL, NAME, "", UserType.RIDER)), "최소 한개 이상의 대소문자와 숫자, 특수문자를 포함한 8자 이상의 비밀번호를 입력해야합니다."),
-                    Arguments.of(Parser.toJson(new UserData(EMAIL, NAME, INVALID_PASSWORD_LOWER_CASE, UserType.DRIVER)), "최소 한개 이상의 대소문자와 숫자, 특수문자를 포함한 8자 이상의 비밀번호를 입력해야합니다."),
-                    Arguments.of(Parser.toJson(new UserData(EMAIL, NAME, INVALID_PASSWORD_LOWER_CASE, UserType.RIDER)), "최소 한개 이상의 대소문자와 숫자, 특수문자를 포함한 8자 이상의 비밀번호를 입력해야합니다."),
-                    Arguments.of(Parser.toJson(new UserData(EMAIL, NAME, INVALID_PASSWORD_UPPER_CASE, UserType.DRIVER)), "최소 한개 이상의 대소문자와 숫자, 특수문자를 포함한 8자 이상의 비밀번호를 입력해야합니다."),
-                    Arguments.of(Parser.toJson(new UserData(EMAIL, NAME, INVALID_PASSWORD_UPPER_CASE, UserType.RIDER)), "최소 한개 이상의 대소문자와 숫자, 특수문자를 포함한 8자 이상의 비밀번호를 입력해야합니다."),
-                    Arguments.of(Parser.toJson(new UserData(EMAIL, NAME, INVALID_PASSWORD_NUMBER, UserType.DRIVER)), "최소 한개 이상의 대소문자와 숫자, 특수문자를 포함한 8자 이상의 비밀번호를 입력해야합니다."),
-                    Arguments.of(Parser.toJson(new UserData(EMAIL, NAME, INVALID_PASSWORD_NUMBER, UserType.RIDER)), "최소 한개 이상의 대소문자와 숫자, 특수문자를 포함한 8자 이상의 비밀번호를 입력해야합니다."),
-                    Arguments.of(Parser.toJson(new UserData(EMAIL, NAME, INVALID_PASSWORD_SPECIAL_CASE, UserType.DRIVER)), "최소 한개 이상의 대소문자와 숫자, 특수문자를 포함한 8자 이상의 비밀번호를 입력해야합니다."),
-                    Arguments.of(Parser.toJson(new UserData(EMAIL, NAME, INVALID_PASSWORD_SPECIAL_CASE, UserType.RIDER)), "최소 한개 이상의 대소문자와 숫자, 특수문자를 포함한 8자 이상의 비밀번호를 입력해야합니다."),
-                    Arguments.of(Parser.toJson(new UserData(EMAIL, NAME, PASSWORD, null)), "사용자 타입이 입력되지 않았습니다."),
+                    Arguments.of(Parser.toJson(new RegisterUserData(null, NAME, PASSWORD, UserType.DRIVER)), "이메일이 입력되지 않았습니다."),
+                    Arguments.of(Parser.toJson(new RegisterUserData(null, NAME, PASSWORD, UserType.RIDER)), "이메일이 입력되지 않았습니다."),
+                    Arguments.of(Parser.toJson(new RegisterUserData("", NAME, PASSWORD, UserType.DRIVER)), "유효하지 않은 이메일 형식입니다."),
+                    Arguments.of(Parser.toJson(new RegisterUserData("", NAME, PASSWORD, UserType.RIDER)), "유효하지 않은 이메일 형식입니다."),
+                    Arguments.of(Parser.toJson(new RegisterUserData(INVALID_EMAIL, NAME, PASSWORD, UserType.DRIVER)), "유효하지 않은 이메일 형식입니다."),
+                    Arguments.of(Parser.toJson(new RegisterUserData(INVALID_EMAIL, NAME, PASSWORD, UserType.RIDER)), "유효하지 않은 이메일 형식입니다."),
+                    Arguments.of(Parser.toJson(new RegisterUserData(EMAIL, null, PASSWORD, UserType.DRIVER)), "이름이 입력되지 않았습니다."),
+                    Arguments.of(Parser.toJson(new RegisterUserData(EMAIL, "", PASSWORD, UserType.DRIVER)), "이름이 입력되지 않았습니다."),
+                    Arguments.of(Parser.toJson(new RegisterUserData(EMAIL, null, PASSWORD, UserType.RIDER)), "이름이 입력되지 않았습니다."),
+                    Arguments.of(Parser.toJson(new RegisterUserData(EMAIL, "", PASSWORD, UserType.RIDER)), "이름이 입력되지 않았습니다."),
+                    Arguments.of(Parser.toJson(new RegisterUserData(EMAIL, NAME, null, UserType.DRIVER)), "비밀번호가 입력되지 않았습니다."),
+                    Arguments.of(Parser.toJson(new RegisterUserData(EMAIL, NAME, null, UserType.RIDER)), "비밀번호가 입력되지 않았습니다."),
+                    Arguments.of(Parser.toJson(new RegisterUserData(EMAIL, NAME, "", UserType.DRIVER)), "최소 한개 이상의 대소문자와 숫자, 특수문자를 포함한 8자 이상의 비밀번호를 입력해야합니다."),
+                    Arguments.of(Parser.toJson(new RegisterUserData(EMAIL, NAME, "", UserType.RIDER)), "최소 한개 이상의 대소문자와 숫자, 특수문자를 포함한 8자 이상의 비밀번호를 입력해야합니다."),
+                    Arguments.of(Parser.toJson(new RegisterUserData(EMAIL, NAME, INVALID_PASSWORD_LOWER_CASE, UserType.DRIVER)), "최소 한개 이상의 대소문자와 숫자, 특수문자를 포함한 8자 이상의 비밀번호를 입력해야합니다."),
+                    Arguments.of(Parser.toJson(new RegisterUserData(EMAIL, NAME, INVALID_PASSWORD_LOWER_CASE, UserType.RIDER)), "최소 한개 이상의 대소문자와 숫자, 특수문자를 포함한 8자 이상의 비밀번호를 입력해야합니다."),
+                    Arguments.of(Parser.toJson(new RegisterUserData(EMAIL, NAME, INVALID_PASSWORD_UPPER_CASE, UserType.DRIVER)), "최소 한개 이상의 대소문자와 숫자, 특수문자를 포함한 8자 이상의 비밀번호를 입력해야합니다."),
+                    Arguments.of(Parser.toJson(new RegisterUserData(EMAIL, NAME, INVALID_PASSWORD_UPPER_CASE, UserType.RIDER)), "최소 한개 이상의 대소문자와 숫자, 특수문자를 포함한 8자 이상의 비밀번호를 입력해야합니다."),
+                    Arguments.of(Parser.toJson(new RegisterUserData(EMAIL, NAME, INVALID_PASSWORD_NUMBER, UserType.DRIVER)), "최소 한개 이상의 대소문자와 숫자, 특수문자를 포함한 8자 이상의 비밀번호를 입력해야합니다."),
+                    Arguments.of(Parser.toJson(new RegisterUserData(EMAIL, NAME, INVALID_PASSWORD_NUMBER, UserType.RIDER)), "최소 한개 이상의 대소문자와 숫자, 특수문자를 포함한 8자 이상의 비밀번호를 입력해야합니다."),
+                    Arguments.of(Parser.toJson(new RegisterUserData(EMAIL, NAME, INVALID_PASSWORD_SPECIAL_CASE, UserType.DRIVER)), "최소 한개 이상의 대소문자와 숫자, 특수문자를 포함한 8자 이상의 비밀번호를 입력해야합니다."),
+                    Arguments.of(Parser.toJson(new RegisterUserData(EMAIL, NAME, INVALID_PASSWORD_SPECIAL_CASE, UserType.RIDER)), "최소 한개 이상의 대소문자와 숫자, 특수문자를 포함한 8자 이상의 비밀번호를 입력해야합니다."),
+                    Arguments.of(Parser.toJson(new RegisterUserData(EMAIL, NAME, PASSWORD, null)), "사용자 타입이 입력되지 않았습니다."),
                     Arguments.of("{\"email\":\"test@test.com\",\"name\":\"name\",\"password\":\"password\",\"userType\":\"INVALID\"}", "유효하지 않은 입력형식입니다."),
                     Arguments.of("{\"email\":1,\"name\":\"name\",\"password\":\"password\",\"userType\":\"INVALID\"}", "유효하지 않은 입력형식입니다."),
                     Arguments.of("{\"email\":\"test@test.com\",\"name\":2,\"password\":\"password\",\"userType\":\"INVALID\"}", "유효하지 않은 입력형식입니다."),
@@ -157,7 +157,7 @@ public final class UserControllerTest {
             @Test
             @DisplayName("이메일이 이미 존재함을 알려준다.")
             public void it_notifies_that_email_already_exists() throws Exception {
-                subject(Parser.toJson(RIDER_USER_DATA), status().isBadRequest())
+                subject(Parser.toJson(REGISTER_USER_DATA_RIDER), status().isBadRequest())
                     .andExpect(
                         content().string(
                             Parser.toJson(
