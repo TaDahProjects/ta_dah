@@ -5,6 +5,7 @@ import com.tadah.user.applications.UserService;
 import com.tadah.user.domain.UserType;
 import com.tadah.user.domain.entities.User;
 import com.tadah.user.dto.UserData;
+import com.tadah.user.exceptions.UserEmailAlreadyExistException;
 import com.tadah.utils.Parser;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -141,6 +142,29 @@ public final class UserControllerTest {
                             new ErrorResponse(CREATE_USER_URL, HttpMethod.POST.toString(), errorMessage)
                         )
                     ));
+            }
+        }
+
+        @Nested
+        @DisplayName("등록하려는 사용자의 이메일이 이미 존재하는 경우")
+        public final class Context_emailAlreadyExists {
+            @BeforeEach
+            private void beforeEach() {
+                when(userService.registerUser(any(User.class)))
+                    .thenThrow(new UserEmailAlreadyExistException());
+            }
+
+            @Test
+            @DisplayName("이메일이 이미 존재함을 알려준다.")
+            public void it_notifies_that_email_already_exists() throws Exception {
+                subject(Parser.toJson(RIDER_USER_DATA), status().isBadRequest())
+                    .andExpect(
+                        content().string(
+                            Parser.toJson(
+                                new ErrorResponse(
+                                    CREATE_USER_URL, HttpMethod.POST.toString(),
+                                    new UserEmailAlreadyExistException().getMessage()
+                                ))));
             }
         }
     }
