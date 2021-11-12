@@ -2,12 +2,13 @@ package com.tadah.user.applications;
 
 import com.tadah.user.domain.entities.User;
 import com.tadah.user.domain.repositories.UserRepository;
+import com.tadah.user.exceptions.UserEmailAlreadyExistException;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 
 /**
- * User 관련 작업을 담당한다.
+ * 사용자 등록을 수행한다.
  */
 @Service
 @Transactional
@@ -19,12 +20,16 @@ public class UserService {
     }
 
     /**
-     * User를 저장하고 리턴한다.
+     * 사용자 등록을 수행한다.
      *
-     * @param user 저장할 User
-     * @return 저장한 User
+     * @param user 등록할 사용자 정보
+     * @return 등록한 사용자 정보
+     * @throws UserEmailAlreadyExistException 이미 존재하는 사용자 이메일인 경우
      */
-    public User saveUser(final User user) {
+    public User registerUser(final User user) {
+        if (this.userRepository.existsByEmail(user.getEmail())) {
+            throw new UserEmailAlreadyExistException();
+        }
         return this.userRepository.save(user);
     }
 }
