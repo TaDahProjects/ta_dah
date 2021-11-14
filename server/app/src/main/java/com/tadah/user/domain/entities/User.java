@@ -5,6 +5,7 @@ import lombok.AccessLevel;
 import lombok.Generated;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -32,5 +33,9 @@ public final class User {
         this.name = name;
         this.password = password;
         this.userType = userType;
+    }
+
+    public void updatePassword(final String password, final PasswordEncoder passwordEncoder) {
+        this.password = passwordEncoder.encode(password);
     }
 }
