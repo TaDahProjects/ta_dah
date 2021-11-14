@@ -54,6 +54,6 @@ public final class RegisterUserData {
     private UserType userType;
 
     public User toEntity() {
-        return new User(email, name, password, userType);
+        return new User(email, name, userType);
     }
 }

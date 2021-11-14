@@ -10,6 +10,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.validation.constraints.NotNull;
 
 @Generated
 @Entity
@@ -24,14 +25,14 @@ public final class User {
 
     private String name;
 
+    @NotNull
     private String password;
 
     private UserType userType;
 
-    public User(final String email, final String name, final String password, final  UserType userType) {
+    public User(final String email, final String name, final  UserType userType) {
         this.email = email;
         this.name = name;
-        this.password = password;
         this.userType = userType;
     }
 

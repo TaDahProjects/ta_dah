@@ -1,5 +1,6 @@
 package com.tadah.user.domain.repositories;
 
+import com.tadah.user.domain.UserType;
 import com.tadah.user.domain.entities.User;
 import com.tadah.user.domain.repositories.infra.JpaUserRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -8,10 +9,18 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.transaction.TransactionSystemException;
 
 import static com.tadah.user.UserConstants.DRIVER;
+import static com.tadah.user.UserConstants.DRIVER_WITH_OUT_PASSWORD;
+import static com.tadah.user.UserConstants.EMAIL;
+import static com.tadah.user.UserConstants.NAME;
+import static com.tadah.user.UserConstants.PASSWORD;
 import static com.tadah.user.UserConstants.RIDER;
+import static com.tadah.user.UserConstants.RIDER_WITH_OUT_PASSWORD;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 
 @DataJpaTest
 @DisplayName("UserRepository 클래스")
@@ -21,6 +30,9 @@ public class UserRepositoryTest {
 
     @Autowired
     private JpaUserRepository jpaUserRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @BeforeEach
     private void beforeEach() {
@@ -34,6 +46,19 @@ public class UserRepositoryTest {
             return userRepository.save(user);
         }
 
+        @Nested
+        @DisplayName("비밀번호가 없는경우")
+        public final class Context_passwordNull {
+            @Test
+            @DisplayName("사용자 정보를 저장하지 않는다.")
+            public void it_does_not_save_user_data() {
+                assertThatThrownBy(() -> subject(RIDER_WITH_OUT_PASSWORD))
+                    .isInstanceOf(TransactionSystemException.class);
+                assertThatThrownBy(() -> subject(DRIVER_WITH_OUT_PASSWORD))
+                    .isInstanceOf(TransactionSystemException.class);
+            }
+        }
+
         @Test
         @DisplayName("사용자 정보를 저장한다.")
         public void it_saves_a_user_data() {
@@ -42,20 +67,20 @@ public class UserRepositoryTest {
                 .isPresent()
                 .get()
                 .isInstanceOf(User.class)
-                .matches(user -> RIDER.getEmail().equals(user.getEmail()))
-                .matches(user -> RIDER.getName().equals(user.getName()))
-                .matches(user -> RIDER.getPassword().equals(user.getPassword()))
-                .matches(user -> RIDER.getUserType().equals(user.getUserType()));
+                .matches(user -> EMAIL.equals(user.getEmail()))
+                .matches(user -> NAME.equals(user.getName()))
+                .matches(user -> UserType.RIDER.equals(user.getUserType()))
+                .matches(user -> passwordEncoder.matches(PASSWORD, user.getPassword()));
 
             final User driver = subject(DRIVER);
             assertThat(jpaUserRepository.findById(driver.getId()))
                 .isPresent()
                 .get()
                 .isInstanceOf(User.class)
-                .matches(user -> DRIVER.getEmail().equals(user.getEmail()))
-                .matches(user -> DRIVER.getName().equals(user.getName()))
-                .matches(user -> DRIVER.getPassword().equals(user.getPassword()))
-                .matches(user -> DRIVER.getUserType().equals(user.getUserType()));
+                .matches(user -> EMAIL.equals(user.getEmail()))
+                .matches(user -> NAME.equals(user.getName()))
+                .matches(user -> UserType.DRIVER.equals(user.getUserType()))
+                .matches(user -> passwordEncoder.matches(PASSWORD, user.getPassword()));
         }
     }
 

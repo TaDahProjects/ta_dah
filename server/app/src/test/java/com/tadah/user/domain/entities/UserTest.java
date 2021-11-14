@@ -20,7 +20,7 @@ public final class UserTest {
     private User user;
     @BeforeEach
     private void beforeEach() {
-        user = new User(EMAIL, NAME, PASSWORD, UserType.RIDER);
+        user = new User(EMAIL, NAME, UserType.RIDER);
     }
 
     @Nested

@@ -26,14 +26,12 @@ public class RegisterUserDataTest {
                 .isInstanceOf(User.class)
                 .matches(user -> REGISTER_USER_DATA_DRIVER.getEmail().equals(user.getEmail()))
                 .matches(user -> REGISTER_USER_DATA_DRIVER.getName().equals(user.getName()))
-                .matches(user -> REGISTER_USER_DATA_DRIVER.getPassword().equals(user.getPassword()))
                 .matches(user -> REGISTER_USER_DATA_DRIVER.getUserType().equals(user.getUserType()));
             assertThat(subject(REGISTER_USER_DATA_RIDER))
                 .isNotNull()
                 .isInstanceOf(User.class)
                 .matches(user -> REGISTER_USER_DATA_RIDER.getEmail().equals(user.getEmail()))
                 .matches(user -> REGISTER_USER_DATA_RIDER.getName().equals(user.getName()))
-                .matches(user -> REGISTER_USER_DATA_RIDER.getPassword().equals(user.getPassword()))
                 .matches(user -> REGISTER_USER_DATA_RIDER.getUserType().equals(user.getUserType()));
         }
     }
