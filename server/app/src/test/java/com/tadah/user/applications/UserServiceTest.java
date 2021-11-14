@@ -12,15 +12,19 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import static com.tadah.user.UserConstants.DRIVER;
 import static com.tadah.user.UserConstants.EMAIL;
+import static com.tadah.user.UserConstants.ENCODED_PASSWORD;
+import static com.tadah.user.UserConstants.PASSWORD;
 import static com.tadah.user.UserConstants.RIDER;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.atMostOnce;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -30,6 +34,9 @@ public final class UserServiceTest {
     @Mock
     private UserRepository userRepository;
 
+    @Mock
+    private PasswordEncoder passwordEncoder;
+
     @InjectMocks
     private UserService userService;
 
@@ -37,7 +44,7 @@ public final class UserServiceTest {
     @DisplayName("registerUser 메서드는")
     public final class Describe_registerUser {
         private User subject(final User user) {
-            return userService.registerUser(user);
+            return userService.registerUser(user, PASSWORD);
         }
 
         @AfterEach
@@ -51,12 +58,16 @@ public final class UserServiceTest {
         public final class Context_validEmail {
             @BeforeEach
             private void beforeEach() {
+                when(passwordEncoder.encode(anyString()))
+                    .thenReturn(ENCODED_PASSWORD);
                 when(userRepository.save(any(User.class)))
                     .thenReturn(DRIVER);
             }
 
             @AfterEach
             private void afterEach() {
+                verify(passwordEncoder, atMostOnce())
+                    .encode(anyString());
                 verify(userRepository, atMostOnce())
                     .save(any(User.class));
             }
@@ -76,6 +87,14 @@ public final class UserServiceTest {
             private void beforeEach() {
                 when(userRepository.existsByEmail(EMAIL))
                     .thenReturn(true);
+            }
+
+            @AfterEach
+            private void afterEach() {
+                verify(passwordEncoder, times(0))
+                    .encode(anyString());
+                verify(userRepository, times(0))
+                    .save(any(User.class));
             }
 
             @Test

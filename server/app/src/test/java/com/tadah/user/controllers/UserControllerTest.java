@@ -40,6 +40,7 @@ import static com.tadah.user.UserConstants.PASSWORD;
 import static com.tadah.user.UserConstants.RIDER;
 import static com.tadah.user.UserConstants.REGISTER_USER_DATA_RIDER;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.atMostOnce;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
@@ -76,14 +77,14 @@ public final class UserControllerTest {
 
         @BeforeEach
         public void beforeEach() {
-            when(userService.registerUser(any(User.class)))
+            when(userService.registerUser(any(User.class), anyString()))
                 .thenReturn(RIDER);
         }
 
         @AfterEach
         public void afterEach() {
             verify(userService, atMostOnce())
-                .registerUser(any(User.class));
+                .registerUser(any(User.class), anyString());
         }
 
         @Test
@@ -150,7 +151,7 @@ public final class UserControllerTest {
         public final class Context_emailAlreadyExists {
             @BeforeEach
             private void beforeEach() {
-                when(userService.registerUser(any(User.class)))
+                when(userService.registerUser(any(User.class), anyString()))
                     .thenThrow(new UserEmailAlreadyExistException());
             }
 

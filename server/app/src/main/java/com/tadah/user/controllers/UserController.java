@@ -38,6 +38,6 @@ public final class UserController {
     @ResponseStatus(HttpStatus.CREATED)
     public User register(@RequestBody @Valid final RegisterUserData registerUserData) {
         final User user = registerUserData.toEntity();
-        return userService.registerUser(user);
+        return userService.registerUser(user, registerUserData.getPassword());
     }
 }
