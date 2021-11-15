@@ -1,0 +1,32 @@
+name: Ta-Dah Server CI/CD
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - server/**
+jobs:
+  build:
+    name: Ta-Dah Server Build
+    runs-on: ubuntu-latest
+    env:
+      working-directory: server
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2.4.0
+
+      - name: SetUp Java JDK
+        uses: actions/setup-java@v2.3.1
+        with:
+          java-version: 15.0.2
+          distribution: 'adopt'
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+        working-directory: ${{ env.working-directory }}
+
+      - name: Spring Test
+        run: ./gradlew test jacocoTestCoverageVerification
+        working-directory: ${{ env.working-directory }}
