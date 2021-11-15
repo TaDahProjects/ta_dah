@@ -5,6 +5,7 @@ import com.tadah.user.applications.UserService;
 import com.tadah.user.domain.UserType;
 import com.tadah.user.domain.entities.User;
 import com.tadah.user.dto.RegisterUserData;
+import com.tadah.user.dto.UserData;
 import com.tadah.user.exceptions.UserEmailAlreadyExistException;
 import com.tadah.utils.Parser;
 import org.junit.jupiter.api.AfterEach;
@@ -88,12 +89,12 @@ public final class UserControllerTest {
         }
 
         @Test
-        @DisplayName("User를 생성한다.")
-        public void it_creates_the_user() throws Exception {
+        @DisplayName("비밀번호를 제외한 사용자 정보를 리턴한다.")
+        public void it_returns_user_data_without_a_password() throws Exception {
             subject(Parser.toJson(REGISTER_USER_DATA_RIDER), status().isCreated())
                 .andExpect(
                     content().string(
-                        Parser.toJson(RIDER)
+                        Parser.toJson(new UserData(RIDER.getEmail(), RIDER.getName(), RIDER.getUserType()))
                     ));
         }
 
