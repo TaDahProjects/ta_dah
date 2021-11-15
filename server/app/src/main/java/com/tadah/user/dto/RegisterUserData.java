@@ -14,7 +14,7 @@ import javax.validation.constraints.Pattern;
 @Generated
 @Getter
 @AllArgsConstructor
-public final class UserData {
+public final class RegisterUserData {
     /**
      * 이메일
      * RFC-5322 기반 이메일 형식 확인 및 null 여부 확인
@@ -54,6 +54,6 @@ public final class UserData {
     private UserType userType;
 
     public User toEntity() {
-        return new User(email, name, password, userType);
+        return new User(email, name, userType);
     }
 }
