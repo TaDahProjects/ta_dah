@@ -3,6 +3,7 @@ package com.tadah.user.controllers;
 import com.tadah.user.applications.UserService;
 import com.tadah.user.domain.entities.User;
 import com.tadah.user.dto.RegisterUserData;
+import com.tadah.user.dto.UserData;
 import com.tadah.user.exceptions.UserEmailAlreadyExistException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -27,6 +28,10 @@ public final class UserController {
         this.userService = userService;
     }
 
+    private UserData toUserData(final User user) {
+        return new UserData(user.getEmail(), user.getName(), user.getUserType());
+    }
+
     /**
      * 사용자 등록을 수행한다.
      *
@@ -36,8 +41,8 @@ public final class UserController {
      */
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public User register(@RequestBody @Valid final RegisterUserData registerUserData) {
+    public UserData register(@RequestBody @Valid final RegisterUserData registerUserData) {
         final User user = registerUserData.toEntity();
-        return userService.registerUser(user, registerUserData.getPassword());
+        return toUserData(userService.registerUser(user, registerUserData.getPassword()));
     }
 }
