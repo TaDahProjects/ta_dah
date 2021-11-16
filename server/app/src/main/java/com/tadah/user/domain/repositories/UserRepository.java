@@ -2,6 +2,8 @@ package com.tadah.user.domain.repositories;
 
 import com.tadah.user.domain.entities.User;
 
+import java.util.Optional;
+
 public interface UserRepository {
     /**
      * 사용자 정보를 저장한다.
@@ -18,4 +20,12 @@ public interface UserRepository {
      * @return 이메일에 해당하는 사용자 존재여부
      */
     boolean existsByEmail(final String email);
+
+    /**
+     * 이메일에 해당하는 사용자 데이터를 리턴한다.
+     *
+     * @param email 사용자의 이메일
+     * @return 이메일에 해당하는 사용자 데이터
+     */
+    Optional<User> findByEmail(final String email);
 }

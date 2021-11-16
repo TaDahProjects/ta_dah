@@ -1,6 +1,7 @@
 package com.tadah.user.controllers;
 
 import com.tadah.common.dtos.ErrorResponse;
+import com.tadah.user.exceptions.LoginFailException;
 import com.tadah.user.exceptions.UserEmailAlreadyExistException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -28,6 +29,15 @@ public final class UserControllerAdvice {
     @ExceptionHandler(UserEmailAlreadyExistException.class)
     public ErrorResponse handleUserEmailAlreadyExistException(
         final HttpServletRequest request, final UserEmailAlreadyExistException exception
+    ) {
+        return new ErrorResponse(request, exception.getMessage());
+    }
+
+    @ResponseBody
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(LoginFailException.class)
+    public ErrorResponse handleLoginFailException(
+        final HttpServletRequest request, final LoginFailException exception
     ) {
         return new ErrorResponse(request, exception.getMessage());
     }

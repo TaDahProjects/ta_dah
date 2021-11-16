@@ -25,16 +25,13 @@ public final class JwtUtilTest {
     public static final String VALID_TOKEN_WITHOUT_CLAIMS = "eyJhbGciOiJIUzI1NiJ9..Y3zwinksGMfE9Ym4QHp3jFBeDE_iJdw3F-DDlvMEE9Q";
     public static final String INVALID_TOKEN = VALID_TOKEN + "invalid";
 
-    private final JwtUtil jwtUtil;
-    public JwtUtilTest() {
-        jwtUtil = new JwtUtil(SECRET);
-    }
+    public static final JwtUtil JWT_UTIL = new JwtUtil(SECRET);
 
     @Nested
     @DisplayName("encode 메서드는")
     public final class Describe_encode {
         private String subject(final Long claimData) {
-            return jwtUtil.encode(claimData);
+            return JWT_UTIL.encode(claimData);
         }
 
         @Test
@@ -60,7 +57,7 @@ public final class JwtUtilTest {
     @DisplayName("verify 메서드는")
     public final class Describe_verify {
         private Claims subject(final String token) {
-            return jwtUtil.decode(token);
+            return JWT_UTIL.decode(token);
         }
 
         @Test
