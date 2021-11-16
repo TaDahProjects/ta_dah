@@ -12,6 +12,8 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.TransactionSystemException;
 
+import java.util.Optional;
+
 import static com.tadah.user.UserConstants.DRIVER;
 import static com.tadah.user.UserConstants.DRIVER_WITH_OUT_PASSWORD;
 import static com.tadah.user.UserConstants.EMAIL;
@@ -115,6 +117,41 @@ public class UserRepositoryTest {
             public void it_notifies_that_user_does_not_exist() {
                 assertThat(subject(RIDER.getEmail()))
                     .isFalse();
+            }
+        }
+    }
+
+    @Nested
+    @DisplayName("findByEmail 메서드는")
+    public final class Describe_findByEmail {
+        private Optional<User> subject(final String email) {
+            return userRepository.findByEmail(email);
+        }
+
+        @Nested
+        @DisplayName("이메일에 해당하는 사용자가 있는 경우")
+        public final class Context_userExist {
+            @BeforeEach
+            private void beforeEach() {
+                new Describe_save().subject(RIDER);
+            }
+
+            @Test
+            @DisplayName("사용자가 존재하는것을 알려준다.")
+            public void it_nofities_that_the_user_exists() {
+                assertThat(subject(RIDER.getEmail()))
+                    .isPresent();
+            }
+        }
+
+        @Nested
+        @DisplayName("이메일에 해당하는 사용자가 없는 경우")
+        public final class Context_userNotExist {
+            @Test
+            @DisplayName("사용자가 존재하지 않는것을 알려준다.")
+            public void it_notifies_that_user_does_not_exist() {
+                assertThat(subject(RIDER.getEmail()))
+                    .isEmpty();
             }
         }
     }
