@@ -26,7 +26,7 @@ public final class SessionController {
     public SessionController(final AuthenticationService authenticationService) {
         this.authenticationService = authenticationService;
     }
-
+    
     /**
      * JWT 발행을 담당한다.
      *
