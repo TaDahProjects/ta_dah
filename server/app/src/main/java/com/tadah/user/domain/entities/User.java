@@ -39,4 +39,8 @@ public final class User {
     public void updatePassword(final String password, final PasswordEncoder passwordEncoder) {
         this.password = passwordEncoder.encode(password);
     }
+
+    public boolean authenticate(final String password, final PasswordEncoder passwordEncoder) {
+        return passwordEncoder.matches(password, this.password);
+    }
 }
