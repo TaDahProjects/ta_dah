@@ -65,7 +65,7 @@ public class UserRepositoryTest {
         @DisplayName("사용자 정보를 저장한다.")
         public void it_saves_a_user_data() {
             final User rider = subject(RIDER);
-            assertThat(jpaUserRepository.findById(rider.getId()))
+            assertThat(new Describe_findById().subject(rider.getId()))
                 .isPresent()
                 .get()
                 .isInstanceOf(User.class)
@@ -75,7 +75,7 @@ public class UserRepositoryTest {
                 .matches(user -> passwordEncoder.matches(PASSWORD, user.getPassword()));
 
             final User driver = subject(DRIVER);
-            assertThat(jpaUserRepository.findById(driver.getId()))
+            assertThat(new Describe_findById().subject(driver.getId()))
                 .isPresent()
                 .get()
                 .isInstanceOf(User.class)
@@ -129,6 +129,17 @@ public class UserRepositoryTest {
         }
 
         @Nested
+        @DisplayName("이메일에 해당하는 사용자가 없는 경우")
+        public final class Context_userNotExist {
+            @Test
+            @DisplayName("사용자가 존재하지 않는것을 알려준다.")
+            public void it_notifies_that_user_does_not_exist() {
+                assertThat(subject(RIDER.getEmail()))
+                    .isEmpty();
+            }
+        }
+
+        @Nested
         @DisplayName("이메일에 해당하는 사용자가 있는 경우")
         public final class Context_userExist {
             @BeforeEach
@@ -138,10 +149,18 @@ public class UserRepositoryTest {
 
             @Test
             @DisplayName("사용자가 존재하는것을 알려준다.")
-            public void it_nofities_that_the_user_exists() {
+            public void it_notifies_that_the_user_exists() {
                 assertThat(subject(RIDER.getEmail()))
                     .isPresent();
             }
+        }
+    }
+
+    @Nested
+    @DisplayName("findById 메서드는")
+    public final class Describe_findById {
+        private Optional<User> subject(final Long id) {
+            return userRepository.findById(id);
         }
 
         @Nested
@@ -150,8 +169,24 @@ public class UserRepositoryTest {
             @Test
             @DisplayName("사용자가 존재하지 않는것을 알려준다.")
             public void it_notifies_that_user_does_not_exist() {
-                assertThat(subject(RIDER.getEmail()))
+                assertThat(subject(RIDER.getId()))
                     .isEmpty();
+            }
+        }
+
+        @Nested
+        @DisplayName("id에 해당하는 사용자가 있는 경우")
+        public final class Context_userExist {
+            @BeforeEach
+            private void beforeEach() {
+                new Describe_save().subject(RIDER);
+            }
+
+            @Test
+            @DisplayName("사용자가 존재하는것을 알려준다.")
+            public void it_notifies_that_the_user_exists() {
+                assertThat(subject(RIDER.getId()))
+                    .isPresent();
             }
         }
     }

@@ -28,4 +28,12 @@ public interface UserRepository {
      * @return 이메일에 해당하는 사용자 데이터
      */
     Optional<User> findByEmail(final String email);
+
+    /**
+     * id에 해당하는 사용자 데이터를 리턴합니다.
+     *
+     * @param id 사용자 아이디
+     * @return 아이디에 해당하는 사용자 데이터
+     */
+    Optional<User> findById(final Long id);
 }
