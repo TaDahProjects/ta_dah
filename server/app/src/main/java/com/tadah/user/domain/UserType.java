@@ -1,6 +1,13 @@
 package com.tadah.user.domain;
 
-public enum UserType {
+import org.springframework.security.core.GrantedAuthority;
+
+public enum UserType implements GrantedAuthority {
     RIDER,
-    DRIVER
+    DRIVER;
+
+    @Override
+    public String getAuthority() {
+        return name();
+    }
 }
