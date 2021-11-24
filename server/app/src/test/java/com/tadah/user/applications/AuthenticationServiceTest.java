@@ -15,7 +15,6 @@ import java.util.Optional;
 import static com.tadah.user.UserConstants.EMAIL;
 import static com.tadah.user.UserConstants.INVALID_EMAIL;
 import static com.tadah.user.UserConstants.PASSWORD;
-import static com.tadah.user.UserConstants.RIDER;
 import static com.tadah.user.domain.entities.UserTest.PASSWORD_ENCODER;
 import static com.tadah.user.utils.JwtUtilTest.CLAIM_DATA;
 import static com.tadah.user.utils.JwtUtilTest.INVALID_TOKEN;
@@ -32,6 +31,7 @@ import static org.mockito.Mockito.when;
 @DisplayName("AuthenticationService 클래스")
 public class AuthenticationServiceTest {
     private static final String INVALID_CLAIMS_NAME_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJpbnZhbGlkIjoxfQ.QwqsY19u7hBbtd32x31vUX0L6wONcPv9Msh2wlanPoI";
+    private static final User USER = mock(User.class);
 
     private final UserRepository userRepository;
     private final AuthenticationService authenticationService;
@@ -53,7 +53,11 @@ public class AuthenticationServiceTest {
             when(userRepository.findByEmail(INVALID_EMAIL))
                 .thenReturn(Optional.empty());
             when(userRepository.findByEmail(EMAIL))
-                .thenReturn(Optional.of(RIDER));
+                .thenReturn(Optional.of(USER));
+            when(USER.getId())
+                .thenReturn(CLAIM_DATA);
+            when(USER.authenticate(PASSWORD, PASSWORD_ENCODER))
+                .thenReturn(true);
         }
 
         @AfterEach
@@ -102,7 +106,7 @@ public class AuthenticationServiceTest {
         @BeforeEach
         private void beforeEach() {
             when(userRepository.findById(CLAIM_DATA))
-                .thenReturn(Optional.of(RIDER));
+                .thenReturn(Optional.of(USER));
         }
 
         @Nested
