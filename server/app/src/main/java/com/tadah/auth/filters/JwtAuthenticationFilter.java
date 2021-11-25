@@ -1,6 +1,6 @@
 package com.tadah.auth.filters;
 
-import com.tadah.auth.applications.AuthService;
+import com.tadah.auth.applications.AuthenticationService;
 import com.tadah.auth.authentication.UserAuthentication;
 import com.tadah.user.domain.entities.User;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -19,12 +19,12 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
     private static final String AUTHORIZATION_HEADER = "Authorization";
     private static final String TOKEN_PREFIX = "Bearer ";
 
-    private final AuthService authService;
+    private final AuthenticationService authenticationService;
     public JwtAuthenticationFilter(
-        final AuthenticationManager authenticationManager, final AuthService authService
+        final AuthenticationManager authenticationManager, final AuthenticationService authenticationService
         ) {
         super(authenticationManager);
-        this.authService = authService;
+        this.authenticationService = authenticationService;
     }
 
     @Override
@@ -35,7 +35,7 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
 
         if (authorizationHeader != null) {
             final String token = authorizationHeader.substring(TOKEN_PREFIX.length());
-            final User user = authService.verifyToken(token);
+            final User user = authenticationService.verifyToken(token);
             final Authentication authentication = new UserAuthentication(user);
 
             final SecurityContext context = SecurityContextHolder.getContext();

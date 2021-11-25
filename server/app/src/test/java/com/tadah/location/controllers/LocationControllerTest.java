@@ -1,6 +1,6 @@
 package com.tadah.location.controllers;
 
-import com.tadah.auth.applications.AuthService;
+import com.tadah.auth.applications.AuthenticationService;
 import com.tadah.utils.LoginFailTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -29,18 +29,18 @@ public final class LocationControllerTest {
     private MockMvc mockMvc;
 
     @MockBean
-    private AuthService authService;
+    private AuthenticationService authenticationService;
 
     @BeforeEach
     private void beforeEach() {
-        reset(authService);
+        reset(authenticationService);
     }
 
     @Nested
     @DisplayName("create 메서드는")
     public final class Describe_create extends LoginFailTest {
         public Describe_create() {
-            super(RIDER, mockMvc, authService, post(URL));
+            super(RIDER, mockMvc, authenticationService, post(URL));
         }
 
         @Nested
@@ -48,7 +48,7 @@ public final class LocationControllerTest {
         public final class Context_validToken {
             @BeforeEach
             private void beforeEach() {
-                when(authService.verifyToken(VALID_TOKEN))
+                when(authenticationService.verifyToken(VALID_TOKEN))
                     .thenReturn(DRIVER);
             }
 

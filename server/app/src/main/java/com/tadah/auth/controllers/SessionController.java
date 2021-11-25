@@ -1,6 +1,6 @@
 package com.tadah.auth.controllers;
 
-import com.tadah.auth.applications.AuthService;
+import com.tadah.auth.applications.AuthenticationService;
 import com.tadah.auth.dto.SessionRequestData;
 import com.tadah.auth.dto.SessionResponseData;
 import org.springframework.http.HttpStatus;
@@ -21,10 +21,10 @@ import javax.validation.Valid;
 @RestController
 @RequestMapping("/session")
 public final class SessionController {
-    private final AuthService authService;
+    private final AuthenticationService authenticationService;
 
-    public SessionController(final AuthService authService) {
-        this.authService = authService;
+    public SessionController(final AuthenticationService authenticationService) {
+        this.authenticationService = authenticationService;
     }
     
     /**
@@ -37,7 +37,7 @@ public final class SessionController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public SessionResponseData login(@RequestBody @Valid final SessionRequestData requestData) {
-        final String token = authService.publishToken(requestData.getEmail(), requestData.getPassword());
+        final String token = authenticationService.publishToken(requestData.getEmail(), requestData.getPassword());
         return new SessionResponseData(token);
     }
 }

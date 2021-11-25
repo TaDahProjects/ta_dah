@@ -1,6 +1,6 @@
 package com.tadah.auth.controllers;
 
-import com.tadah.auth.applications.AuthService;
+import com.tadah.auth.applications.AuthenticationService;
 import com.tadah.auth.dto.SessionRequestData;
 import com.tadah.auth.dto.SessionResponseData;
 import com.tadah.auth.exceptions.LoginFailException;
@@ -52,16 +52,16 @@ public final class SessionControllerTest {
     private MockMvc mockMvc;
 
     @MockBean
-    private AuthService authService;
+    private AuthenticationService authenticationService;
 
     @BeforeEach
     private void beforeEach() {
-        reset(authService);
+        reset(authenticationService);
     }
 
     @AfterEach
     private void afterEach() {
-        verify(authService, atMostOnce())
+        verify(authenticationService, atMostOnce())
             .publishToken(anyString(), anyString());
     }
 
@@ -82,7 +82,7 @@ public final class SessionControllerTest {
         public final class Context_invalidEmail {
             @BeforeEach
             private void beforeEach() {
-                when(authService.publishToken(EMAIL, PASSWORD))
+                when(authenticationService.publishToken(EMAIL, PASSWORD))
                     .thenThrow(new LoginFailException());
             }
 
@@ -103,7 +103,7 @@ public final class SessionControllerTest {
         public final class Context_invalidPassword {
             @BeforeEach
             private void beforeEach() {
-                when(authService.publishToken(EMAIL, PASSWORD + "invalid"))
+                when(authenticationService.publishToken(EMAIL, PASSWORD + "invalid"))
                     .thenThrow(new LoginFailException());
             }
 
@@ -121,7 +121,7 @@ public final class SessionControllerTest {
 
         @BeforeEach
         private void beforeEach() {
-            when(authService.publishToken(EMAIL, PASSWORD))
+            when(authenticationService.publishToken(EMAIL, PASSWORD))
                 .thenReturn(VALID_TOKEN);
         }
 

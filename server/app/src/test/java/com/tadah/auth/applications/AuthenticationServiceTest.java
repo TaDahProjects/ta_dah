@@ -29,22 +29,22 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@DisplayName("AuthService 클래스")
-public class AuthServiceTest {
+@DisplayName("AuthenticationService 클래스")
+public class AuthenticationServiceTest {
     private static final User USER = mock(User.class);
 
     private final UserRepository userRepository;
-    private final AuthService authService;
-    public AuthServiceTest() {
+    private final AuthenticationService authenticationService;
+    public AuthenticationServiceTest() {
         this.userRepository = mock(UserRepository.class);
-        this.authService = new AuthService(JWT_UTIL, userRepository, PASSWORD_ENCODER);
+        this.authenticationService = new AuthenticationService(JWT_UTIL, userRepository, PASSWORD_ENCODER);
     }
 
     @Nested
     @DisplayName("publishToken 메서드는")
     public final class Describe_publishToken {
         private String subject(final String email, final String password) {
-            return authService.publishToken(email, password);
+            return authenticationService.publishToken(email, password);
         }
 
         @BeforeEach
@@ -99,7 +99,7 @@ public class AuthServiceTest {
     @DisplayName("verifyToken 메서드는")
     public final class Describe_verifyToken {
         private User subject(final String token) {
-            return authService.verifyToken(token);
+            return authenticationService.verifyToken(token);
         }
 
         @BeforeEach
