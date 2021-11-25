@@ -1,6 +1,6 @@
 package com.tadah.auth.utils;
 
-import com.tadah.common.exceptions.InvalidTokenException;
+import com.tadah.auth.exceptions.InvalidTokenException;
 import io.jsonwebtoken.Claims;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;

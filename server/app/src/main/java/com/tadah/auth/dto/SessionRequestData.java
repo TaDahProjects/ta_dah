@@ -1,4 +1,4 @@
-package com.tadah.user.dto;
+package com.tadah.auth.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Generated;

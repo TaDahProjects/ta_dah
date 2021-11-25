@@ -1,6 +1,6 @@
 package com.tadah.auth.filters;
 
-import com.tadah.common.exceptions.InvalidTokenException;
+import com.tadah.auth.exceptions.InvalidTokenException;
 import org.springframework.http.HttpStatus;
 
 import javax.servlet.FilterChain;

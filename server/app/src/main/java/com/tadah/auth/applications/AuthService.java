@@ -1,10 +1,10 @@
 package com.tadah.auth.applications;
 
+import com.tadah.auth.exceptions.InvalidTokenException;
+import com.tadah.auth.exceptions.LoginFailException;
 import com.tadah.auth.utils.JwtUtil;
-import com.tadah.common.exceptions.InvalidTokenException;
 import com.tadah.user.domain.entities.User;
 import com.tadah.user.domain.repositories.UserRepository;
-import com.tadah.user.exceptions.LoginFailException;
 import io.jsonwebtoken.Claims;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;

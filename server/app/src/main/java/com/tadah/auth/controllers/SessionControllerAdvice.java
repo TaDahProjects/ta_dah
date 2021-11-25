@@ -1,7 +1,7 @@
-package com.tadah.user.controllers;
+package com.tadah.auth.controllers;
 
+import com.tadah.auth.exceptions.LoginFailException;
 import com.tadah.common.dtos.ErrorResponse;
-import com.tadah.user.exceptions.UserEmailAlreadyExistException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -11,12 +11,12 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import javax.servlet.http.HttpServletRequest;
 
 /**
- * User 컨트롤러에서 던져진 예외를 처리한다.
+ * Session 컨트롤러에서 던져진 예외를 처리한다.
  */
 @RestControllerAdvice
-public final class UserControllerAdvice {
+public final class SessionControllerAdvice {
     /**
-     * 등록하려는 이메일이 이미 존재하는 경우
+     * 로그인에 실패한 경우
      * 해당 예외가 어디서 던져졌는지 리턴한다.
      *
      * @param request 예외가 던져진 http 요청
@@ -25,9 +25,9 @@ public final class UserControllerAdvice {
      */
     @ResponseBody
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(UserEmailAlreadyExistException.class)
-    public ErrorResponse handleUserEmailAlreadyExistException(
-        final HttpServletRequest request, final UserEmailAlreadyExistException exception
+    @ExceptionHandler(LoginFailException.class)
+    public ErrorResponse handleLoginFailException(
+        final HttpServletRequest request, final LoginFailException exception
     ) {
         return new ErrorResponse(request, exception.getMessage());
     }

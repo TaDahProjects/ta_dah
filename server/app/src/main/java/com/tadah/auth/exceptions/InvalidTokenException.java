@@ -1,4 +1,4 @@
-package com.tadah.common.exceptions;
+package com.tadah.auth.exceptions;
 
 public final class InvalidTokenException extends RuntimeException {
     public InvalidTokenException() {

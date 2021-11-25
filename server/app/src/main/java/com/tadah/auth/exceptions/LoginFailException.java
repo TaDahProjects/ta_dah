@@ -1,4 +1,4 @@
-package com.tadah.user.exceptions;
+package com.tadah.auth.exceptions;
 
 public class LoginFailException extends RuntimeException {
     public LoginFailException() {

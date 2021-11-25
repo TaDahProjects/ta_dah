@@ -1,10 +1,10 @@
 package com.tadah.auth.controllers;
 
 import com.tadah.auth.applications.AuthService;
+import com.tadah.auth.dto.SessionRequestData;
+import com.tadah.auth.dto.SessionResponseData;
+import com.tadah.auth.exceptions.LoginFailException;
 import com.tadah.common.dtos.ErrorResponse;
-import com.tadah.user.dto.SessionRequestData;
-import com.tadah.user.dto.SessionResponseData;
-import com.tadah.user.exceptions.LoginFailException;
 import com.tadah.utils.Parser;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;

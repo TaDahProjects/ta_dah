@@ -1,7 +1,7 @@
 package com.tadah.utils;
 
 import com.tadah.auth.applications.AuthService;
-import com.tadah.common.exceptions.InvalidTokenException;
+import com.tadah.auth.exceptions.InvalidTokenException;
 import com.tadah.user.domain.entities.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
