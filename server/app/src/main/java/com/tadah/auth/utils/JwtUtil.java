@@ -1,7 +1,6 @@
 package com.tadah.auth.utils;
 
 import com.tadah.common.exceptions.InvalidTokenException;
-import com.tadah.user.exceptions.InvalidClaimDataException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
@@ -28,12 +27,8 @@ public final class JwtUtil {
      *
      * @param claimData JWT Claim(속성 정보)에 들어갈 데이터
      * @return JWT
-     * @throws InvalidClaimDataException claimData에 null값이 들어온 경우
      */
     public String encode(final Long claimData) {
-        if (claimData == null) {
-            throw new InvalidClaimDataException();
-        }
         return Jwts.builder()
             .claim(CLAIM_NAME, claimData)
             .signWith(key)

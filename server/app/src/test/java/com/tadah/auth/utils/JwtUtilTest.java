@@ -1,7 +1,6 @@
 package com.tadah.auth.utils;
 
 import com.tadah.common.exceptions.InvalidTokenException;
-import com.tadah.user.exceptions.InvalidClaimDataException;
 import io.jsonwebtoken.Claims;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -41,17 +40,6 @@ public final class JwtUtilTest {
         public void it_encodes_claim_data_and_then_returns_the_token() {
             assertThat(subject(CLAIM_DATA))
                 .isEqualTo(VALID_TOKEN);
-        }
-
-        @Nested
-        @DisplayName("속성 정보에 null이 들어오는 경우")
-        public final class Context_claimDataNull {
-            @Test
-            @DisplayName("InvalidClaimException을 던진다.")
-            public void it_throws_invalid_claim_exception() {
-                assertThatThrownBy(() -> subject(null))
-                    .isInstanceOf(InvalidClaimDataException.class);
-            }
         }
     }
 
