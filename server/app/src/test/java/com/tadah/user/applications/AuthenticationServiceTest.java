@@ -30,7 +30,7 @@ import static org.mockito.Mockito.when;
 
 @DisplayName("AuthenticationService 클래스")
 public class AuthenticationServiceTest {
-    private static final String INVALID_CLAIMS_NAME_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJpbnZhbGlkIjoxfQ.QwqsY19u7hBbtd32x31vUX0L6wONcPv9Msh2wlanPoI";
+    public static final String INVALID_CLAIMS_NAME_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJpbnZhbGlkIjoxfQ.QwqsY19u7hBbtd32x31vUX0L6wONcPv9Msh2wlanPoI";
     private static final User USER = mock(User.class);
 
     private final UserRepository userRepository;
