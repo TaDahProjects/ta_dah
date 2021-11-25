@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import javax.servlet.http.HttpServletRequest;
 
 /**
- * Session 컨트롤러에서 던져진 예외를 처리한다.
+ * SessionController에서 던져진 예외를 처리한다.
  */
 @RestControllerAdvice
 public final class SessionControllerAdvice {

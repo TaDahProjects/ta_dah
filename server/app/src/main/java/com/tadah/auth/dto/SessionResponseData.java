@@ -4,6 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.Generated;
 import lombok.Getter;
 
+/**
+ * 인증 결과를 저장한다.
+ */
 @Generated
 @Getter
 @AllArgsConstructor

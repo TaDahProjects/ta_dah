@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 import static com.tadah.auth.utils.JwtUtil.CLAIM_NAME;
 
 /**
- * 인증을 담당한다.
+ * 인증을 수행한다.
  */
 @Service
 public final class AuthenticationService {
