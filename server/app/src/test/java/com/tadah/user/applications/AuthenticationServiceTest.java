@@ -12,14 +12,14 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Optional;
 
+import static com.tadah.auth.utils.JwtUtilTest.CLAIM_DATA;
+import static com.tadah.auth.utils.JwtUtilTest.INVALID_TOKEN;
+import static com.tadah.auth.utils.JwtUtilTest.JWT_UTIL;
+import static com.tadah.auth.utils.JwtUtilTest.VALID_TOKEN;
 import static com.tadah.user.UserConstants.EMAIL;
 import static com.tadah.user.UserConstants.INVALID_EMAIL;
 import static com.tadah.user.UserConstants.PASSWORD;
 import static com.tadah.user.domain.entities.UserTest.PASSWORD_ENCODER;
-import static com.tadah.user.utils.JwtUtilTest.CLAIM_DATA;
-import static com.tadah.user.utils.JwtUtilTest.INVALID_TOKEN;
-import static com.tadah.user.utils.JwtUtilTest.JWT_UTIL;
-import static com.tadah.user.utils.JwtUtilTest.VALID_TOKEN;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -35,7 +35,6 @@ public class AuthenticationServiceTest {
 
     private final UserRepository userRepository;
     private final AuthenticationService authenticationService;
-
     public AuthenticationServiceTest() {
         this.userRepository = mock(UserRepository.class);
         this.authenticationService = new AuthenticationService(JWT_UTIL, userRepository, PASSWORD_ENCODER);

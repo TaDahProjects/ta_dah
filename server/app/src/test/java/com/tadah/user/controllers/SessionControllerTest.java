@@ -33,7 +33,7 @@ import static com.tadah.user.UserConstants.INVALID_PASSWORD_NUMBER;
 import static com.tadah.user.UserConstants.INVALID_PASSWORD_SPECIAL_CASE;
 import static com.tadah.user.UserConstants.INVALID_PASSWORD_UPPER_CASE;
 import static com.tadah.user.UserConstants.PASSWORD;
-import static com.tadah.user.utils.JwtUtilTest.VALID_TOKEN;
+import static com.tadah.auth.utils.JwtUtilTest.VALID_TOKEN;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.atMostOnce;
 import static org.mockito.Mockito.reset;

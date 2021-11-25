@@ -1,4 +1,4 @@
-package com.tadah.user.utils;
+package com.tadah.auth.utils;
 
 import com.tadah.common.exceptions.InvalidTokenException;
 import com.tadah.user.exceptions.InvalidClaimDataException;
@@ -13,7 +13,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.stream.Stream;
 
-import static com.tadah.user.utils.JwtUtil.CLAIM_NAME;
+import static com.tadah.auth.utils.JwtUtil.CLAIM_NAME;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 

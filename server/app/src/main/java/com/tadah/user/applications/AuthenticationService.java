@@ -1,16 +1,16 @@
 package com.tadah.user.applications;
 
+import com.tadah.auth.utils.JwtUtil;
 import com.tadah.common.exceptions.InvalidTokenException;
 import com.tadah.user.domain.entities.User;
 import com.tadah.user.domain.repositories.UserRepository;
 import com.tadah.user.exceptions.InvalidClaimDataException;
 import com.tadah.user.exceptions.LoginFailException;
-import com.tadah.user.utils.JwtUtil;
 import io.jsonwebtoken.Claims;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import static com.tadah.user.utils.JwtUtil.CLAIM_NAME;
+import static com.tadah.auth.utils.JwtUtil.CLAIM_NAME;
 
 /**
  * 토큰 발행 및 검증을 담당한다.

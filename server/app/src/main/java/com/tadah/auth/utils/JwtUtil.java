@@ -1,4 +1,4 @@
-package com.tadah.user.utils;
+package com.tadah.auth.utils;
 
 import com.tadah.common.exceptions.InvalidTokenException;
 import com.tadah.user.exceptions.InvalidClaimDataException;

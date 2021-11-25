@@ -18,9 +18,9 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 
 import java.util.stream.Stream;
 
+import static com.tadah.auth.utils.JwtUtilTest.INVALID_TOKEN;
+import static com.tadah.auth.utils.JwtUtilTest.VALID_TOKEN;
 import static com.tadah.user.applications.AuthenticationServiceTest.INVALID_CLAIMS_NAME_TOKEN;
-import static com.tadah.user.utils.JwtUtilTest.INVALID_TOKEN;
-import static com.tadah.user.utils.JwtUtilTest.VALID_TOKEN;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
