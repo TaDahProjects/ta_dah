@@ -1,4 +1,4 @@
-package com.tadah.user.controllers;
+package com.tadah.auth.controllers;
 
 import com.tadah.auth.applications.AuthService;
 import com.tadah.common.dtos.ErrorResponse;

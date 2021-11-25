@@ -1,4 +1,4 @@
-package com.tadah.user.controllers;
+package com.tadah.auth.controllers;
 
 import com.tadah.auth.applications.AuthService;
 import com.tadah.user.dto.SessionRequestData;
@@ -15,7 +15,7 @@ import com.tadah.user.exceptions.LoginFailException;
 import javax.validation.Valid;
 
 /**
- * 로그인을 담당한다.
+ * 인증을 시작한다.
  */
 @CrossOrigin
 @RestController
