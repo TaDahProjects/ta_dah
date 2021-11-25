@@ -1,6 +1,6 @@
 package com.tadah.auth.config;
 
-import com.tadah.auth.applications.AuthenticationService;
+import com.tadah.auth.applications.AuthService;
 import com.tadah.auth.filters.AuthenticationErrorFilter;
 import com.tadah.auth.filters.JwtAuthenticationFilter;
 import org.springframework.context.annotation.Configuration;
@@ -17,17 +17,17 @@ import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 @Configuration
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityJavaConfig extends WebSecurityConfigurerAdapter {
-    private final AuthenticationService authenticationService;
+    private final AuthService authService;
 
-    public SecurityJavaConfig(final AuthenticationService authenticationService) {
-        this.authenticationService = authenticationService;
+    public SecurityJavaConfig(final AuthService authService) {
+        this.authService = authService;
     }
 
     @Override
     protected void configure(final HttpSecurity http) throws Exception {
         http
             .csrf().disable()
-            .addFilter(new JwtAuthenticationFilter(authenticationManager(), authenticationService))
+            .addFilter(new JwtAuthenticationFilter(authenticationManager(), authService))
             .addFilterBefore(new AuthenticationErrorFilter(), JwtAuthenticationFilter.class)
             .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             .and()

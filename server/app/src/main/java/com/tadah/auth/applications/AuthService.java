@@ -12,15 +12,15 @@ import org.springframework.stereotype.Service;
 import static com.tadah.auth.utils.JwtUtil.CLAIM_NAME;
 
 /**
- * 토큰 발행 및 검증을 담당한다.
+ * 인증 및 인가를 담당한다.
  */
 @Service
-public final class AuthenticationService {
+public final class AuthService {
     private final JwtUtil jwtUtil;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public AuthenticationService(
+    public AuthService(
         final JwtUtil jwtUtil, final UserRepository userRepository, final PasswordEncoder passwordEncoder
     ) {
         this.jwtUtil = jwtUtil;
@@ -36,7 +36,7 @@ public final class AuthenticationService {
      * @return JWT
      * @throws LoginFailException 로그인에 실패한 경우
      */
-    public String login(final String email, final String password) {
+    public String publishToken(final String email, final String password) {
         final User user = userRepository.findByEmail(email)
             .orElseThrow(LoginFailException::new);
 
@@ -51,7 +51,7 @@ public final class AuthenticationService {
      *
      * @param token JWT
      * @return 사용자 데이터
-     * @throws InvalidTokenException 토큰이 유효하지 않은 경우
+     * @throws InvalidTokenException 토큰 검증에 실패한 경우
      */
     public User verifyToken(final String token) {
         final Claims claims = jwtUtil.decode(token);

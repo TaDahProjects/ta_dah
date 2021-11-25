@@ -1,6 +1,6 @@
 package com.tadah.utils;
 
-import com.tadah.auth.applications.AuthenticationService;
+import com.tadah.auth.applications.AuthService;
 import com.tadah.common.exceptions.InvalidTokenException;
 import com.tadah.user.domain.entities.User;
 import org.junit.jupiter.api.BeforeEach;
@@ -32,18 +32,18 @@ public abstract class LoginFailTest {
     private final User user;
     private final MockMvc mockMvc;
     private final MockHttpServletRequestBuilder requestBuilder;
-    private final AuthenticationService authenticationService;
+    private final AuthService authService;
 
     public LoginFailTest(
         final User user,
         final MockMvc mockMvc,
-        final AuthenticationService authenticationService,
+        final AuthService authService,
         final MockHttpServletRequestBuilder requestBuilder
     ) {
         this.user = user;
         this.mockMvc = mockMvc;
         this.requestBuilder = requestBuilder;
-        this.authenticationService = authenticationService;
+        this.authService = authService;
     }
 
     private ResultActions subject(final MockHttpServletRequestBuilder requestBuilder) throws Exception {
@@ -55,17 +55,17 @@ public abstract class LoginFailTest {
 
     @BeforeEach
     private void beforeEach() {
-        when(authenticationService.verifyToken(VALID_TOKEN))
+        when(authService.verifyToken(VALID_TOKEN))
             .thenReturn(user);
-        when(authenticationService.verifyToken(VALID_TOKEN.substring(TOKEN_PREFIX.length())))
+        when(authService.verifyToken(VALID_TOKEN.substring(TOKEN_PREFIX.length())))
             .thenThrow(new InvalidTokenException());
-        when(authenticationService.verifyToken(VALID_TOKEN.substring(1)))
+        when(authService.verifyToken(VALID_TOKEN.substring(1)))
             .thenThrow(new InvalidTokenException());
-        when(authenticationService.verifyToken(INVALID_TOKEN))
+        when(authService.verifyToken(INVALID_TOKEN))
             .thenThrow(new InvalidTokenException());
-        when(authenticationService.verifyToken(VALID_TOKEN_INVALID_CLAIMS_NAME))
+        when(authService.verifyToken(VALID_TOKEN_INVALID_CLAIMS_NAME))
             .thenThrow(new InvalidTokenException());
-        when(authenticationService.verifyToken(VALID_TOKEN_WITHOUT_CLAIMS))
+        when(authService.verifyToken(VALID_TOKEN_WITHOUT_CLAIMS))
             .thenThrow(new InvalidTokenException());
     }
 
