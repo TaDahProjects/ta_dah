@@ -1,7 +1,7 @@
 package com.tadah.auth.filters;
 
+import com.tadah.auth.applications.AuthenticationService;
 import com.tadah.auth.authentication.UserAuthentication;
-import com.tadah.user.applications.AuthenticationService;
 import com.tadah.user.domain.entities.User;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;

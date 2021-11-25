@@ -1,10 +1,9 @@
-package com.tadah.user.applications;
+package com.tadah.auth.applications;
 
 import com.tadah.auth.utils.JwtUtil;
 import com.tadah.common.exceptions.InvalidTokenException;
 import com.tadah.user.domain.entities.User;
 import com.tadah.user.domain.repositories.UserRepository;
-import com.tadah.user.exceptions.InvalidClaimDataException;
 import com.tadah.user.exceptions.LoginFailException;
 import io.jsonwebtoken.Claims;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -52,7 +51,7 @@ public final class AuthenticationService {
      *
      * @param token JWT
      * @return 사용자 데이터
-     * @throws InvalidClaimDataException 토큰이 유효하지 않은 경우
+     * @throws InvalidTokenException 토큰이 유효하지 않은 경우
      */
     public User verifyToken(final String token) {
         final Claims claims = jwtUtil.decode(token);

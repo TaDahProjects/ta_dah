@@ -1,6 +1,6 @@
 package com.tadah.location.controllers;
 
-import com.tadah.user.applications.AuthenticationService;
+import com.tadah.auth.applications.AuthenticationService;
 import com.tadah.utils.LoginFailTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

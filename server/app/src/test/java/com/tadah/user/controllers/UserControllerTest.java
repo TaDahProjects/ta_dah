@@ -1,7 +1,7 @@
 package com.tadah.user.controllers;
 
+import com.tadah.auth.applications.AuthenticationService;
 import com.tadah.common.dtos.ErrorResponse;
-import com.tadah.user.applications.AuthenticationService;
 import com.tadah.user.applications.UserService;
 import com.tadah.user.domain.UserType;
 import com.tadah.user.domain.entities.User;

@@ -1,4 +1,4 @@
-package com.tadah.user.applications;
+package com.tadah.auth.applications;
 
 import com.tadah.common.exceptions.InvalidTokenException;
 import com.tadah.user.domain.entities.User;

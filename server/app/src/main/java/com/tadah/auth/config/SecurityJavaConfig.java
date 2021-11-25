@@ -1,7 +1,7 @@
 package com.tadah.auth.config;
 
+import com.tadah.auth.applications.AuthenticationService;
 import com.tadah.auth.filters.AuthenticationErrorFilter;
-import com.tadah.user.applications.AuthenticationService;
 import com.tadah.auth.filters.JwtAuthenticationFilter;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
