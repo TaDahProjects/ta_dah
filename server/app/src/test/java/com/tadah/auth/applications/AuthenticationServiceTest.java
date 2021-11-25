@@ -1,9 +1,9 @@
-package com.tadah.user.applications;
+package com.tadah.auth.applications;
 
-import com.tadah.common.exceptions.InvalidTokenException;
+import com.tadah.auth.exceptions.InvalidTokenException;
+import com.tadah.auth.exceptions.LoginFailException;
 import com.tadah.user.domain.entities.User;
 import com.tadah.user.domain.repositories.UserRepository;
-import com.tadah.user.exceptions.LoginFailException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -12,14 +12,15 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Optional;
 
+import static com.tadah.auth.utils.JwtUtilTest.CLAIM_DATA;
+import static com.tadah.auth.utils.JwtUtilTest.VALID_TOKEN_INVALID_CLAIMS_NAME;
+import static com.tadah.auth.utils.JwtUtilTest.INVALID_TOKEN;
+import static com.tadah.auth.utils.JwtUtilTest.JWT_UTIL;
+import static com.tadah.auth.utils.JwtUtilTest.VALID_TOKEN;
 import static com.tadah.user.UserConstants.EMAIL;
 import static com.tadah.user.UserConstants.INVALID_EMAIL;
 import static com.tadah.user.UserConstants.PASSWORD;
 import static com.tadah.user.domain.entities.UserTest.PASSWORD_ENCODER;
-import static com.tadah.user.utils.JwtUtilTest.CLAIM_DATA;
-import static com.tadah.user.utils.JwtUtilTest.INVALID_TOKEN;
-import static com.tadah.user.utils.JwtUtilTest.JWT_UTIL;
-import static com.tadah.user.utils.JwtUtilTest.VALID_TOKEN;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -30,12 +31,10 @@ import static org.mockito.Mockito.when;
 
 @DisplayName("AuthenticationService 클래스")
 public class AuthenticationServiceTest {
-    public static final String INVALID_CLAIMS_NAME_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJpbnZhbGlkIjoxfQ.QwqsY19u7hBbtd32x31vUX0L6wONcPv9Msh2wlanPoI";
     private static final User USER = mock(User.class);
 
     private final UserRepository userRepository;
     private final AuthenticationService authenticationService;
-
     public AuthenticationServiceTest() {
         this.userRepository = mock(UserRepository.class);
         this.authenticationService = new AuthenticationService(JWT_UTIL, userRepository, PASSWORD_ENCODER);
@@ -45,7 +44,7 @@ public class AuthenticationServiceTest {
     @DisplayName("publishToken 메서드는")
     public final class Describe_publishToken {
         private String subject(final String email, final String password) {
-            return authenticationService.login(email, password);
+            return authenticationService.publishToken(email, password);
         }
 
         @BeforeEach
@@ -126,7 +125,7 @@ public class AuthenticationServiceTest {
             @Test
             @DisplayName("InvalidTokenException을 던진다.")
             public void it_throws_invalid_token_exception() {
-                assertThatThrownBy(() -> subject(INVALID_CLAIMS_NAME_TOKEN))
+                assertThatThrownBy(() -> subject(VALID_TOKEN_INVALID_CLAIMS_NAME))
                     .isInstanceOf(InvalidTokenException.class);
             }
         }

@@ -1,10 +1,10 @@
-package com.tadah.user.controllers;
+package com.tadah.auth.controllers;
 
+import com.tadah.auth.applications.AuthenticationService;
+import com.tadah.auth.dto.SessionRequestData;
+import com.tadah.auth.dto.SessionResponseData;
+import com.tadah.auth.exceptions.LoginFailException;
 import com.tadah.common.dtos.ErrorResponse;
-import com.tadah.user.applications.AuthenticationService;
-import com.tadah.user.dto.SessionRequestData;
-import com.tadah.user.dto.SessionResponseData;
-import com.tadah.user.exceptions.LoginFailException;
 import com.tadah.utils.Parser;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -33,7 +33,7 @@ import static com.tadah.user.UserConstants.INVALID_PASSWORD_NUMBER;
 import static com.tadah.user.UserConstants.INVALID_PASSWORD_SPECIAL_CASE;
 import static com.tadah.user.UserConstants.INVALID_PASSWORD_UPPER_CASE;
 import static com.tadah.user.UserConstants.PASSWORD;
-import static com.tadah.user.utils.JwtUtilTest.VALID_TOKEN;
+import static com.tadah.auth.utils.JwtUtilTest.VALID_TOKEN;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.atMostOnce;
 import static org.mockito.Mockito.reset;
@@ -62,7 +62,7 @@ public final class SessionControllerTest {
     @AfterEach
     private void afterEach() {
         verify(authenticationService, atMostOnce())
-            .login(anyString(), anyString());
+            .publishToken(anyString(), anyString());
     }
 
     @Nested
@@ -82,7 +82,7 @@ public final class SessionControllerTest {
         public final class Context_invalidEmail {
             @BeforeEach
             private void beforeEach() {
-                when(authenticationService.login(EMAIL, PASSWORD))
+                when(authenticationService.publishToken(EMAIL, PASSWORD))
                     .thenThrow(new LoginFailException());
             }
 
@@ -103,7 +103,7 @@ public final class SessionControllerTest {
         public final class Context_invalidPassword {
             @BeforeEach
             private void beforeEach() {
-                when(authenticationService.login(EMAIL, PASSWORD + "invalid"))
+                when(authenticationService.publishToken(EMAIL, PASSWORD + "invalid"))
                     .thenThrow(new LoginFailException());
             }
 
@@ -121,7 +121,7 @@ public final class SessionControllerTest {
 
         @BeforeEach
         private void beforeEach() {
-            when(authenticationService.login(EMAIL, PASSWORD))
+            when(authenticationService.publishToken(EMAIL, PASSWORD))
                 .thenReturn(VALID_TOKEN);
         }
 

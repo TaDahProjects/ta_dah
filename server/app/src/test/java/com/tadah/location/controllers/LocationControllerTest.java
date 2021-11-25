@@ -1,6 +1,6 @@
 package com.tadah.location.controllers;
 
-import com.tadah.user.applications.AuthenticationService;
+import com.tadah.auth.applications.AuthenticationService;
 import com.tadah.utils.LoginFailTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -12,9 +12,9 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static com.tadah.auth.utils.JwtUtilTest.VALID_TOKEN;
 import static com.tadah.user.UserConstants.DRIVER;
 import static com.tadah.user.UserConstants.RIDER;
-import static com.tadah.user.utils.JwtUtilTest.VALID_TOKEN;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;

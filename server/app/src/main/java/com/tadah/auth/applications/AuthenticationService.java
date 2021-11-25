@@ -1,19 +1,18 @@
-package com.tadah.user.applications;
+package com.tadah.auth.applications;
 
-import com.tadah.common.exceptions.InvalidTokenException;
+import com.tadah.auth.exceptions.InvalidTokenException;
+import com.tadah.auth.exceptions.LoginFailException;
+import com.tadah.auth.utils.JwtUtil;
 import com.tadah.user.domain.entities.User;
 import com.tadah.user.domain.repositories.UserRepository;
-import com.tadah.user.exceptions.InvalidClaimDataException;
-import com.tadah.user.exceptions.LoginFailException;
-import com.tadah.user.utils.JwtUtil;
 import io.jsonwebtoken.Claims;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import static com.tadah.user.utils.JwtUtil.CLAIM_NAME;
+import static com.tadah.auth.utils.JwtUtil.CLAIM_NAME;
 
 /**
- * 토큰 발행 및 검증을 담당한다.
+ * 인증을 수행한다.
  */
 @Service
 public final class AuthenticationService {
@@ -22,7 +21,9 @@ public final class AuthenticationService {
     private final PasswordEncoder passwordEncoder;
 
     public AuthenticationService(
-        final JwtUtil jwtUtil, final UserRepository userRepository, final PasswordEncoder passwordEncoder
+        final JwtUtil jwtUtil,
+        final UserRepository userRepository,
+        final PasswordEncoder passwordEncoder
     ) {
         this.jwtUtil = jwtUtil;
         this.userRepository = userRepository;
@@ -37,7 +38,7 @@ public final class AuthenticationService {
      * @return JWT
      * @throws LoginFailException 로그인에 실패한 경우
      */
-    public String login(final String email, final String password) {
+    public String publishToken(final String email, final String password) {
         final User user = userRepository.findByEmail(email)
             .orElseThrow(LoginFailException::new);
 
@@ -48,11 +49,11 @@ public final class AuthenticationService {
     }
 
     /**
-     * JWT에 해당하는 사용자 데이터를 리턴한다.
+     * JWT를 검증하고, 해당하는 사용자 데이터를 리턴한다.
      *
      * @param token JWT
      * @return 사용자 데이터
-     * @throws InvalidClaimDataException 토큰이 유효하지 않은 경우
+     * @throws InvalidTokenException 유효하지 않은 토큰인 경우, 토큰을 통해 사용자 정보를 가져올 수 없는경우
      */
     public User verifyToken(final String token) {
         final Claims claims = jwtUtil.decode(token);

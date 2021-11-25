@@ -1,8 +1,8 @@
-package com.tadah.user.controllers;
+package com.tadah.auth.controllers;
 
-import com.tadah.user.applications.AuthenticationService;
-import com.tadah.user.dto.SessionRequestData;
-import com.tadah.user.dto.SessionResponseData;
+import com.tadah.auth.applications.AuthenticationService;
+import com.tadah.auth.dto.SessionRequestData;
+import com.tadah.auth.dto.SessionResponseData;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -10,12 +10,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-import com.tadah.user.exceptions.LoginFailException;
+import com.tadah.auth.exceptions.LoginFailException;
 
 import javax.validation.Valid;
 
 /**
- * 로그인을 담당한다.
+ * 인증을 시작한다.
  */
 @CrossOrigin
 @RestController
@@ -28,7 +28,7 @@ public final class SessionController {
     }
     
     /**
-     * JWT 발행을 담당한다.
+     * JWT를 발행한다.
      *
      * @param requestData 이메일, 비밀번호
      * @return JWT
@@ -37,7 +37,7 @@ public final class SessionController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public SessionResponseData login(@RequestBody @Valid final SessionRequestData requestData) {
-        final String token = authenticationService.login(requestData.getEmail(), requestData.getPassword());
+        final String token = authenticationService.publishToken(requestData.getEmail(), requestData.getPassword());
         return new SessionResponseData(token);
     }
 }

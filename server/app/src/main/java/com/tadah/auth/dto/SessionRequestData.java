@@ -1,4 +1,4 @@
-package com.tadah.user.dto;
+package com.tadah.auth.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Generated;
@@ -8,6 +8,9 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
+/**
+ * 인증 요청 정보를 저장한다.
+ */
 @Generated
 @Getter
 @AllArgsConstructor

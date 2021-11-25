@@ -7,6 +7,9 @@ import org.springframework.security.core.GrantedAuthority;
 
 import java.util.List;
 
+/**
+ * 인증 여부 및 권한 목록을 저장한다.
+ */
 public final class UserAuthentication extends AbstractAuthenticationToken {
     private static List<GrantedAuthority> authorities(final User user) {
         return List.of(user.getUserType());
@@ -26,6 +29,11 @@ public final class UserAuthentication extends AbstractAuthenticationToken {
         return null;
     }
 
+    /**
+     * 인증된 사용자 정보를 리턴한다.
+     *
+     * @return 인증된 사용자 정보
+     */
     @Override
     public Object getPrincipal() {
         return user;

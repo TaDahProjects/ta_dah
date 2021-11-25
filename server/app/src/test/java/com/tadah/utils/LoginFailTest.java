@@ -1,7 +1,7 @@
 package com.tadah.utils;
 
-import com.tadah.common.exceptions.InvalidTokenException;
-import com.tadah.user.applications.AuthenticationService;
+import com.tadah.auth.applications.AuthenticationService;
+import com.tadah.auth.exceptions.InvalidTokenException;
 import com.tadah.user.domain.entities.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -18,9 +18,10 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 
 import java.util.stream.Stream;
 
-import static com.tadah.user.applications.AuthenticationServiceTest.INVALID_CLAIMS_NAME_TOKEN;
-import static com.tadah.user.utils.JwtUtilTest.INVALID_TOKEN;
-import static com.tadah.user.utils.JwtUtilTest.VALID_TOKEN;
+import static com.tadah.auth.utils.JwtUtilTest.VALID_TOKEN_INVALID_CLAIMS_NAME;
+import static com.tadah.auth.utils.JwtUtilTest.INVALID_TOKEN;
+import static com.tadah.auth.utils.JwtUtilTest.VALID_TOKEN;
+import static com.tadah.auth.utils.JwtUtilTest.VALID_TOKEN_WITHOUT_CLAIMS;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -62,7 +63,9 @@ public abstract class LoginFailTest {
             .thenThrow(new InvalidTokenException());
         when(authenticationService.verifyToken(INVALID_TOKEN))
             .thenThrow(new InvalidTokenException());
-        when(authenticationService.verifyToken(INVALID_CLAIMS_NAME_TOKEN))
+        when(authenticationService.verifyToken(VALID_TOKEN_INVALID_CLAIMS_NAME))
+            .thenThrow(new InvalidTokenException());
+        when(authenticationService.verifyToken(VALID_TOKEN_WITHOUT_CLAIMS))
             .thenThrow(new InvalidTokenException());
     }
 
@@ -86,7 +89,8 @@ public abstract class LoginFailTest {
                 Arguments.of(VALID_TOKEN),
                 Arguments.of(TOKEN_PREFIX.substring(0, TOKEN_PREFIX.length() - 1) + VALID_TOKEN),
                 Arguments.of(TOKEN_PREFIX + INVALID_TOKEN),
-                Arguments.of(TOKEN_PREFIX + INVALID_CLAIMS_NAME_TOKEN)
+                Arguments.of(TOKEN_PREFIX + VALID_TOKEN_INVALID_CLAIMS_NAME),
+                Arguments.of(TOKEN_PREFIX + VALID_TOKEN_WITHOUT_CLAIMS)
             );
         }
 

@@ -1,7 +1,7 @@
 package com.tadah.auth.filters;
 
+import com.tadah.auth.applications.AuthenticationService;
 import com.tadah.auth.authentication.UserAuthentication;
-import com.tadah.user.applications.AuthenticationService;
 import com.tadah.user.domain.entities.User;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
@@ -15,6 +15,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+/**
+ * 인증을 진행한다.
+ */
 public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
     private static final String AUTHORIZATION_HEADER = "Authorization";
     private static final String TOKEN_PREFIX = "Bearer ";
