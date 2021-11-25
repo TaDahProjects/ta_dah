@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import java.util.Optional;
 
 import static com.tadah.auth.utils.JwtUtilTest.CLAIM_DATA;
+import static com.tadah.auth.utils.JwtUtilTest.VALID_TOKEN_INVALID_CLAIMS_NAME;
 import static com.tadah.auth.utils.JwtUtilTest.INVALID_TOKEN;
 import static com.tadah.auth.utils.JwtUtilTest.JWT_UTIL;
 import static com.tadah.auth.utils.JwtUtilTest.VALID_TOKEN;
@@ -30,7 +31,6 @@ import static org.mockito.Mockito.when;
 
 @DisplayName("AuthenticationService 클래스")
 public class AuthenticationServiceTest {
-    public static final String INVALID_CLAIMS_NAME_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJpbnZhbGlkIjoxfQ.QwqsY19u7hBbtd32x31vUX0L6wONcPv9Msh2wlanPoI";
     private static final User USER = mock(User.class);
 
     private final UserRepository userRepository;
@@ -125,7 +125,7 @@ public class AuthenticationServiceTest {
             @Test
             @DisplayName("InvalidTokenException을 던진다.")
             public void it_throws_invalid_token_exception() {
-                assertThatThrownBy(() -> subject(INVALID_CLAIMS_NAME_TOKEN))
+                assertThatThrownBy(() -> subject(VALID_TOKEN_INVALID_CLAIMS_NAME))
                     .isInstanceOf(InvalidTokenException.class);
             }
         }
