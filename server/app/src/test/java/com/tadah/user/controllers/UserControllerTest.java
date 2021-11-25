@@ -1,6 +1,7 @@
 package com.tadah.user.controllers;
 
 import com.tadah.common.dtos.ErrorResponse;
+import com.tadah.user.applications.AuthenticationService;
 import com.tadah.user.applications.UserService;
 import com.tadah.user.domain.UserType;
 import com.tadah.user.domain.entities.User;
@@ -58,6 +59,9 @@ public final class UserControllerTest {
 
     @MockBean
     private UserService userService;
+
+    @MockBean
+    private AuthenticationService authenticationService;
 
     @BeforeEach
     private void beforeEach() {
