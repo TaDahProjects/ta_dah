@@ -8,9 +8,12 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
+
 import static com.tadah.auth.domain.entities.RoleTest.ROLE;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.atMostOnce;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -50,6 +53,33 @@ public final class AuthorizationServiceTest {
         public void it_saves_a_role() {
             assertThat(subject())
                 .isInstanceOf(Role.class);
+        }
+    }
+
+    @Nested
+    @DisplayName("list 메서드는")
+    private final class Describe_list {
+        private List<Role> subject() {
+            return authorizationService.list(ROLE.getUserId());
+        }
+
+        @BeforeEach
+        private void beforeEach() {
+            when(roleRepository.findAllByUserId(anyLong()))
+                .thenReturn(List.of(ROLE));
+        }
+
+        @AfterEach
+        private void afterEach() {
+            verify(roleRepository, atMostOnce())
+                .findAllByUserId(anyLong());
+        }
+
+        @Test
+        @DisplayName("권한 목록을 리턴한다.")
+        public void it_returns_a_roles() {
+            assertThat(subject())
+                .isInstanceOf(List.class);
         }
     }
 }
