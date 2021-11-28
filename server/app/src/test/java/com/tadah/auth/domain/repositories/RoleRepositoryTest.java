@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
-import java.util.Optional;
+import java.util.List;
 
 import static com.tadah.auth.domain.entities.RoleTest.ROLE;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -56,8 +56,8 @@ public class RoleRepositoryTest {
     @Nested
     @DisplayName("findByUserId 메서드는")
     public final class Describe_findByUserId {
-        private Optional<Role> subject() {
-            return roleRepository.findByUserId(ROLE.getUserId());
+        private List<Role> subject() {
+            return roleRepository.findAllByUserId(ROLE.getUserId());
         }
 
         @BeforeEach
@@ -68,10 +68,13 @@ public class RoleRepositoryTest {
         @Test
         @DisplayName("권한을 리턴한다.")
         public void it_returns_a_role_data() {
-            assertThat(subject())
-                .isPresent()
-                .get()
-                .matches(role -> ROLE.getUserId().equals(role.getUserId()))
+            final List<Role> roles = subject();
+
+            assertThat(roles.size())
+                .isEqualTo(1);
+
+            assertThat(roles.get(0))
+                .matches(role -> ROLE.getName().equals(role.getName()))
                 .matches(role -> ROLE.getUserId().equals(role.getUserId()));
         }
 
@@ -86,8 +89,8 @@ public class RoleRepositoryTest {
             @Test
             @DisplayName("권한이 없음을 알려준다.")
             public void it_notifies_that_role_is_empty() {
-                assertThat(subject())
-                    .isEmpty();
+                assertThat(subject().size())
+                    .isEqualTo(0);
             }
         }
     }

@@ -2,6 +2,7 @@ package com.tadah.auth.domain.repositories;
 
 import com.tadah.auth.domain.entities.Role;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface RoleRepository {
@@ -14,10 +15,10 @@ public interface RoleRepository {
     Role save(final Role role);
 
     /**
-     * 사용자의 권한을 조회한다.
+     * 사용자의 권한 목록을 조회한다.
      *
      * @param userId 권한을 조회할 사용자
-     * @return 권한
+     * @return 사용자가 가지고있는 권한 목록
      */
-    Optional<Role> findByUserId(final Long userId);
+    List<Role> findAllByUserId(final Long userId);
 }
