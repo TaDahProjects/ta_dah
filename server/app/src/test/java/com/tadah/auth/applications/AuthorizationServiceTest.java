@@ -58,7 +58,7 @@ public final class AuthorizationServiceTest {
 
     @Nested
     @DisplayName("list 메서드는")
-    private final class Describe_list {
+    public final class Describe_list {
         private List<Role> subject() {
             return authorizationService.list(ROLE.getUserId());
         }
