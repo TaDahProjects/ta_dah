@@ -1,32 +1,44 @@
 package com.tadah.auth.applications;
 
-import com.tadah.auth.domain.entities.Role;
-import com.tadah.auth.domain.repositories.RoleRepository;
+import com.tadah.auth.domains.entities.Role;
+import com.tadah.auth.domains.repositories.RoleRepository;
+import com.tadah.auth.domains.repositories.infra.JpaRoleRepository;
+import com.tadah.user.domains.repositories.infra.JpaUserRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import java.util.List;
 
-import static com.tadah.auth.domain.entities.RoleTest.ROLE;
+import static com.tadah.auth.domains.entities.RoleTest.ROLE;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.atMostOnce;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
+@DataJpaTest
 @DisplayName("AuthorizationService 클래스")
-public final class AuthorizationServiceTest {
+public class AuthorizationServiceTest {
+    @Autowired
+    private JpaRoleRepository jpaRoleRepository;
+
+    @Autowired
+    private JpaUserRepository jpaUserRepository;
+
     private final RoleRepository roleRepository;
     private final AuthorizationService authorizationService;
-
-    public AuthorizationServiceTest() {
-        this.roleRepository = mock(RoleRepository.class);
+    public AuthorizationServiceTest(@Autowired final RoleRepository roleRepository) {
+        this.roleRepository = roleRepository;
         this.authorizationService = new AuthorizationService(roleRepository);
+    }
+
+    @AfterEach
+    private void afterEach() {
+        jpaUserRepository.deleteAll();
+        jpaRoleRepository.deleteAll();
     }
 
     @Nested
@@ -36,23 +48,12 @@ public final class AuthorizationServiceTest {
             return authorizationService.create(ROLE);
         }
 
-        @BeforeEach
-        private void beforeEach() {
-            when(roleRepository.save(any(Role.class)))
-                .thenReturn(ROLE);
-        }
-
-        @AfterEach
-        private void afterEach() {
-            verify(roleRepository, atMostOnce())
-                .save(any(Role.class));
-        }
-
         @Test
         @DisplayName("권한을 저장한다.")
         public void it_saves_a_role() {
             assertThat(subject())
-                .isInstanceOf(Role.class);
+                .matches(role -> ROLE.getName().equals(role.getName()))
+                .matches(role -> ROLE.getUserId().equals(role.getUserId()));
         }
     }
 
@@ -65,21 +66,20 @@ public final class AuthorizationServiceTest {
 
         @BeforeEach
         private void beforeEach() {
-            when(roleRepository.findAllByUserId(anyLong()))
-                .thenReturn(List.of(ROLE));
-        }
-
-        @AfterEach
-        private void afterEach() {
-            verify(roleRepository, atMostOnce())
-                .findAllByUserId(anyLong());
+            roleRepository.save(ROLE);
         }
 
         @Test
         @DisplayName("권한 목록을 리턴한다.")
         public void it_returns_a_roles() {
-            assertThat(subject())
-                .isInstanceOf(List.class);
+            final List<Role> roles = subject();
+
+            assertThat(roles.size())
+                .isEqualTo(1);
+
+            assertThat(roles.get(0))
+                .matches(role -> ROLE.getName().equals(role.getName()))
+                .matches(role -> ROLE.getUserId().equals(role.getUserId()));
         }
     }
 }
