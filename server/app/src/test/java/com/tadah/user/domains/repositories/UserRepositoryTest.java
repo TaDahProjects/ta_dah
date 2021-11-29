@@ -62,6 +62,7 @@ public class UserRepositoryTest {
         @Test
         @DisplayName("사용자 정보를 저장한다.")
         public void it_saves_a_user_data() {
+            USER.setPassword(PASSWORD, passwordEncoder);
             final User savedUser = subject(USER);
             assertThat(new Describe_findById().subject(savedUser.getId()))
                 .isPresent()

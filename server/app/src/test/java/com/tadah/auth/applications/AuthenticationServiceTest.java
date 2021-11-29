@@ -19,6 +19,7 @@ import static com.tadah.auth.utils.JwtUtilTest.VALID_TOKEN_INVALID_CLAIMS_NAME;
 import static com.tadah.auth.utils.JwtUtilTest.INVALID_TOKEN;
 import static com.tadah.auth.utils.JwtUtilTest.VALID_TOKEN;
 import static com.tadah.user.domains.entities.UserTest.EMAIL;
+import static com.tadah.user.domains.entities.UserTest.NAME;
 import static com.tadah.user.domains.entities.UserTest.PASSWORD;
 import static com.tadah.user.domains.entities.UserTest.USER;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -33,17 +34,20 @@ public class AuthenticationServiceTest {
     @Autowired
     private JpaUserRepository jpaUserRepository;
 
+    private final PasswordEncoder passwordEncoder;
     private final AuthenticationService authenticationService;
     public AuthenticationServiceTest(
         @Autowired final UserRepository userRepository,
         @Autowired final PasswordEncoder passwordEncoder
-        ) {
+    ) {
+        this.passwordEncoder = passwordEncoder;
         this.authenticationService = new AuthenticationService(JWT_UTIL, userRepository, passwordEncoder);
     }
 
     private Long userId;
     @BeforeEach
     private void beforeEach() {
+        USER.setPassword(PASSWORD, passwordEncoder);
         userId = userRepository.save(USER).getId();
     }
 
@@ -146,7 +150,10 @@ public class AuthenticationServiceTest {
         @DisplayName("사용자 정보를 리턴한다.")
         public void it_returns_a_user_data() {
             assertThat(subject(getToken(userId)))
-                .isInstanceOf(User.class);
+                .isInstanceOf(User.class)
+                .matches(user -> EMAIL.equals(user.getEmail()))
+                .matches(user -> NAME.equals(user.getName()))
+                .matches(user -> passwordEncoder.matches(PASSWORD, user.getPassword()));
         }
     }
 }
