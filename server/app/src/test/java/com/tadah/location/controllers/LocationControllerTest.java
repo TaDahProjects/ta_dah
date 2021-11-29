@@ -4,10 +4,10 @@ import com.tadah.auth.domain.entities.Role;
 import com.tadah.auth.domain.repositories.RoleRepository;
 import com.tadah.auth.domain.repositories.infra.JpaRoleRepository;
 import com.tadah.auth.utils.JwtUtil;
-import com.tadah.user.domain.UserType;
-import com.tadah.user.domain.entities.User;
-import com.tadah.user.domain.repositories.UserRepository;
-import com.tadah.user.domain.repositories.infra.JpaUserRepository;
+import com.tadah.user.domains.UserType;
+import com.tadah.user.domains.entities.User;
+import com.tadah.user.domains.repositories.UserRepository;
+import com.tadah.user.domains.repositories.infra.JpaUserRepository;
 import com.tadah.utils.LoginFailTest;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -24,8 +24,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
-import static com.tadah.user.UserConstants.DRIVER;
-import static com.tadah.user.UserConstants.RIDER;
+import static com.tadah.user.domains.entities.UserTest.USER;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -81,7 +80,7 @@ public final class LocationControllerTest {
 
         @BeforeEach
         private void beforeEach() {
-            this.savedUser = userRepository.save(RIDER);
+            this.savedUser = userRepository.save(USER);
             this.token = jwtUtil.encode(savedUser.getId());
         }
 

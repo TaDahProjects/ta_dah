@@ -5,9 +5,9 @@ import com.tadah.auth.dtos.SessionResponseData;
 import com.tadah.auth.exceptions.LoginFailException;
 import com.tadah.auth.utils.JwtUtil;
 import com.tadah.common.dtos.ErrorResponse;
-import com.tadah.user.domain.entities.User;
-import com.tadah.user.domain.repositories.UserRepository;
-import com.tadah.user.domain.repositories.infra.JpaUserRepository;
+import com.tadah.user.domains.entities.User;
+import com.tadah.user.domains.repositories.UserRepository;
+import com.tadah.user.domains.repositories.infra.JpaUserRepository;
 import com.tadah.utils.Parser;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -31,14 +31,14 @@ import org.springframework.test.web.servlet.ResultActions;
 
 import java.util.stream.Stream;
 
-import static com.tadah.user.UserConstants.EMAIL;
-import static com.tadah.user.UserConstants.INVALID_EMAIL;
-import static com.tadah.user.UserConstants.INVALID_PASSWORD_LOWER_CASE;
-import static com.tadah.user.UserConstants.INVALID_PASSWORD_NUMBER;
-import static com.tadah.user.UserConstants.INVALID_PASSWORD_SPECIAL_CASE;
-import static com.tadah.user.UserConstants.INVALID_PASSWORD_UPPER_CASE;
-import static com.tadah.user.UserConstants.PASSWORD;
-import static com.tadah.user.UserConstants.RIDER;
+import static com.tadah.user.controllers.UserControllerTest.INVALID_EMAIL;
+import static com.tadah.user.controllers.UserControllerTest.INVALID_PASSWORD_LOWER_CASE;
+import static com.tadah.user.controllers.UserControllerTest.INVALID_PASSWORD_NUMBER;
+import static com.tadah.user.controllers.UserControllerTest.INVALID_PASSWORD_SPECIAL_CASE;
+import static com.tadah.user.controllers.UserControllerTest.INVALID_PASSWORD_UPPER_CASE;
+import static com.tadah.user.domains.entities.UserTest.EMAIL;
+import static com.tadah.user.domains.entities.UserTest.PASSWORD;
+import static com.tadah.user.domains.entities.UserTest.USER;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -110,7 +110,7 @@ public final class SessionControllerTest {
 
             @BeforeEach
             private void beforeEach() {
-                final User savedUser = userRepository.save(RIDER);
+                final User savedUser = userRepository.save(USER);
                 this.token = jwtUtil.encode(savedUser.getId());
             }
 

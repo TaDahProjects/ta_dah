@@ -2,9 +2,9 @@ package com.tadah.user.controllers;
 
 import com.tadah.auth.domain.repositories.infra.JpaRoleRepository;
 import com.tadah.common.dtos.ErrorResponse;
-import com.tadah.user.domain.UserType;
-import com.tadah.user.domain.repositories.UserRepository;
-import com.tadah.user.domain.repositories.infra.JpaUserRepository;
+import com.tadah.user.domains.UserType;
+import com.tadah.user.domains.repositories.UserRepository;
+import com.tadah.user.domains.repositories.infra.JpaUserRepository;
 import com.tadah.user.dtos.UserRequestData;
 import com.tadah.user.dtos.UserResponseData;
 import com.tadah.user.exceptions.UserEmailAlreadyExistException;
@@ -30,15 +30,10 @@ import org.springframework.test.web.servlet.ResultActions;
 
 import java.util.stream.Stream;
 
-import static com.tadah.user.UserConstants.EMAIL;
-import static com.tadah.user.UserConstants.INVALID_EMAIL;
-import static com.tadah.user.UserConstants.INVALID_PASSWORD_LOWER_CASE;
-import static com.tadah.user.UserConstants.INVALID_PASSWORD_NUMBER;
-import static com.tadah.user.UserConstants.INVALID_PASSWORD_SPECIAL_CASE;
-import static com.tadah.user.UserConstants.INVALID_PASSWORD_UPPER_CASE;
-import static com.tadah.user.UserConstants.NAME;
-import static com.tadah.user.UserConstants.PASSWORD;
-import static com.tadah.user.UserConstants.RIDER;
+import static com.tadah.user.domains.entities.UserTest.EMAIL;
+import static com.tadah.user.domains.entities.UserTest.NAME;
+import static com.tadah.user.domains.entities.UserTest.PASSWORD;
+import static com.tadah.user.domains.entities.UserTest.USER;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -49,11 +44,16 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ExtendWith(SpringExtension.class)
 @DisplayName("UserController 클래스")
 public final class UserControllerTest {
-    public static final UserRequestData RIDER_REQUEST = new UserRequestData(EMAIL, NAME, PASSWORD, UserType.RIDER);
-    public static final UserRequestData DRIVER_REQUEST = new UserRequestData(EMAIL, NAME, PASSWORD, UserType.DRIVER);
-    public static final UserResponseData RIDER_RESPONSE = new UserResponseData(EMAIL, NAME, UserType.RIDER.name());
-    public static final UserResponseData DRIVER_RESPONSE = new UserResponseData(EMAIL, NAME, UserType.DRIVER.name());
-    public static final String USERS_URL = "/users";
+    public static final String INVALID_EMAIL = "test@testcom";
+    public static final String INVALID_PASSWORD_UPPER_CASE = "password123!!";
+    public static final String INVALID_PASSWORD_LOWER_CASE = "PASSWORD123!!";
+    public static final String INVALID_PASSWORD_NUMBER = "Password!!";
+    public static final String INVALID_PASSWORD_SPECIAL_CASE = "Password123";
+    private static final UserRequestData RIDER_REQUEST = new UserRequestData(EMAIL, NAME, PASSWORD, UserType.RIDER);
+    private static final UserRequestData DRIVER_REQUEST = new UserRequestData(EMAIL, NAME, PASSWORD, UserType.DRIVER);
+    private static final UserResponseData RIDER_RESPONSE = new UserResponseData(EMAIL, NAME, UserType.RIDER.name());
+    private static final UserResponseData DRIVER_RESPONSE = new UserResponseData(EMAIL, NAME, UserType.DRIVER.name());
+    private static final String USERS_URL = "/users";
 
     @Autowired
     private MockMvc mockMvc;
@@ -247,7 +247,7 @@ public final class UserControllerTest {
 
             @BeforeEach
             private void beforeEach() {
-                userRepository.save(RIDER);
+                userRepository.save(USER);
             }
 
             @MethodSource("methodSource")

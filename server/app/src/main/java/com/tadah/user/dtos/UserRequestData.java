@@ -1,6 +1,6 @@
 package com.tadah.user.dtos;
 
-import com.tadah.user.domain.UserType;
+import com.tadah.user.domains.UserType;
 import lombok.AllArgsConstructor;
 import lombok.Generated;
 import lombok.Getter;

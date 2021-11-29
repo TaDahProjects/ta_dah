@@ -1,7 +1,7 @@
 package com.tadah.user.applications;
 
-import com.tadah.user.domain.entities.User;
-import com.tadah.user.domain.repositories.UserRepository;
+import com.tadah.user.domains.entities.User;
+import com.tadah.user.domains.repositories.UserRepository;
 import com.tadah.user.exceptions.UserEmailAlreadyExistException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;

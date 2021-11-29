@@ -1,4 +1,4 @@
-package com.tadah.user.domain;
+package com.tadah.user.domains;
 
 public enum UserType {
     RIDER,

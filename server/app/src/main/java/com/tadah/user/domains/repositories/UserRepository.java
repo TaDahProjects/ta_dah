@@ -1,6 +1,6 @@
-package com.tadah.user.domain.repositories;
+package com.tadah.user.domains.repositories;
 
-import com.tadah.user.domain.entities.User;
+import com.tadah.user.domains.entities.User;
 
 import java.util.Optional;
 

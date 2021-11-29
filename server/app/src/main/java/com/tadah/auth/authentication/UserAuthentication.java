@@ -2,7 +2,7 @@ package com.tadah.auth.authentication;
 
 import com.tadah.auth.domain.entities.Role;
 import com.tadah.common.annotations.Generated;
-import com.tadah.user.domain.entities.User;
+import com.tadah.user.domains.entities.User;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 
 import java.util.List;

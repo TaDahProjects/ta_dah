@@ -1,10 +1,12 @@
-package com.tadah.user.domain.entities;
+package com.tadah.user.domains.entities;
 
-import com.tadah.user.domain.UserType;
+import com.tadah.user.domains.UserType;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Generated;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.persistence.Entity;
@@ -15,7 +17,8 @@ import javax.validation.constraints.NotNull;
 @Generated
 @Entity
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
+@AllArgsConstructor(access = AccessLevel.PACKAGE)
 public final class User {
     @Id
     @GeneratedValue
@@ -28,12 +31,9 @@ public final class User {
     @NotNull
     private String password;
 
-    private UserType userType;
-
-    public User(final String email, final String name, final  UserType userType) {
+    public User(final String email, final String name) {
         this.email = email;
         this.name = name;
-        this.userType = userType;
     }
 
     public void updatePassword(final String password, final PasswordEncoder passwordEncoder) {

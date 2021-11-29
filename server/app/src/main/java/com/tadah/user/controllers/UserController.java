@@ -3,8 +3,8 @@ package com.tadah.user.controllers;
 import com.tadah.auth.applications.AuthorizationService;
 import com.tadah.auth.domain.entities.Role;
 import com.tadah.user.applications.UserService;
-import com.tadah.user.domain.UserType;
-import com.tadah.user.domain.entities.User;
+import com.tadah.user.domains.UserType;
+import com.tadah.user.domains.entities.User;
 import com.tadah.user.dtos.UserRequestData;
 import com.tadah.user.dtos.UserResponseData;
 import com.tadah.user.exceptions.UserEmailAlreadyExistException;
@@ -37,7 +37,7 @@ public final class UserController {
     }
 
     private User toUser(final UserRequestData userRequestData) {
-        return new User(userRequestData.getEmail(), userRequestData.getName(), userRequestData.getUserType());
+        return new User(userRequestData.getEmail(), userRequestData.getName());
     }
 
     private Role toRole(final Long userId, final UserType userType) {
