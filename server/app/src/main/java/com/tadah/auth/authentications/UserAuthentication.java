@@ -1,6 +1,6 @@
-package com.tadah.auth.authentication;
+package com.tadah.auth.authentications;
 
-import com.tadah.auth.domain.entities.Role;
+import com.tadah.auth.domains.entities.Role;
 import com.tadah.common.annotations.Generated;
 import com.tadah.user.domains.entities.User;
 import org.springframework.security.authentication.AbstractAuthenticationToken;

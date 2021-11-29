@@ -1,4 +1,4 @@
-package com.tadah.auth.config;
+package com.tadah.auth.configs;
 
 import com.tadah.auth.applications.AuthenticationService;
 import com.tadah.auth.applications.AuthorizationService;

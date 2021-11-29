@@ -1,7 +1,7 @@
-package com.tadah.auth.domain.repositories;
+package com.tadah.auth.domains.repositories;
 
-import com.tadah.auth.domain.entities.Role;
-import com.tadah.auth.domain.repositories.infra.JpaRoleRepository;
+import com.tadah.auth.domains.entities.Role;
+import com.tadah.auth.domains.repositories.infra.JpaRoleRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -12,21 +12,16 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import java.util.List;
 
-import static com.tadah.auth.domain.entities.RoleTest.ROLE;
+import static com.tadah.auth.domains.entities.RoleTest.ROLE;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 @DataJpaTest
 public class RoleRepositoryTest {
-    private final RoleRepository roleRepository;
-    private final JpaRoleRepository jpaRoleRepository;
+    @Autowired
+    private RoleRepository roleRepository;
 
-    public RoleRepositoryTest(
-        @Autowired final RoleRepository roleRepository,
-        @Autowired final JpaRoleRepository jpaRoleRepository
-    ) {
-        this.roleRepository = roleRepository;
-        this.jpaRoleRepository = jpaRoleRepository;
-    }
+    @Autowired
+    private JpaRoleRepository jpaRoleRepository;
 
     @AfterEach
     private void afterEach() {

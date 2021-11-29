@@ -23,7 +23,7 @@ public final class UserTest {
     @DisplayName("updatePassword 메서드는")
     public final class Describe_updatePassword {
         private void subject() {
-            USER.updatePassword(PASSWORD, PASSWORD_ENCODER);
+            USER.setPassword(PASSWORD, PASSWORD_ENCODER);
         }
 
         @BeforeEach
@@ -48,7 +48,7 @@ public final class UserTest {
         }
 
         private boolean subject(final String password) {
-            return USER.authenticate(password, PASSWORD_ENCODER);
+            return USER.verifyPassword(password, PASSWORD_ENCODER);
         }
 
         @Test

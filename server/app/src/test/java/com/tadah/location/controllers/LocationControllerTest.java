@@ -1,11 +1,10 @@
 package com.tadah.location.controllers;
 
-import com.tadah.auth.domain.entities.Role;
-import com.tadah.auth.domain.repositories.RoleRepository;
-import com.tadah.auth.domain.repositories.infra.JpaRoleRepository;
+import com.tadah.auth.domains.entities.Role;
+import com.tadah.auth.domains.repositories.RoleRepository;
+import com.tadah.auth.domains.repositories.infra.JpaRoleRepository;
 import com.tadah.auth.utils.JwtUtil;
 import com.tadah.user.domains.UserType;
-import com.tadah.user.domains.entities.User;
 import com.tadah.user.domains.repositories.UserRepository;
 import com.tadah.user.domains.repositories.infra.JpaUserRepository;
 import com.tadah.utils.LoginFailTest;
@@ -63,8 +62,8 @@ public final class LocationControllerTest {
     @Nested
     @DisplayName("create 메서드는")
     public final class Describe_create extends LoginFailTest {
+        private Long userId;
         private String token;
-        private User savedUser;
 
         public Describe_create() {
             super(mockMvc, post(LOCATIONS_URL));
@@ -80,8 +79,8 @@ public final class LocationControllerTest {
 
         @BeforeEach
         private void beforeEach() {
-            this.savedUser = userRepository.save(USER);
-            this.token = jwtUtil.encode(savedUser.getId());
+            this.userId = userRepository.save(USER).getId();
+            this.token = jwtUtil.encode(userId);
         }
 
         @Nested
@@ -100,7 +99,7 @@ public final class LocationControllerTest {
         public final class Context_invalidAuthority {
             @BeforeEach
             private void beforeEach() {
-                roleRepository.save(new Role(savedUser.getId(), UserType.RIDER.name()));
+                roleRepository.save(new Role(userId, UserType.RIDER.name()));
             }
 
             @Test
@@ -116,7 +115,7 @@ public final class LocationControllerTest {
         public final class Context_validToken {
             @BeforeEach
             private void beforeEach() {
-                roleRepository.save(new Role(savedUser.getId(), UserType.DRIVER.name()));
+                roleRepository.save(new Role(userId, UserType.DRIVER.name()));
             }
 
             @Test

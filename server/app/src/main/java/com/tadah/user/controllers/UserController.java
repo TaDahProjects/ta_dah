@@ -1,7 +1,7 @@
 package com.tadah.user.controllers;
 
 import com.tadah.auth.applications.AuthorizationService;
-import com.tadah.auth.domain.entities.Role;
+import com.tadah.auth.domains.entities.Role;
 import com.tadah.user.applications.UserService;
 import com.tadah.user.domains.UserType;
 import com.tadah.user.domains.entities.User;
@@ -58,7 +58,7 @@ public final class UserController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public UserResponseData register(@RequestBody @Valid final UserRequestData userRequestData) {
-        final User user = userService.registerUser(toUser(userRequestData), userRequestData.getPassword());
+        final User user = userService.register(toUser(userRequestData), userRequestData.getPassword());
         final Role role = authorizationService.create(toRole(user.getId(), userRequestData.getUserType()));
         return toUserResponseData(user, role);
     }

@@ -1,4 +1,4 @@
-package com.tadah.auth.dto;
+package com.tadah.auth.dtos;
 
 import lombok.AllArgsConstructor;
 import lombok.Generated;
@@ -9,7 +9,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
 /**
- * 인증 요청 정보를 저장한다.
+ * 인증 요청 데이터를 저장한다.
  */
 @Generated
 @Getter

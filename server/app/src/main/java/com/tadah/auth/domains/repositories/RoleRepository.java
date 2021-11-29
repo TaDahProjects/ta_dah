@@ -1,9 +1,8 @@
-package com.tadah.auth.domain.repositories;
+package com.tadah.auth.domains.repositories;
 
-import com.tadah.auth.domain.entities.Role;
+import com.tadah.auth.domains.entities.Role;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface RoleRepository {
     /**

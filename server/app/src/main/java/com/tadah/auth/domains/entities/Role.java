@@ -1,10 +1,10 @@
-package com.tadah.auth.domain.entities;
+package com.tadah.auth.domains.entities;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Generated;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 
 import javax.persistence.Entity;
@@ -17,8 +17,8 @@ import javax.persistence.Id;
 @Generated
 @Entity
 @Getter
+@NoArgsConstructor
 @AllArgsConstructor(access = AccessLevel.PACKAGE)
-@RequiredArgsConstructor
 public final class Role implements GrantedAuthority {
     @Id
     @GeneratedValue

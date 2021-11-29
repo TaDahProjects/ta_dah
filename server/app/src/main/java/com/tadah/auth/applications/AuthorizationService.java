@@ -1,7 +1,7 @@
 package com.tadah.auth.applications;
 
-import com.tadah.auth.domain.entities.Role;
-import com.tadah.auth.domain.repositories.RoleRepository;
+import com.tadah.auth.domains.entities.Role;
+import com.tadah.auth.domains.repositories.RoleRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

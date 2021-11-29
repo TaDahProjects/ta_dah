@@ -1,6 +1,6 @@
 package com.tadah.user.controllers;
 
-import com.tadah.auth.domain.repositories.infra.JpaRoleRepository;
+import com.tadah.auth.domains.repositories.infra.JpaRoleRepository;
 import com.tadah.common.dtos.ErrorResponse;
 import com.tadah.user.domains.UserType;
 import com.tadah.user.domains.repositories.UserRepository;
