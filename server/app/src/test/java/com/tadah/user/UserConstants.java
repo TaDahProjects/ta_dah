@@ -2,7 +2,6 @@ package com.tadah.user;
 
 import com.tadah.user.domain.UserType;
 import com.tadah.user.domain.entities.User;
-import com.tadah.user.dto.RegisterUserData;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 /**
@@ -22,9 +21,6 @@ public interface UserConstants {
     User RIDER = setUserWithPassword(UserType.RIDER);
     User RIDER_WITH_OUT_PASSWORD = setUser(UserType.RIDER);
     User DRIVER_WITH_OUT_PASSWORD = setUser(UserType.DRIVER);
-    RegisterUserData REGISTER_USER_DATA_DRIVER = new RegisterUserData(EMAIL, NAME, PASSWORD, UserType.DRIVER);
-    RegisterUserData REGISTER_USER_DATA_RIDER = new RegisterUserData(EMAIL, NAME, PASSWORD, UserType.RIDER);
-    String CREATE_USER_URL = "/users";
 
     private static User setUser(final UserType userType) {
         return new User(EMAIL, NAME, userType);
