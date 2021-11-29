@@ -1,10 +1,10 @@
 package com.tadah.user.controllers;
 
-import com.tadah.auth.applications.AuthenticationService;
+import com.tadah.auth.domain.repositories.infra.JpaRoleRepository;
 import com.tadah.common.dtos.ErrorResponse;
-import com.tadah.user.applications.UserService;
 import com.tadah.user.domain.UserType;
-import com.tadah.user.domain.entities.User;
+import com.tadah.user.domain.repositories.UserRepository;
+import com.tadah.user.domain.repositories.infra.JpaUserRepository;
 import com.tadah.user.dto.RegisterUserData;
 import com.tadah.user.dto.UserData;
 import com.tadah.user.exceptions.UserEmailAlreadyExistException;
@@ -15,22 +15,22 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
-import org.junit.jupiter.api.TestInstance.Lifecycle;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.test.web.servlet.ResultMatcher;
 
 import java.util.stream.Stream;
 
-import static com.tadah.user.UserConstants.CREATE_USER_URL;
 import static com.tadah.user.UserConstants.EMAIL;
 import static com.tadah.user.UserConstants.INVALID_EMAIL;
 import static com.tadah.user.UserConstants.INVALID_PASSWORD_LOWER_CASE;
@@ -41,70 +41,58 @@ import static com.tadah.user.UserConstants.NAME;
 import static com.tadah.user.UserConstants.PASSWORD;
 import static com.tadah.user.UserConstants.RIDER;
 import static com.tadah.user.UserConstants.REGISTER_USER_DATA_RIDER;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.atMostOnce;
-import static org.mockito.Mockito.reset;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@SpringBootTest
+@AutoConfigureMockMvc
+@AutoConfigureTestDatabase
+@ExtendWith(SpringExtension.class)
 @DisplayName("UserController 클래스")
-@WebMvcTest(UserController.class)
 public final class UserControllerTest {
+    public static final String USERS_URL = "/users";
+
     @Autowired
     private MockMvc mockMvc;
 
-    @MockBean
-    private UserService userService;
+    @Autowired
+    private UserRepository userRepository;
 
-    @MockBean
-    private AuthenticationService authenticationService;
+    @Autowired
+    private JpaUserRepository jpaUserRepository;
 
-    @BeforeEach
-    private void beforeEach() {
-        reset(userService);
+    @Autowired
+    private JpaRoleRepository jpaRoleRepository;
+
+    @AfterEach
+    private void afterEach() {
+        jpaUserRepository.deleteAll();
+        jpaRoleRepository.deleteAll();
     }
 
     @Nested
     @DisplayName("createUser 메서드는")
     public final class Describe_createUser {
-        private ResultActions subject(final String requestBody, final ResultMatcher responseStatus) throws Exception {
+        private ResultActions subject(final String requestBody) throws Exception {
             return mockMvc.perform(
-                post(CREATE_USER_URL)
+                post(USERS_URL)
                     .accept(MediaType.APPLICATION_JSON_UTF8)
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(requestBody)
-            ).andExpect(responseStatus);
-        }
-
-        @BeforeEach
-        public void beforeEach() {
-            when(userService.registerUser(any(User.class), anyString()))
-                .thenReturn(RIDER);
-        }
-
-        @AfterEach
-        public void afterEach() {
-            verify(userService, atMostOnce())
-                .registerUser(any(User.class), anyString());
+                    .content(requestBody));
         }
 
         @Test
         @DisplayName("비밀번호를 제외한 사용자 정보를 리턴한다.")
         public void it_returns_user_data_without_a_password() throws Exception {
-            subject(Parser.toJson(REGISTER_USER_DATA_RIDER), status().isCreated())
-                .andExpect(
-                    content().string(
-                        Parser.toJson(new UserData(RIDER.getEmail(), RIDER.getName(), RIDER.getUserType()))
-                    ));
+            subject(Parser.toJson(REGISTER_USER_DATA_RIDER))
+                .andExpect(status().isCreated())
+                .andExpect(content().string(Parser.toJson(new UserData(RIDER.getEmail(), RIDER.getName(), RIDER.getUserType()))));
         }
 
         @Nested
-        @TestInstance(Lifecycle.PER_CLASS)
         @DisplayName("유효하지 않은 데이터를 입력한 경우")
+        @TestInstance(TestInstance.Lifecycle.PER_CLASS)
         public final class Context_invalidData {
             private Stream<Arguments> methodSource() throws Exception {
                 return Stream.of(
@@ -142,12 +130,9 @@ public final class UserControllerTest {
             @DisplayName("입력 데이터가 잘못되었음을 알려준다.")
             @ParameterizedTest(name = "input=\"{0}\" errorMessage=\"{1}\"")
             public void it_notifies_that_input_data_is_invalid(final String input, final String errorMessage) throws Exception {
-                subject(input, status().isBadRequest())
-                    .andExpect(content().string(
-                        Parser.toJson(
-                            new ErrorResponse(CREATE_USER_URL, HttpMethod.POST.toString(), errorMessage)
-                        )
-                    ));
+                subject(input)
+                    .andExpect(status().isBadRequest())
+                    .andExpect(content().string(Parser.toJson(new ErrorResponse(USERS_URL, HttpMethod.POST.toString(), errorMessage))));
             }
         }
 
@@ -156,21 +141,15 @@ public final class UserControllerTest {
         public final class Context_emailAlreadyExists {
             @BeforeEach
             private void beforeEach() {
-                when(userService.registerUser(any(User.class), anyString()))
-                    .thenThrow(new UserEmailAlreadyExistException());
+                userRepository.save(RIDER);
             }
 
             @Test
             @DisplayName("이메일이 이미 존재함을 알려준다.")
             public void it_notifies_that_email_already_exists() throws Exception {
-                subject(Parser.toJson(REGISTER_USER_DATA_RIDER), status().isBadRequest())
-                    .andExpect(
-                        content().string(
-                            Parser.toJson(
-                                new ErrorResponse(
-                                    CREATE_USER_URL, HttpMethod.POST.toString(),
-                                    new UserEmailAlreadyExistException().getMessage()
-                                ))));
+                subject(Parser.toJson(REGISTER_USER_DATA_RIDER))
+                    .andExpect(status().isBadRequest())
+                    .andExpect(content().string(Parser.toJson(new ErrorResponse(USERS_URL, HttpMethod.POST.toString(), new UserEmailAlreadyExistException().getMessage()))));
             }
         }
     }
