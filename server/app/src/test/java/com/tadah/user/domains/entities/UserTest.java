@@ -15,13 +15,13 @@ public final class UserTest {
     public static final String EMAIL = "test@test.com";
     public static final String NAME = "name";
     public static final String PASSWORD = "Password123!!";
-    public static final User USER = new User(USER_ID, EMAIL, NAME, PASSWORD);
+    public static final User USER = new User(EMAIL, NAME);
 
     public static final PasswordEncoder PASSWORD_ENCODER = new BCryptPasswordEncoder();
 
     @Nested
-    @DisplayName("updatePassword 메서드는")
-    public final class Describe_updatePassword {
+    @DisplayName("setPassword 메서드는")
+    public final class Describe_setPassword {
         private void subject() {
             USER.setPassword(PASSWORD, PASSWORD_ENCODER);
         }
@@ -40,11 +40,11 @@ public final class UserTest {
     }
 
     @Nested
-    @DisplayName("authenticate 메서드는")
-    public final class Describe_authenticate {
+    @DisplayName("verifyPassword 메서드는")
+    public final class Describe_verifyPassword {
         @BeforeEach
         private void beforeEach() {
-            new Describe_updatePassword().subject();
+            new Describe_setPassword().subject();
         }
 
         private boolean subject(final String password) {
