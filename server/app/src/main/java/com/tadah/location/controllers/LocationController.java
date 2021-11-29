@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * 사용자 위치와 관련된 작업을 수행한다.
+ * 위치 정보를 생성한다.
  */
 @CrossOrigin
 @RestController

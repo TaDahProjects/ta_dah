@@ -1,9 +1,7 @@
-package com.tadah.auth.applications;
+package com.tadah.auth.domains.repositories;
 
 import com.tadah.auth.domains.entities.Role;
-import com.tadah.auth.domains.repositories.RoleRepository;
 import com.tadah.auth.domains.repositories.infra.JpaRoleRepository;
-import com.tadah.user.domains.repositories.infra.JpaUserRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -16,62 +14,55 @@ import java.util.List;
 
 import static com.tadah.auth.domains.entities.RoleTest.ROLE;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
 
 @DataJpaTest
-@DisplayName("AuthorizationService 클래스")
-public class AuthorizationServiceTest {
+public class RoleRepositoryTest {
+    @Autowired
+    private RoleRepository roleRepository;
+
     @Autowired
     private JpaRoleRepository jpaRoleRepository;
 
-    @Autowired
-    private JpaUserRepository jpaUserRepository;
-
-    private final RoleRepository roleRepository;
-    private final AuthorizationService authorizationService;
-    public AuthorizationServiceTest(@Autowired final RoleRepository roleRepository) {
-        this.roleRepository = roleRepository;
-        this.authorizationService = new AuthorizationService(roleRepository);
-    }
-
     @AfterEach
     private void afterEach() {
-        jpaUserRepository.deleteAll();
         jpaRoleRepository.deleteAll();
     }
 
     @Nested
-    @DisplayName("create 메서드는")
-    public final class Describe_create {
+    @DisplayName("save 메서드는")
+    public final class  Describe_save {
         private Role subject() {
-            return authorizationService.create(ROLE);
+            return roleRepository.save(ROLE);
         }
 
         @Test
         @DisplayName("권한을 저장한다.")
-        public void it_saves_a_role() {
-            assertThat(subject())
+        public void it_saves_a_role_data() {
+            final Role savedRole = subject();
+
+            assertThat(jpaRoleRepository.findById(savedRole.getId()))
+                .isPresent()
+                .get()
                 .matches(role -> ROLE.getName().equals(role.getName()))
                 .matches(role -> ROLE.getUserId().equals(role.getUserId()));
         }
     }
 
     @Nested
-    @DisplayName("list 메서드는")
-    public final class Describe_list {
+    @DisplayName("findByUserId 메서드는")
+    public final class Describe_findByUserId {
         private List<Role> subject() {
-            return authorizationService.list(ROLE.getUserId());
+            return roleRepository.findAllByUserId(ROLE.getUserId());
         }
 
         @BeforeEach
         private void beforeEach() {
-            roleRepository.save(ROLE);
+            new Describe_save().subject();
         }
 
         @Test
-        @DisplayName("권한 목록을 리턴한다.")
-        public void it_returns_a_roles() {
+        @DisplayName("권한을 리턴한다.")
+        public void it_returns_a_role_data() {
             final List<Role> roles = subject();
 
             assertThat(roles.size())
@@ -80,6 +71,22 @@ public class AuthorizationServiceTest {
             assertThat(roles.get(0))
                 .matches(role -> ROLE.getName().equals(role.getName()))
                 .matches(role -> ROLE.getUserId().equals(role.getUserId()));
+        }
+
+        @Nested
+        @DisplayName("권한이 없는 경우")
+        public final class Context_emptyRole {
+            @BeforeEach
+            private void beforeEach() {
+                jpaRoleRepository.deleteAll();
+            }
+
+            @Test
+            @DisplayName("권한이 없음을 알려준다.")
+            public void it_notifies_that_role_is_empty() {
+                assertThat(subject().size())
+                    .isEqualTo(0);
+            }
         }
     }
 }

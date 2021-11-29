@@ -1,13 +1,12 @@
 package com.tadah.location.controllers;
 
-import com.tadah.auth.domain.entities.Role;
-import com.tadah.auth.domain.repositories.RoleRepository;
-import com.tadah.auth.domain.repositories.infra.JpaRoleRepository;
+import com.tadah.auth.domains.entities.Role;
+import com.tadah.auth.domains.repositories.RoleRepository;
+import com.tadah.auth.domains.repositories.infra.JpaRoleRepository;
 import com.tadah.auth.utils.JwtUtil;
-import com.tadah.user.domain.UserType;
-import com.tadah.user.domain.entities.User;
-import com.tadah.user.domain.repositories.UserRepository;
-import com.tadah.user.domain.repositories.infra.JpaUserRepository;
+import com.tadah.user.domains.UserType;
+import com.tadah.user.domains.repositories.UserRepository;
+import com.tadah.user.domains.repositories.infra.JpaUserRepository;
 import com.tadah.utils.LoginFailTest;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -24,8 +23,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
-import static com.tadah.user.UserConstants.DRIVER;
-import static com.tadah.user.UserConstants.RIDER;
+import static com.tadah.user.domains.entities.UserTest.USER;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -64,8 +62,8 @@ public final class LocationControllerTest {
     @Nested
     @DisplayName("create 메서드는")
     public final class Describe_create extends LoginFailTest {
+        private Long userId;
         private String token;
-        private User savedUser;
 
         public Describe_create() {
             super(mockMvc, post(LOCATIONS_URL));
@@ -81,8 +79,8 @@ public final class LocationControllerTest {
 
         @BeforeEach
         private void beforeEach() {
-            this.savedUser = userRepository.save(RIDER);
-            this.token = jwtUtil.encode(savedUser.getId());
+            this.userId = userRepository.save(USER).getId();
+            this.token = jwtUtil.encode(userId);
         }
 
         @Nested
@@ -101,7 +99,7 @@ public final class LocationControllerTest {
         public final class Context_invalidAuthority {
             @BeforeEach
             private void beforeEach() {
-                roleRepository.save(new Role(savedUser.getId(), UserType.RIDER.name()));
+                roleRepository.save(new Role(userId, UserType.RIDER.name()));
             }
 
             @Test
@@ -117,7 +115,7 @@ public final class LocationControllerTest {
         public final class Context_validToken {
             @BeforeEach
             private void beforeEach() {
-                roleRepository.save(new Role(savedUser.getId(), UserType.DRIVER.name()));
+                roleRepository.save(new Role(userId, UserType.DRIVER.name()));
             }
 
             @Test

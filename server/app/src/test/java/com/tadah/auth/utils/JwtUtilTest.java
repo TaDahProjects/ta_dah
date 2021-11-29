@@ -18,27 +18,25 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 @DisplayName("JwtUtil 클래스")
 public final class JwtUtilTest {
     private static final String SECRET = "12345678901234567890123456789012";
-
-    public static final Long CLAIM_DATA = 1L;
+    private static final Long CLAIM_DATA = 1L;
 
     public static final String VALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjF9.ZZ3CUl0jxeLGvQ1Js5nG2Ty5qGTlqai5ubDMXZOdaDk";
     public static final String VALID_TOKEN_WITHOUT_CLAIMS = "eyJhbGciOiJIUzI1NiJ9..Y3zwinksGMfE9Ym4QHp3jFBeDE_iJdw3F-DDlvMEE9Q";
     public static final String VALID_TOKEN_INVALID_CLAIMS_NAME = "eyJhbGciOiJIUzI1NiJ9.eyJpbnZhbGlkIjoxfQ.QwqsY19u7hBbtd32x31vUX0L6wONcPv9Msh2wlanPoI";
     public static final String INVALID_TOKEN = VALID_TOKEN + "invalid";
-
     public static final JwtUtil JWT_UTIL = new JwtUtil(SECRET);
 
     @Nested
     @DisplayName("encode 메서드는")
     public final class Describe_encode {
-        private String subject(final Long claimData) {
-            return JWT_UTIL.encode(claimData);
+        private String subject() {
+            return JWT_UTIL.encode(CLAIM_DATA);
         }
 
         @Test
         @DisplayName("속성 정보를 인코딩하여 토큰을 리턴한다.")
         public void it_encodes_claim_data_and_then_returns_the_token() {
-            assertThat(subject(CLAIM_DATA))
+            assertThat(subject())
                 .isEqualTo(VALID_TOKEN);
         }
     }

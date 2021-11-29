@@ -2,9 +2,9 @@ package com.tadah.auth.filters;
 
 import com.tadah.auth.applications.AuthenticationService;
 import com.tadah.auth.applications.AuthorizationService;
-import com.tadah.auth.authentication.UserAuthentication;
-import com.tadah.auth.domain.entities.Role;
-import com.tadah.user.domain.entities.User;
+import com.tadah.auth.authentications.UserAuthentication;
+import com.tadah.auth.domains.entities.Role;
+import com.tadah.user.domains.entities.User;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
@@ -45,7 +45,7 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
 
         if (authorizationHeader != null) {
             final String token = authorizationHeader.substring(TOKEN_PREFIX.length());
-            final User user = authenticationService.verifyToken(token);
+            final User user = authenticationService.verify(token);
             final List<Role> roles = authorizationService.list(user.getId());
             final Authentication authentication = new UserAuthentication(user, roles);
 

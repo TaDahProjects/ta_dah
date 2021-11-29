@@ -6,6 +6,9 @@ import lombok.Getter;
 
 import javax.servlet.http.HttpServletRequest;
 
+/**
+ * 발생한 에러 정보를 저장한다.
+ */
 @Generated
 @Getter
 @AllArgsConstructor

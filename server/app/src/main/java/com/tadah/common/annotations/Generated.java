@@ -8,6 +8,9 @@ import java.lang.annotation.Target;
 import static java.lang.annotation.ElementType.METHOD;
 import static java.lang.annotation.ElementType.TYPE;
 
+/**
+ * 선언된 클래스 또는 메서드를 테스트 커버리지에서 제외한다.
+ */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target({TYPE, METHOD})

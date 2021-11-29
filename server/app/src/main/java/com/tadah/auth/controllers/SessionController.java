@@ -1,8 +1,8 @@
 package com.tadah.auth.controllers;
 
 import com.tadah.auth.applications.AuthenticationService;
-import com.tadah.auth.dto.SessionRequestData;
-import com.tadah.auth.dto.SessionResponseData;
+import com.tadah.auth.dtos.SessionRequestData;
+import com.tadah.auth.dtos.SessionResponseData;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -37,7 +37,7 @@ public final class SessionController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public SessionResponseData login(@RequestBody @Valid final SessionRequestData requestData) {
-        final String token = authenticationService.publishToken(requestData.getEmail(), requestData.getPassword());
+        final String token = authenticationService.publish(requestData.getEmail(), requestData.getPassword());
         return new SessionResponseData(token);
     }
 }

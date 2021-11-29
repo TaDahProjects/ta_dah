@@ -1,7 +1,7 @@
 package com.tadah.user.applications;
 
-import com.tadah.user.domain.entities.User;
-import com.tadah.user.domain.repositories.UserRepository;
+import com.tadah.user.domains.entities.User;
+import com.tadah.user.domains.repositories.UserRepository;
 import com.tadah.user.exceptions.UserEmailAlreadyExistException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -30,11 +30,11 @@ public class UserService {
      * @throws UserEmailAlreadyExistException 이미 존재하는 사용자 이메일인 경우
      * @return 등록한 사용자 정보
      */
-    public User registerUser(final User user, final String password) {
+    public User register(final User user, final String password) {
         if (this.userRepository.existsByEmail(user.getEmail())) {
             throw new UserEmailAlreadyExistException();
         }
-        user.updatePassword(password, passwordEncoder);
+        user.setPassword(password, passwordEncoder);
         return this.userRepository.save(user);
     }
 }
