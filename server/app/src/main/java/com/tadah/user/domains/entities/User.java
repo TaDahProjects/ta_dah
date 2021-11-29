@@ -1,12 +1,10 @@
 package com.tadah.user.domains.entities;
 
-import com.tadah.user.domains.UserType;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Generated;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.persistence.Entity;
@@ -36,11 +34,24 @@ public final class User {
         this.name = name;
     }
 
-    public void updatePassword(final String password, final PasswordEncoder passwordEncoder) {
+    /**
+     * 비밀번호를 설정한다.
+     *
+     * @param password 설정할 비밀번호
+     * @param passwordEncoder 비밀번호를 암호화할 인코더
+     */
+    public void setPassword(final String password, final PasswordEncoder passwordEncoder) {
         this.password = passwordEncoder.encode(password);
     }
 
-    public boolean authenticate(final String password, final PasswordEncoder passwordEncoder) {
+    /**
+     * 사용자의 비밀번호를 검증한다.
+     *
+     * @param password 검증할 비밀번호
+     * @param passwordEncoder 검증에 사용할 인코더
+     * @return 검증 결과
+     */
+    public boolean verifyPassword(final String password, final PasswordEncoder passwordEncoder) {
         return passwordEncoder.matches(password, this.password);
     }
 }
