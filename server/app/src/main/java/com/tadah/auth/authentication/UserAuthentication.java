@@ -1,9 +1,9 @@
 package com.tadah.auth.authentication;
 
+import com.tadah.auth.domain.entities.Role;
 import com.tadah.common.annotations.Generated;
 import com.tadah.user.domain.entities.User;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
-import org.springframework.security.core.GrantedAuthority;
 
 import java.util.List;
 
@@ -11,14 +11,9 @@ import java.util.List;
  * 인증 여부 및 권한 목록을 저장한다.
  */
 public final class UserAuthentication extends AbstractAuthenticationToken {
-    private static List<GrantedAuthority> authorities(final User user) {
-        return List.of(user.getUserType());
-    }
-
     private final User user;
-
-    public UserAuthentication(final User user) {
-        super(authorities(user));
+    public UserAuthentication(final User user, final List<Role> roles) {
+        super(roles);
         super.setAuthenticated(true);
         this.user = user;
     }

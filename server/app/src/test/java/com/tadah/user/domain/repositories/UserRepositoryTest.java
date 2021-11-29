@@ -3,13 +3,13 @@ package com.tadah.user.domain.repositories;
 import com.tadah.user.domain.UserType;
 import com.tadah.user.domain.entities.User;
 import com.tadah.user.domain.repositories.infra.JpaUserRepository;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.TransactionSystemException;
 
 import java.util.Optional;
@@ -21,6 +21,7 @@ import static com.tadah.user.UserConstants.NAME;
 import static com.tadah.user.UserConstants.PASSWORD;
 import static com.tadah.user.UserConstants.RIDER;
 import static com.tadah.user.UserConstants.RIDER_WITH_OUT_PASSWORD;
+import static com.tadah.user.domain.entities.UserTest.PASSWORD_ENCODER;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 
@@ -33,11 +34,8 @@ public class UserRepositoryTest {
     @Autowired
     private JpaUserRepository jpaUserRepository;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
-    @BeforeEach
-    private void beforeEach() {
+    @AfterEach
+    private void afterEach() {
         jpaUserRepository.deleteAll();
     }
 
@@ -72,7 +70,7 @@ public class UserRepositoryTest {
                 .matches(user -> EMAIL.equals(user.getEmail()))
                 .matches(user -> NAME.equals(user.getName()))
                 .matches(user -> UserType.RIDER.equals(user.getUserType()))
-                .matches(user -> passwordEncoder.matches(PASSWORD, user.getPassword()));
+                .matches(user -> PASSWORD_ENCODER.matches(PASSWORD, user.getPassword()));
 
             final User driver = subject(DRIVER);
             assertThat(new Describe_findById().subject(driver.getId()))
@@ -82,7 +80,7 @@ public class UserRepositoryTest {
                 .matches(user -> EMAIL.equals(user.getEmail()))
                 .matches(user -> NAME.equals(user.getName()))
                 .matches(user -> UserType.DRIVER.equals(user.getUserType()))
-                .matches(user -> passwordEncoder.matches(PASSWORD, user.getPassword()));
+                .matches(user -> PASSWORD_ENCODER.matches(PASSWORD, user.getPassword()));
         }
     }
 
@@ -177,15 +175,17 @@ public class UserRepositoryTest {
         @Nested
         @DisplayName("id에 해당하는 사용자가 있는 경우")
         public final class Context_userExist {
+            private Long userId;
+
             @BeforeEach
             private void beforeEach() {
-                new Describe_save().subject(RIDER);
+                userId = new Describe_save().subject(RIDER).getId();
             }
 
             @Test
             @DisplayName("사용자가 존재하는것을 알려준다.")
             public void it_notifies_that_the_user_exists() {
-                assertThat(subject(RIDER.getId()))
+                assertThat(subject(userId))
                     .isPresent();
             }
         }

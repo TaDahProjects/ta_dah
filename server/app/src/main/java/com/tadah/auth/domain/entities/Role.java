@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Generated;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.GrantedAuthority;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -18,7 +19,7 @@ import javax.persistence.Id;
 @Getter
 @AllArgsConstructor(access = AccessLevel.PACKAGE)
 @RequiredArgsConstructor
-public final class Role {
+public final class Role implements GrantedAuthority {
     @Id
     @GeneratedValue
     private Long id;
@@ -30,5 +31,10 @@ public final class Role {
     public Role(final Long userId, final String name) {
         this.userId = userId;
         this.name = name;
+    }
+
+    @Override
+    public String getAuthority() {
+        return name;
     }
 }
