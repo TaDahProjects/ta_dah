@@ -38,11 +38,11 @@ public final class AuthenticationService {
      * @return JWT
      * @throws LoginFailException 로그인에 실패한 경우
      */
-    public String publishToken(final String email, final String password) {
+    public String publish(final String email, final String password) {
         final User user = userRepository.findByEmail(email)
             .orElseThrow(LoginFailException::new);
 
-        if (!user.authenticate(password, passwordEncoder)) {
+        if (!user.verifyPassword(password, passwordEncoder)) {
             throw new LoginFailException();
         }
         return jwtUtil.encode(user.getId());
@@ -55,7 +55,7 @@ public final class AuthenticationService {
      * @return 사용자 데이터
      * @throws InvalidTokenException 유효하지 않은 토큰인 경우, 토큰을 통해 사용자 정보를 가져올 수 없는경우
      */
-    public User verifyToken(final String token) {
+    public User verify(final String token) {
         final Claims claims = jwtUtil.decode(token);
 
         final Long userId = claims.get(CLAIM_NAME, Long.class);
