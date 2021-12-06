@@ -1,9 +1,6 @@
 package com.tadah.user.controllers;
 
-import com.tadah.auth.applications.AuthorizationService;
-import com.tadah.auth.domains.entities.Role;
 import com.tadah.user.applications.UserService;
-import com.tadah.user.domains.UserType;
 import com.tadah.user.domains.entities.User;
 import com.tadah.user.dtos.UserRequestData;
 import com.tadah.user.dtos.UserResponseData;
@@ -26,26 +23,19 @@ import javax.validation.Valid;
 @RequestMapping("/users")
 public final class UserController {
     private final UserService userService;
-    private final AuthorizationService authorizationService;
 
     public UserController(
-        final UserService userService,
-        final AuthorizationService authorizationService
+        final UserService userService
     ) {
         this.userService = userService;
-        this.authorizationService = authorizationService;
     }
 
-    private User toUser(final UserRequestData userRequestData) {
+    private User toEntity(final UserRequestData userRequestData) {
         return new User(userRequestData.getEmail(), userRequestData.getName());
     }
 
-    private Role toRole(final Long userId, final UserType userType) {
-        return new Role(userId, userType.name());
-    }
-
-    private UserResponseData toUserResponseData(final User user, final Role role) {
-        return new UserResponseData(user.getEmail(), user.getName(), role.getName());
+    private UserResponseData toDto(final User user) {
+        return new UserResponseData(user.getEmail(), user.getName());
     }
 
     /**
@@ -58,8 +48,7 @@ public final class UserController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public UserResponseData register(@RequestBody @Valid final UserRequestData userRequestData) {
-        final User user = userService.register(toUser(userRequestData), userRequestData.getPassword());
-        final Role role = authorizationService.create(toRole(user.getId(), userRequestData.getUserType()));
-        return toUserResponseData(user, role);
+        final User user = userService.register(toEntity(userRequestData), userRequestData.getPassword());
+        return toDto(user);
     }
 }

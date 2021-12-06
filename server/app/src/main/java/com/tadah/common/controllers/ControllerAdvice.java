@@ -38,18 +38,4 @@ public final class ControllerAdvice {
                 .getDefaultMessage()
         );
     }
-
-    /**
-     * 파싱에 실패한 경우
-     * 해당 예외가 어디서 던져졌는지 리턴한다.
-     *
-     * @param request 예외가 던져진 http 요청
-     * @return 던져진 예외의 내용 및 위치
-     */
-    @ResponseBody
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(HttpMessageNotReadableException.class)
-    public ErrorResponse handleParsingException(final HttpServletRequest request) {
-        return new ErrorResponse(request, "유효하지 않은 입력형식입니다.");
-    }
 }

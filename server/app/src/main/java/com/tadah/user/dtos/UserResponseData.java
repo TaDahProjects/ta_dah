@@ -13,5 +13,4 @@ import lombok.Getter;
 public final class UserResponseData {
     private final String email;
     private final String name;
-    private final String userType;
 }

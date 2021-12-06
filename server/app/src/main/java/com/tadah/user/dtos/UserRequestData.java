@@ -1,6 +1,5 @@
 package com.tadah.user.dtos;
 
-import com.tadah.user.domains.UserType;
 import lombok.AllArgsConstructor;
 import lombok.Generated;
 import lombok.Getter;
@@ -46,12 +45,4 @@ public final class UserRequestData {
         regexp = "(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,100}"
     )
     private final String password;
-
-    /**
-     * 사용자 타입
-     * null 또는 UserType을 제외한 값이 들어오는 경우 json 파싱 단계에서 먼저 에러가 발생함
-     * 따라서 null 또는 UserType을 제외한 값이 들어오는 경우에 관한 validator를 추가할 필요가 없음
-     */
-    @NotNull(message = "사용자 타입이 입력되지 않았습니다.")
-    private final UserType userType;
 }
