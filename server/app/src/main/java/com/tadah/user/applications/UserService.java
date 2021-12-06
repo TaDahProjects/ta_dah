@@ -6,14 +6,11 @@ import com.tadah.user.exceptions.UserEmailAlreadyExistException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
-
 /**
  * 사용자 등록을 수행한다.
  */
 @Service
-@Transactional
-public class UserService {
+public final class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 

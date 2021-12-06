@@ -10,7 +10,7 @@ import java.util.List;
  * 권한 생성 및 조회를 수행한다.
  */
 @Service
-public class AuthorizationService {
+public final class AuthorizationService {
     private final RoleRepository roleRepository;
 
     public AuthorizationService(final RoleRepository roleRepository) {
