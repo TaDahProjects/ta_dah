@@ -5,7 +5,6 @@ import com.tadah.auth.domains.repositories.RoleRepository;
 import com.tadah.auth.domains.repositories.infra.JpaRoleRepository;
 import com.tadah.auth.utils.JwtUtil;
 import com.tadah.common.dtos.ErrorResponse;
-import com.tadah.user.domains.UserType;
 import com.tadah.user.domains.repositories.UserRepository;
 import com.tadah.user.domains.repositories.infra.JpaUserRepository;
 import com.tadah.utils.LoginFailTest;
@@ -14,7 +13,7 @@ import com.tadah.vehicle.domains.entities.Vehicle;
 import com.tadah.vehicle.domains.repositories.VehicleRepository;
 import com.tadah.vehicle.domains.repositories.infra.JpaVehicleRepository;
 import com.tadah.vehicle.exceptions.VehicleAlreadyExistException;
-import org.checkerframework.checker.units.qual.A;
+import org.aspectj.lang.annotation.After;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -26,15 +25,19 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
+import java.util.List;
+import java.util.Objects;
+
+import static com.tadah.auth.domains.entities.RoleTest.ROLE;
 import static com.tadah.user.domains.entities.UserTest.PASSWORD;
 import static com.tadah.user.domains.entities.UserTest.PASSWORD_ENCODER;
 import static com.tadah.user.domains.entities.UserTest.USER;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -46,6 +49,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @DisplayName("VehicleController 클래스")
 public final class VehicleControllerTest {
     private static final String VEHICLES_URL = "/vehicles";
+    private static final String DRIVER_ROLE = "DRIVER";
 
     @Autowired
     private MockMvc mockMvc;
@@ -57,7 +61,13 @@ public final class VehicleControllerTest {
     private UserRepository userRepository;
 
     @Autowired
+    private RoleRepository roleRepository;
+
+    @Autowired
     private VehicleRepository vehicleRepository;
+
+    @Autowired
+    private JpaRoleRepository jpaRoleRepository;
 
     @Autowired
     private JpaUserRepository jpaUserRepository;
@@ -67,6 +77,7 @@ public final class VehicleControllerTest {
 
     @AfterEach
     private void afterEach() {
+        jpaRoleRepository.deleteAll();
         jpaUserRepository.deleteAll();
         jpaVehicleRepository.deleteAll();
     }
@@ -101,6 +112,16 @@ public final class VehicleControllerTest {
         public void it_creates_a_vehicles() throws Exception {
             subject(token)
                 .andExpect(status().isCreated());
+
+            final List<Role> roles = roleRepository.findAllByUserId(userId);
+
+            assertThat(roles.size())
+                .isEqualTo(1);
+
+            assertThat(roles.get(0))
+                .matches(Objects::nonNull)
+                .matches(role -> role.getName().equals(DRIVER_ROLE))
+                .matches(role -> role.getUserId().equals(userId));
         }
 
         @Nested

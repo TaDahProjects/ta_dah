@@ -1,5 +1,7 @@
 package com.tadah.vehicle.controllers;
 
+import com.tadah.auth.applications.AuthorizationService;
+import com.tadah.auth.domains.entities.Role;
 import com.tadah.user.domains.entities.User;
 import com.tadah.vehicle.applications.VehicleService;
 import com.tadah.vehicle.domains.entities.Vehicle;
@@ -20,13 +22,20 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/vehicles")
 public class VehicleController {
-    private final VehicleService vehicleService;
+    private static final String DRIVER_ROLE = "DRIVER";
 
-    public VehicleController(final VehicleService vehicleService) {
+    private final VehicleService vehicleService;
+    private final AuthorizationService authorizationService;
+
+    public VehicleController(
+        final VehicleService vehicleService,
+        final AuthorizationService authorizationService
+    ) {
         this.vehicleService = vehicleService;
+        this.authorizationService = authorizationService;
     }
 
-    private Vehicle toVehicle(final User user) {
+    private Vehicle toEntity(final User user) {
         return new Vehicle(user.getId());
     }
 
@@ -39,7 +48,8 @@ public class VehicleController {
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("isAuthenticated()")
     public void create(@AuthenticationPrincipal final User user) {
-        final Vehicle vehicle = toVehicle(user);
+        final Vehicle vehicle = toEntity(user);
+        authorizationService.create(new Role(user.getId(), DRIVER_ROLE));
         vehicleService.create(vehicle);
     }
 }
