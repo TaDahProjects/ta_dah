@@ -1,4 +1,4 @@
-package com.tadah.location.controllers;
+package com.tadah.vehicle.controllers;
 
 import com.tadah.auth.domains.entities.Role;
 import com.tadah.auth.domains.repositories.RoleRepository;
@@ -23,6 +23,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
+import static com.tadah.user.domains.entities.UserTest.PASSWORD;
+import static com.tadah.user.domains.entities.UserTest.PASSWORD_ENCODER;
 import static com.tadah.user.domains.entities.UserTest.USER;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -31,9 +33,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @AutoConfigureTestDatabase
 @ExtendWith(SpringExtension.class)
-@DisplayName("LocationController 클래스")
-public final class LocationControllerTest {
-    private static final String LOCATIONS_URL = "/locations";
+@DisplayName("VehicleController 클래스")
+public final class VehicleControllerTest {
+    private static final String VEHICLES_URL = "/vehicles";
 
     @Autowired
     private MockMvc mockMvc;
@@ -66,12 +68,12 @@ public final class LocationControllerTest {
         private String token;
 
         public Describe_create() {
-            super(mockMvc, post(LOCATIONS_URL));
+            super(mockMvc, post(VEHICLES_URL));
         }
 
         private ResultActions subject(final String token) throws Exception {
             return mockMvc.perform(
-                post(LOCATIONS_URL)
+                post(VEHICLES_URL)
                     .accept(MediaType.APPLICATION_JSON_UTF8)
                     .contentType(MediaType.APPLICATION_JSON)
                     .header(AUTHORIZATION_HEADER, TOKEN_PREFIX + token));
@@ -79,6 +81,7 @@ public final class LocationControllerTest {
 
         @BeforeEach
         private void beforeEach() {
+            USER.setPassword(PASSWORD, PASSWORD_ENCODER);
             this.userId = userRepository.save(USER).getId();
             this.token = jwtUtil.encode(userId);
         }
