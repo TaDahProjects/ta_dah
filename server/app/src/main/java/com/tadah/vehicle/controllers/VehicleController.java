@@ -3,6 +3,7 @@ package com.tadah.vehicle.controllers;
 import com.tadah.user.domains.entities.User;
 import com.tadah.vehicle.applications.VehicleService;
 import com.tadah.vehicle.domains.entities.Vehicle;
+import com.tadah.vehicle.exceptions.VehicleAlreadyExistException;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -31,6 +32,7 @@ public class VehicleController {
 
     /**
      * 차량 생성을 수행한다.
+     * @throws VehicleAlreadyExistException 차량이 이미 존재하는 경우
      * @param user 생성할 차량의 소유자
      */
     @PostMapping
