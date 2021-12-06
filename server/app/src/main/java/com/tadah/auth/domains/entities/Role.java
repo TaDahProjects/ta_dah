@@ -1,7 +1,5 @@
 package com.tadah.auth.domains.entities;
 
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.Generated;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,7 +16,6 @@ import javax.persistence.Id;
 @Entity
 @Getter
 @NoArgsConstructor
-@AllArgsConstructor(access = AccessLevel.PACKAGE)
 public final class Role implements GrantedAuthority {
     @Id
     @GeneratedValue
