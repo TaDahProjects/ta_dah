@@ -8,6 +8,8 @@ import com.tadah.user.domains.UserType;
 import com.tadah.user.domains.repositories.UserRepository;
 import com.tadah.user.domains.repositories.infra.JpaUserRepository;
 import com.tadah.utils.LoginFailTest;
+import com.tadah.vehicle.domains.repositories.VehicleRepository;
+import com.tadah.vehicle.domains.repositories.infra.JpaVehicleRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -47,24 +49,20 @@ public final class VehicleControllerTest {
     private UserRepository userRepository;
 
     @Autowired
-    private RoleRepository roleRepository;
-
-    @Autowired
     private JpaUserRepository jpaUserRepository;
 
     @Autowired
-    private JpaRoleRepository jpaRoleRepository;
+    private JpaVehicleRepository jpaVehicleRepository;
 
     @AfterEach
     private void afterEach() {
         jpaUserRepository.deleteAll();
-        jpaRoleRepository.deleteAll();
+        jpaVehicleRepository.deleteAll();
     }
 
     @Nested
     @DisplayName("create 메서드는")
     public final class Describe_create extends LoginFailTest {
-        private Long userId;
         private String token;
 
         public Describe_create() {
@@ -82,50 +80,15 @@ public final class VehicleControllerTest {
         @BeforeEach
         private void beforeEach() {
             USER.setPassword(PASSWORD, PASSWORD_ENCODER);
-            this.userId = userRepository.save(USER).getId();
+            final Long userId = userRepository.save(USER).getId();
             this.token = jwtUtil.encode(userId);
         }
 
-        @Nested
-        @DisplayName("권한이 없는 경우")
-        public final class Context_emptyAuthority {
-            @Test
-            @DisplayName("권한이 필요함을 알려준다.")
-            public void it_informs_that_authority_is_required() throws Exception {
-                subject(token)
-                    .andExpect(status().isForbidden());
-            }
-        }
-
-        @Nested
-        @DisplayName("권한이 올바르지 않은 경우")
-        public final class Context_invalidAuthority {
-            @BeforeEach
-            private void beforeEach() {
-                roleRepository.save(new Role(userId, UserType.RIDER.name()));
-            }
-
-            @Test
-            @DisplayName("잘못된 권한임을 알려준다.")
-            public void it_informs_that_authority_is_invalid() throws Exception {
-                subject(token)
-                    .andExpect(status().isForbidden());
-            }
-        }
-
-        @Nested
-        @DisplayName("올바른 토큰이 입력된 경우")
-        public final class Context_validToken {
-            @BeforeEach
-            private void beforeEach() {
-                roleRepository.save(new Role(userId, UserType.DRIVER.name()));
-            }
-
-            @Test
-            public void test() throws Exception {
-                subject(token)
-                    .andExpect(status().isCreated());
-            }
+        @Test
+        @DisplayName("차량을 생성한다.")
+        public void it_creates_a_vehicles() throws Exception {
+            subject(token)
+                .andExpect(status().isCreated());
         }
     }
 }
