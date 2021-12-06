@@ -10,4 +10,12 @@ public interface VehicleRepository {
      * @return 저장한 사용자 정보
      */
     Vehicle save(final Vehicle vehicle);
+
+    /**
+     * 차량의 소유여부를 리턴한다.
+     *
+     * @param userId 차량 소유여부를 확인할 사용자
+     * @return 차량의 소유여부
+     */
+    boolean existsByUserId(final Long userId);
 }
