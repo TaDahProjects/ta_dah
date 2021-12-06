@@ -11,7 +11,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
 /**
- * 사용자 요청 데이터를 저장한다.
+ * 사용자 데이터를 저장한다.
  */
 @Generated
 @Getter

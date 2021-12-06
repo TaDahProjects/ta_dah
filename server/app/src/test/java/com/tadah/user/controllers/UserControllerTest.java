@@ -74,9 +74,9 @@ public final class UserControllerTest {
     }
 
     @Nested
-    @DisplayName("createUser 메서드는")
+    @DisplayName("register 메서드는")
     @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-    public final class Describe_createUser {
+    public final class Describe_register {
         private Stream<Arguments> methodSource() throws Exception {
             return Stream.of(
                 Arguments.of(Parser.toJson(RIDER_REQUEST), Parser.toJson(RIDER_RESPONSE)),

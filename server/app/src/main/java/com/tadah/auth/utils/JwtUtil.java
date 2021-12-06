@@ -18,7 +18,7 @@ public final class JwtUtil {
     public static final String CLAIM_NAME = "userId";
 
     private final Key key;
-    public JwtUtil(@Value("${jwt.secret}") final String secret) {
+    public JwtUtil(@Value("${spring.jwt.secret}") final String secret) {
         this.key = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
     }
 
