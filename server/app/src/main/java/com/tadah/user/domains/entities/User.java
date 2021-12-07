@@ -10,6 +10,9 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.validation.constraints.NotNull;
 
+/**
+ * 사용자 데이터를 정의한다.
+ */
 @Generated
 @Entity
 @Getter
