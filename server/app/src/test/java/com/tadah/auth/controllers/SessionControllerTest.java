@@ -49,6 +49,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public final class SessionControllerTest {
     private static final String SESSION_URL = "/session";
 
+    private static String getSessionRequest(final String email, final String password) throws Exception {
+        return Parser.toJson(new SessionRequestData(email, password));
+    }
+
+    private static String getSessionResponse(final String token) throws Exception {
+        return Parser.toJson(new SessionResponseData(token));
+    }
+
     @Autowired
     private MockMvc mockMvc;
 
@@ -72,6 +80,10 @@ public final class SessionControllerTest {
     @Nested
     @DisplayName("login 메서드는")
     public final class Describe_login {
+        private String getErrorMessage(final String errorMessage) throws Exception {
+            return Parser.toJson(new ErrorResponse(SESSION_URL, HttpMethod.POST.toString(), errorMessage));
+        }
+
         private ResultActions subject(final String requestBody) throws Exception {
             return mockMvc.perform(
                 post(SESSION_URL)
@@ -87,12 +99,12 @@ public final class SessionControllerTest {
             private Stream<Arguments> methodSource() throws Exception {
                 return Stream.of(
                     Arguments.of(
-                        Parser.toJson(new SessionRequestData("invalid" + EMAIL, PASSWORD)),
-                        Parser.toJson(new ErrorResponse(SESSION_URL, HttpMethod.POST.toString(), new LoginFailException().getMessage()))
+                        getSessionRequest("invalid" + EMAIL, PASSWORD),
+                        getErrorMessage(new LoginFailException().getMessage())
                     ),
                     Arguments.of(
-                        Parser.toJson(new SessionRequestData(EMAIL, PASSWORD + "invalid")),
-                        Parser.toJson(new ErrorResponse(SESSION_URL, HttpMethod.POST.toString(), new LoginFailException().getMessage()))
+                        getSessionRequest(EMAIL, PASSWORD + "invalid"),
+                        getErrorMessage(new LoginFailException().getMessage())
                     )
                 );
             }
@@ -115,7 +127,7 @@ public final class SessionControllerTest {
                 USER.setPassword(PASSWORD, passwordEncoder);
                 final Long userId = userRepository.save(USER).getId();
                 final String token = jwtUtil.encode(userId);
-                return Stream.of(Arguments.of(Parser.toJson(new SessionRequestData(EMAIL, PASSWORD)), Parser.toJson(new SessionResponseData(token))));
+                return Stream.of(Arguments.of(getSessionRequest(EMAIL, PASSWORD), getSessionResponse(token)));
             }
 
             @DisplayName("토큰을 리턴한다.")
@@ -135,40 +147,40 @@ public final class SessionControllerTest {
             private Stream<Arguments> methodSource() throws Exception {
                 return Stream.of(
                     Arguments.of(
-                        Parser.toJson(new SessionRequestData(null, PASSWORD)),
-                        Parser.toJson(new ErrorResponse(SESSION_URL, HttpMethod.POST.toString(), "이메일이 입력되지 않았습니다."))
+                        getSessionRequest(null, PASSWORD),
+                        getErrorMessage("이메일이 입력되지 않았습니다.")
                     ),
                     Arguments.of(
-                        Parser.toJson(new SessionRequestData("", PASSWORD)),
-                        Parser.toJson(new ErrorResponse(SESSION_URL, HttpMethod.POST.toString(), "유효하지 않은 이메일 형식입니다."))
+                        getSessionRequest("", PASSWORD),
+                        getErrorMessage("유효하지 않은 이메일 형식입니다.")
                     ),
                     Arguments.of(
-                        Parser.toJson(new SessionRequestData(INVALID_EMAIL, PASSWORD)),
-                        Parser.toJson(new ErrorResponse(SESSION_URL, HttpMethod.POST.toString(), "유효하지 않은 이메일 형식입니다."))
+                        getSessionRequest(INVALID_EMAIL, PASSWORD),
+                        getErrorMessage("유효하지 않은 이메일 형식입니다.")
                     ),
                     Arguments.of(
-                        Parser.toJson(new SessionRequestData(EMAIL, null)),
-                        Parser.toJson(new ErrorResponse(SESSION_URL, HttpMethod.POST.toString(), "비밀번호가 입력되지 않았습니다."))
+                        getSessionRequest(EMAIL, null),
+                        getErrorMessage("비밀번호가 입력되지 않았습니다.")
                     ),
                     Arguments.of(
-                        Parser.toJson(new SessionRequestData(EMAIL, "")),
-                        Parser.toJson(new ErrorResponse(SESSION_URL, HttpMethod.POST.toString(), "최소 한개 이상의 대소문자와 숫자, 특수문자를 포함한 8자 이상의 비밀번호를 입력해야합니다."))
+                        getSessionRequest(EMAIL, ""),
+                        getErrorMessage("최소 한개 이상의 대소문자와 숫자, 특수문자를 포함한 8자 이상의 비밀번호를 입력해야합니다.")
                     ),
                     Arguments.of(
-                        Parser.toJson(new SessionRequestData(EMAIL, INVALID_PASSWORD_LOWER_CASE)),
-                        Parser.toJson(new ErrorResponse(SESSION_URL, HttpMethod.POST.toString(), "최소 한개 이상의 대소문자와 숫자, 특수문자를 포함한 8자 이상의 비밀번호를 입력해야합니다."))
+                        getSessionRequest(EMAIL, INVALID_PASSWORD_LOWER_CASE),
+                        getErrorMessage("최소 한개 이상의 대소문자와 숫자, 특수문자를 포함한 8자 이상의 비밀번호를 입력해야합니다.")
                     ),
                     Arguments.of(
-                        Parser.toJson(new SessionRequestData(EMAIL, INVALID_PASSWORD_UPPER_CASE)),
-                        Parser.toJson(new ErrorResponse(SESSION_URL, HttpMethod.POST.toString(), "최소 한개 이상의 대소문자와 숫자, 특수문자를 포함한 8자 이상의 비밀번호를 입력해야합니다."))
+                        getSessionRequest(EMAIL, INVALID_PASSWORD_UPPER_CASE),
+                        getErrorMessage("최소 한개 이상의 대소문자와 숫자, 특수문자를 포함한 8자 이상의 비밀번호를 입력해야합니다.")
                     ),
                     Arguments.of(
-                        Parser.toJson(new SessionRequestData(EMAIL, INVALID_PASSWORD_NUMBER)),
-                        Parser.toJson(new ErrorResponse(SESSION_URL, HttpMethod.POST.toString(), "최소 한개 이상의 대소문자와 숫자, 특수문자를 포함한 8자 이상의 비밀번호를 입력해야합니다."))
+                        getSessionRequest(EMAIL, INVALID_PASSWORD_NUMBER),
+                        getErrorMessage("최소 한개 이상의 대소문자와 숫자, 특수문자를 포함한 8자 이상의 비밀번호를 입력해야합니다.")
                     ),
                     Arguments.of(
-                        Parser.toJson(new SessionRequestData(EMAIL, INVALID_PASSWORD_SPECIAL_CASE)),
-                        Parser.toJson(new ErrorResponse(SESSION_URL, HttpMethod.POST.toString(), "최소 한개 이상의 대소문자와 숫자, 특수문자를 포함한 8자 이상의 비밀번호를 입력해야합니다."))
+                        getSessionRequest(EMAIL, INVALID_PASSWORD_SPECIAL_CASE),
+                        getErrorMessage("최소 한개 이상의 대소문자와 숫자, 특수문자를 포함한 8자 이상의 비밀번호를 입력해야합니다.")
                     )
                 );
             }
