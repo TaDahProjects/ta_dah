@@ -22,7 +22,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
@@ -36,7 +35,7 @@ import static com.tadah.user.controllers.UserControllerTest.INVALID_PASSWORD_SPE
 import static com.tadah.user.controllers.UserControllerTest.INVALID_PASSWORD_UPPER_CASE;
 import static com.tadah.user.domains.entities.UserTest.EMAIL;
 import static com.tadah.user.domains.entities.UserTest.PASSWORD;
-import static com.tadah.user.domains.entities.UserTest.USER;
+import static com.tadah.user.domains.entities.UserTest.getUser;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -65,9 +64,6 @@ public final class SessionControllerTest {
 
     @Autowired
     private UserRepository userRepository;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
 
     @Autowired
     private JpaUserRepository jpaUserRepository;
@@ -124,8 +120,7 @@ public final class SessionControllerTest {
         @TestInstance(TestInstance.Lifecycle.PER_CLASS)
         public final class Context_validLoginInfo {
             private Stream<Arguments> methodSource() throws Exception {
-                USER.setPassword(PASSWORD, passwordEncoder);
-                final Long userId = userRepository.save(USER).getId();
+                final Long userId = userRepository.save(getUser()).getId();
                 final String token = jwtUtil.encode(userId);
                 return Stream.of(Arguments.of(getSessionRequest(EMAIL, PASSWORD), getSessionResponse(token)));
             }

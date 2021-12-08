@@ -40,9 +40,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Stream;
 
-import static com.tadah.user.domains.entities.UserTest.PASSWORD;
-import static com.tadah.user.domains.entities.UserTest.PASSWORD_ENCODER;
-import static com.tadah.user.domains.entities.UserTest.USER;
+import static com.tadah.user.domains.entities.UserTest.getUser;
 import static com.tadah.vehicle.domains.entities.VehicleTest.LATITUDE;
 import static com.tadah.vehicle.domains.entities.VehicleTest.LONGITUDE;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -121,8 +119,7 @@ public final class VehicleControllerTest {
 
         @BeforeEach
         private void beforeEach() {
-            USER.setPassword(PASSWORD, PASSWORD_ENCODER);
-            this.userId = userRepository.save(USER).getId();
+            this.userId = userRepository.save(getUser()).getId();
             this.token = jwtUtil.encode(userId);
         }
 
@@ -193,8 +190,7 @@ public final class VehicleControllerTest {
 
         @BeforeEach
         private void beforeEach() {
-            USER.setPassword(PASSWORD, PASSWORD_ENCODER);
-            this.userId = userRepository.save(USER).getId();
+            this.userId = userRepository.save(getUser()).getId();
             roleRepository.save(new Role(userId, DRIVER_ROLE));
             this.token = jwtUtil.encode(userId);
         }
@@ -337,8 +333,7 @@ public final class VehicleControllerTest {
 
         @BeforeEach
         private void beforeEach() {
-            USER.setPassword(PASSWORD, PASSWORD_ENCODER);
-            this.userId = userRepository.save(USER).getId();
+            this.userId = userRepository.save(getUser()).getId();
             roleRepository.save(new Role(userId, DRIVER_ROLE));
             this.token = jwtUtil.encode(userId);
         }
@@ -481,8 +476,7 @@ public final class VehicleControllerTest {
 
         @BeforeEach
         private void beforeEach() {
-            USER.setPassword(PASSWORD, PASSWORD_ENCODER);
-            this.userId = userRepository.save(USER).getId();
+            this.userId = userRepository.save(getUser()).getId();
             roleRepository.save(new Role(userId, DRIVER_ROLE));
             this.vehicle = vehicleRepository.save(new Vehicle(userId));
             this.token = jwtUtil.encode(userId);

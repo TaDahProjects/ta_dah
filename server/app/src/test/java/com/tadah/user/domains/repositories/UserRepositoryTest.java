@@ -17,15 +17,15 @@ import java.util.Optional;
 import static com.tadah.user.domains.entities.UserTest.EMAIL;
 import static com.tadah.user.domains.entities.UserTest.NAME;
 import static com.tadah.user.domains.entities.UserTest.PASSWORD;
-import static com.tadah.user.domains.entities.UserTest.USER;
 import static com.tadah.user.domains.entities.UserTest.USER_ID;
+import static com.tadah.user.domains.entities.UserTest.getUser;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 
 @DataJpaTest
 @DisplayName("UserRepository 클래스")
 public class UserRepositoryTest {
-    private static final User USER_WITHOUT_PASSWORD = new User(EMAIL, NAME);
+    public static final User USER_WITHOUT_PASSWORD = new User(EMAIL, NAME);
 
     @Autowired
     private UserRepository userRepository;
@@ -62,8 +62,8 @@ public class UserRepositoryTest {
         @Test
         @DisplayName("사용자 정보를 저장한다.")
         public void it_saves_a_user_data() {
-            USER.setPassword(PASSWORD, passwordEncoder);
-            final User savedUser = subject(USER);
+//            USER.setPassword(PASSWORD, passwordEncoder);
+            final User savedUser = subject(getUser());
             assertThat(new Describe_findById().subject(savedUser.getId()))
                 .isPresent()
                 .get()
@@ -86,7 +86,7 @@ public class UserRepositoryTest {
         public final class Context_userExist {
             @BeforeEach
             private void beforeEach() {
-                new Describe_save().subject(USER);
+                new Describe_save().subject(getUser());
             }
 
             @Test
@@ -132,7 +132,7 @@ public class UserRepositoryTest {
         public final class Context_userExist {
             @BeforeEach
             private void beforeEach() {
-                new Describe_save().subject(USER);
+                new Describe_save().subject(getUser());
             }
 
             @Test
@@ -169,7 +169,7 @@ public class UserRepositoryTest {
 
             @BeforeEach
             private void beforeEach() {
-                userId = new Describe_save().subject(USER).getId();
+                userId = new Describe_save().subject(getUser()).getId();
             }
 
             @Test

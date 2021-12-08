@@ -21,7 +21,7 @@ import static com.tadah.auth.utils.JwtUtilTest.VALID_TOKEN;
 import static com.tadah.user.domains.entities.UserTest.EMAIL;
 import static com.tadah.user.domains.entities.UserTest.NAME;
 import static com.tadah.user.domains.entities.UserTest.PASSWORD;
-import static com.tadah.user.domains.entities.UserTest.USER;
+import static com.tadah.user.domains.entities.UserTest.getUser;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 
@@ -47,8 +47,7 @@ public class AuthenticationServiceTest {
     private Long userId;
     @BeforeEach
     private void beforeEach() {
-        USER.setPassword(PASSWORD, passwordEncoder);
-        userId = userRepository.save(USER).getId();
+        userId = userRepository.save(getUser()).getId();
     }
 
     @AfterEach

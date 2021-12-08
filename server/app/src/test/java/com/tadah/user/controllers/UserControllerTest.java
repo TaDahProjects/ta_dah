@@ -32,8 +32,7 @@ import java.util.stream.Stream;
 import static com.tadah.user.domains.entities.UserTest.EMAIL;
 import static com.tadah.user.domains.entities.UserTest.NAME;
 import static com.tadah.user.domains.entities.UserTest.PASSWORD;
-import static com.tadah.user.domains.entities.UserTest.PASSWORD_ENCODER;
-import static com.tadah.user.domains.entities.UserTest.USER;
+import static com.tadah.user.domains.entities.UserTest.getUser;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -164,8 +163,7 @@ public final class UserControllerTest {
         public final class Context_emailAlreadyExists {
             @BeforeEach
             private void beforeEach() {
-                USER.setPassword(PASSWORD, PASSWORD_ENCODER);
-                userRepository.save(USER);
+                userRepository.save(getUser());
             }
 
             @Test
