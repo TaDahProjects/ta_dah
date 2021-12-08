@@ -45,6 +45,7 @@ import static com.tadah.user.domains.entities.UserTest.USER;
 import static com.tadah.vehicle.domains.entities.VehicleTest.LATITUDE;
 import static com.tadah.vehicle.domains.entities.VehicleTest.LONGITUDE;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -101,7 +102,7 @@ public final class VehicleControllerTest {
         private String token;
 
         private String getErrorResponse() throws Exception {
-           return Parser.toJson(new ErrorResponse(VEHICLES_URL, HttpMethod.POST.toString(), new VehicleAlreadyExistException().getMessage()));
+            return Parser.toJson(new ErrorResponse(VEHICLES_URL, HttpMethod.POST.toString(), new VehicleAlreadyExistException().getMessage()));
         }
 
         public Describe_create() {
@@ -297,6 +298,150 @@ public final class VehicleControllerTest {
             public void it_starts_the_driving() throws Exception {
                 subject(token, getDrivingRequest(LATITUDE, LONGITUDE))
                     .andExpect(status().isCreated());
+            }
+        }
+    }
+
+
+    @Nested
+    @DisplayName("stopDriving 메서드는")
+    public final class Describe_stopDriving extends LoginFailTest {
+        private Long userId;
+        private String token;
+
+        public String getErrorResponse(final String errorMessage) throws Exception {
+            return Parser.toJson(new ErrorResponse(VEHICLES_URL + DRIVING_URL, HttpMethod.DELETE.toString(), errorMessage));
+        }
+
+        public Describe_stopDriving() throws Exception {
+            super(
+                mockMvc,
+                delete(VEHICLES_URL + DRIVING_URL)
+                    .accept(MediaType.APPLICATION_JSON_UTF8)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(getDrivingRequest(LATITUDE, LONGITUDE))
+            );
+        }
+
+        private ResultActions subject(final String token, final String requestBody) throws Exception {
+            return mockMvc.perform(
+                delete(VEHICLES_URL + DRIVING_URL)
+                    .header(AUTHORIZATION_HEADER, TOKEN_PREFIX + token)
+                    .accept(MediaType.APPLICATION_JSON_UTF8)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(requestBody)
+            );
+        }
+
+        @BeforeEach
+        private void beforeEach() {
+            USER.setPassword(PASSWORD, PASSWORD_ENCODER);
+            this.userId = userRepository.save(USER).getId();
+            roleRepository.save(new Role(userId, DRIVER_ROLE));
+            this.token = jwtUtil.encode(userId);
+        }
+
+        @Nested
+        @DisplayName("권한이 없는 경우")
+        public final class Context_emptyRole {
+            @BeforeEach
+            private void beforeEach() {
+                jpaRoleRepository.deleteAll();
+            }
+
+            @Test
+            @DisplayName("권한이 필요함을 알려준다.")
+            public void it_informs_that_role_is_required() throws Exception {
+                subject(token, getDrivingRequest(LATITUDE, LONGITUDE))
+                    .andExpect(status().isForbidden());
+            }
+        }
+
+        @Nested
+        @DisplayName("권한이 올바르지 않은 경우")
+        public final class Context_invalidRole {
+            @BeforeEach
+            private void beforeEach() {
+                jpaRoleRepository.deleteAll();
+                roleRepository.save(new Role(userId, "INVALID"));
+            }
+
+            @Test
+            @DisplayName("잘못된 권한임을 알려준다.")
+            public void it_informs_that_role_is_invalid() throws Exception {
+                subject(token, getDrivingRequest(LATITUDE, LONGITUDE))
+                    .andExpect(status().isForbidden());
+            }
+        }
+
+        @Nested
+        @DisplayName("유효하지 않은 데이터를 입력한 경우")
+        @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+        public final class Context_invalidData {
+            private Stream<Arguments> methodSource() throws Exception {
+                return Stream.of(
+                    Arguments.of(
+                        getDrivingRequest(null, LONGITUDE),
+                        getErrorResponse("위도가 입력되지 않았습니다.")
+                    ),
+                    Arguments.of(
+                        getDrivingRequest(-100D, LONGITUDE),
+                        getErrorResponse("위도 범위를 벗어났습니다.")
+                    ),
+                    Arguments.of(
+                        getDrivingRequest(100D, LONGITUDE),
+                        getErrorResponse("위도 범위를 벗어났습니다.")
+                    ),
+                    Arguments.of(
+                        getDrivingRequest(LATITUDE, null),
+                        getErrorResponse("경도가 입력되지 않았습니다.")
+                    ),
+                    Arguments.of(
+                        getDrivingRequest(LATITUDE, -200D),
+                        getErrorResponse("경도 범위를 벗어났습니다.")
+                    ),
+                    Arguments.of(
+                        getDrivingRequest(LATITUDE, 200D),
+                        getErrorResponse("경도 범위를 벗어났습니다.")
+                    )
+                );
+            }
+
+            @MethodSource("methodSource")
+            @DisplayName("입력 데이터가 잘못되었음을 알려준다.")
+            @ParameterizedTest(name = "input=\"{0}\" output=\"{1}\"")
+            public void it_notifies_that_input_data_is_invalid(final String input, final String output) throws Exception {
+                subject(token, input)
+                    .andExpect(status().isBadRequest())
+                    .andExpect(content().string(output));
+            }
+        }
+
+        @Nested
+        @DisplayName("차량이 존재하지 않는 경우")
+        public final class Context_vehicleNotExist {
+            @Test
+            @DisplayName("차량이 존재하지 않음을 알려준다.")
+            public void it_notifies_that_vehicle_not_exist() throws Exception {
+                subject(token, getDrivingRequest(LATITUDE, LONGITUDE))
+                    .andExpect(status().isNotFound())
+                    .andExpect(content().string(getErrorResponse(new VehicleNotFoundException().getMessage())));
+            }
+        }
+
+        @Nested
+        @DisplayName("차량이 존재하는 경우")
+        public final class Context_vehicleExist {
+            @BeforeEach
+            private void beforeEach() {
+                vehicleRepository.save(new Vehicle(userId));
+            }
+
+            @Test
+            @DisplayName("차량 운행을 종료한다.")
+            public void it_stops_the_driving() throws Exception {
+                subject(token, getDrivingRequest(LATITUDE, LONGITUDE))
+                    .andExpect(status().isNoContent());
             }
         }
     }
