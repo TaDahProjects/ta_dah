@@ -4,6 +4,7 @@ import com.tadah.vehicle.domains.entities.Vehicle;
 import com.tadah.vehicle.domains.repositories.VehicleRepository;
 import com.tadah.vehicle.domains.repositories.infra.JpaVehicleRepository;
 import com.tadah.vehicle.exceptions.VehicleAlreadyExistException;
+import com.tadah.vehicle.exceptions.VehicleNotDrivingException;
 import com.tadah.vehicle.exceptions.VehicleNotFoundException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -140,6 +141,66 @@ public class VehicleServiceTest {
                     .matches(vehicle -> !vehicle.isDriving())
                     .matches(vehicle -> latitude.equals(vehicle.getLatitude()))
                     .matches(vehicle -> longitude.equals(vehicle.getLongitude()));
+            }
+        }
+
+        @Nested
+        @DisplayName("차량이 존재하지 않는 경우")
+        public final class Context_vehicleNotExist {
+            @Test
+            @DisplayName("VehicleNotFoundException을 던진다.")
+            public void it_throws_vehicle_not_found_exception() {
+                assertThatThrownBy(() -> subject(LATITUDE, LONGITUDE))
+                    .isInstanceOf(VehicleNotFoundException.class);
+            }
+        }
+    }
+
+    @Nested
+    @DisplayName("updateLocation 메서드는")
+    public final class Describe_updateLocation {
+        private Vehicle subject(final Double latitude, final Double longitude) {
+            return vehicleService.updateLocation(USER_ID, latitude, longitude);
+        }
+
+        @Nested
+        @DisplayName("차량이 존재하는 경우")
+        public final class Context_vehicleExist {
+            @BeforeEach
+            private void beforeEach() {
+                if (!VEHICLE.isDriving()) {
+                    VEHICLE.toggleDriving();
+                }
+                vehicleRepository.save(VEHICLE);
+            }
+
+            @Test
+            @DisplayName("차량의 위치를 업데이트한다.")
+            public void it_updates_the_location_of_the_vehicle() {
+                final Double latitude = getLatitude();
+                final Double longitude = getLongitude();
+                assertThat(subject(latitude, longitude))
+                    .matches(vehicle -> latitude.equals(vehicle.getLatitude()))
+                    .matches(vehicle -> longitude.equals(vehicle.getLongitude()));
+            }
+        }
+
+        @Nested
+        @DisplayName("차량 운행이 종료된 경우")
+        public final class Context_notDriving {
+            @BeforeEach
+            private void beforeEach() {
+                if (VEHICLE.isDriving()) {
+                    VEHICLE.toggleDriving();
+                }
+                vehicleRepository.save(VEHICLE);
+            }
+
+            @Test
+            @DisplayName("VehicleNotDrivingException을 던진다.")
+            public void it_throws_vehicle_not_driving_exception() {
+                assertThatThrownBy(() -> subject(LATITUDE, LONGITUDE))
+                    .isInstanceOf(VehicleNotDrivingException.class);
             }
         }
 
