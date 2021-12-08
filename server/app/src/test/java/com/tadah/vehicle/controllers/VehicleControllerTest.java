@@ -43,6 +43,7 @@ import java.util.stream.Stream;
 import static com.tadah.user.domains.entities.UserTest.getUser;
 import static com.tadah.vehicle.domains.entities.VehicleTest.LATITUDE;
 import static com.tadah.vehicle.domains.entities.VehicleTest.LONGITUDE;
+import static com.tadah.vehicle.domains.entities.VehicleTest.setDriving;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -580,10 +581,7 @@ public final class VehicleControllerTest {
         public final class Context_notDriving {
             @BeforeEach
             private void beforeEach() {
-                if (vehicle.isDriving()) {
-                    vehicle.toggleDriving();
-                    vehicle = vehicleRepository.save(vehicle);
-                }
+                vehicle = vehicleRepository.save(setDriving(vehicle, false));
             }
 
             @Test
@@ -600,10 +598,7 @@ public final class VehicleControllerTest {
         public final class Context_vehicleExist {
             @BeforeEach
             private void beforeEach() {
-                if (!vehicle.isDriving()) {
-                    vehicle.toggleDriving();
-                    vehicle = vehicleRepository.save(vehicle);
-                }
+                vehicle = vehicleRepository.save(setDriving(vehicle, true));
             }
 
             @Test

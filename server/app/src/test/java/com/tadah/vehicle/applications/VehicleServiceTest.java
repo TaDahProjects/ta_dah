@@ -22,6 +22,7 @@ import static com.tadah.vehicle.domains.entities.VehicleTest.LONGITUDE;
 import static com.tadah.vehicle.domains.entities.VehicleTest.VEHICLE;
 import static com.tadah.vehicle.domains.entities.VehicleTest.getLatitude;
 import static com.tadah.vehicle.domains.entities.VehicleTest.getLongitude;
+import static com.tadah.vehicle.domains.entities.VehicleTest.getVehicle;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 
@@ -90,10 +91,7 @@ public class VehicleServiceTest {
             @ValueSource(booleans = {true, false})
             @ParameterizedTest(name = "isDriving = {0}")
             public void it_starts_the_driving(final boolean isDriving) {
-                if (VEHICLE.isDriving() == isDriving) {
-                    VEHICLE.toggleDriving();
-                }
-                vehicleRepository.save(VEHICLE);
+                vehicleRepository.save(getVehicle(isDriving));
 
                 final Double latitude = getLatitude();
                 final Double longitude = getLongitude();
@@ -130,10 +128,7 @@ public class VehicleServiceTest {
             @ValueSource(booleans = {true, false})
             @ParameterizedTest(name = "isDriving = {0}")
             public void it_starts_the_driving(final boolean isDriving) {
-                if (VEHICLE.isDriving() == isDriving) {
-                    VEHICLE.toggleDriving();
-                }
-                vehicleRepository.save(VEHICLE);
+                vehicleRepository.save(getVehicle(isDriving));
 
                 final Double latitude = getLatitude();
                 final Double longitude = getLongitude();
@@ -168,10 +163,7 @@ public class VehicleServiceTest {
         public final class Context_vehicleExist {
             @BeforeEach
             private void beforeEach() {
-                if (!VEHICLE.isDriving()) {
-                    VEHICLE.toggleDriving();
-                }
-                vehicleRepository.save(VEHICLE);
+                vehicleRepository.save(getVehicle(true));
             }
 
             @Test
@@ -190,10 +182,7 @@ public class VehicleServiceTest {
         public final class Context_notDriving {
             @BeforeEach
             private void beforeEach() {
-                if (VEHICLE.isDriving()) {
-                    VEHICLE.toggleDriving();
-                }
-                vehicleRepository.save(VEHICLE);
+                vehicleRepository.save(getVehicle(false));
             }
 
             @Test
