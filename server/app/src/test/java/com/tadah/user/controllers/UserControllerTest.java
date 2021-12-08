@@ -11,6 +11,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -31,6 +32,7 @@ import java.util.stream.Stream;
 import static com.tadah.user.domains.entities.UserTest.EMAIL;
 import static com.tadah.user.domains.entities.UserTest.NAME;
 import static com.tadah.user.domains.entities.UserTest.PASSWORD;
+import static com.tadah.user.domains.entities.UserTest.PASSWORD_ENCODER;
 import static com.tadah.user.domains.entities.UserTest.USER;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -47,9 +49,15 @@ public final class UserControllerTest {
     public static final String INVALID_PASSWORD_LOWER_CASE = "PASSWORD123!!";
     public static final String INVALID_PASSWORD_NUMBER = "Password!!";
     public static final String INVALID_PASSWORD_SPECIAL_CASE = "Password123";
-    private static final UserRequestData USER_REQUEST = new UserRequestData(EMAIL, NAME, PASSWORD);
-    private static final UserResponseData USER_RESPONSE = new UserResponseData(EMAIL, NAME);
     private static final String USERS_URL = "/users";
+
+    private static String getUserRequest(final String email, final String name, final String password) throws Exception {
+        return Parser.toJson(new UserRequestData(email, name, password));
+    }
+
+    private static String getUserResponse() throws Exception {
+        return Parser.toJson(new UserResponseData(EMAIL, NAME));
+    }
 
     @Autowired
     private MockMvc mockMvc;
@@ -67,12 +75,9 @@ public final class UserControllerTest {
 
     @Nested
     @DisplayName("register 메서드는")
-    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
     public final class Describe_register {
-        private Stream<Arguments> methodSource() throws Exception {
-            return Stream.of(
-                Arguments.of(Parser.toJson(USER_REQUEST), Parser.toJson(USER_RESPONSE))
-            );
+        private String getErrorResponse(final String errorMessage) throws Exception {
+            return Parser.toJson(new ErrorResponse(USERS_URL, HttpMethod.POST.toString(), errorMessage));
         }
 
         private ResultActions subject(final String requestBody) throws Exception {
@@ -83,13 +88,12 @@ public final class UserControllerTest {
                     .content(requestBody));
         }
 
-        @MethodSource("methodSource")
+        @Test
         @DisplayName("비밀번호를 제외한 사용자 정보를 리턴한다.")
-        @ParameterizedTest(name = "input=\"{0}\" output=\"{1}\"")
-        public void it_returns_user_data_without_a_password(final String input, final String output) throws Exception {
-            subject(input)
+        public void it_returns_user_data_without_a_password() throws Exception {
+            subject(getUserRequest(EMAIL, NAME, PASSWORD))
                 .andExpect(status().isCreated())
-                .andExpect(content().string(output));
+                .andExpect(content().string(getUserResponse()));
         }
 
         @Nested
@@ -99,48 +103,48 @@ public final class UserControllerTest {
             private Stream<Arguments> methodSource() throws Exception {
                 return Stream.of(
                     Arguments.of(
-                        Parser.toJson(new UserRequestData(null, NAME, PASSWORD)),
-                        Parser.toJson(new ErrorResponse(USERS_URL, HttpMethod.POST.toString(), "이메일이 입력되지 않았습니다."))
+                        getUserRequest(null, NAME, PASSWORD),
+                        getErrorResponse("이메일이 입력되지 않았습니다.")
                     ),
                     Arguments.of(
-                        Parser.toJson(new UserRequestData("", NAME, PASSWORD)),
-                        Parser.toJson(new ErrorResponse(USERS_URL, HttpMethod.POST.toString(), "유효하지 않은 이메일 형식입니다."))
+                        getUserRequest("", NAME, PASSWORD),
+                        getErrorResponse("유효하지 않은 이메일 형식입니다.")
                     ),
                     Arguments.of(
-                        Parser.toJson(new UserRequestData(INVALID_EMAIL, NAME, PASSWORD)),
-                        Parser.toJson(new ErrorResponse(USERS_URL, HttpMethod.POST.toString(), "유효하지 않은 이메일 형식입니다."))
+                        getUserRequest(INVALID_EMAIL, NAME, PASSWORD),
+                        getErrorResponse("유효하지 않은 이메일 형식입니다.")
                     ),
                     Arguments.of(
-                        Parser.toJson(new UserRequestData(EMAIL, null, PASSWORD)),
-                        Parser.toJson(new ErrorResponse(USERS_URL, HttpMethod.POST.toString(), "이름이 입력되지 않았습니다."))
+                        getUserRequest(EMAIL, null, PASSWORD),
+                        getErrorResponse("이름이 입력되지 않았습니다.")
                     ),
                     Arguments.of(
-                        Parser.toJson(new UserRequestData(EMAIL, "", PASSWORD)),
-                        Parser.toJson(new ErrorResponse(USERS_URL, HttpMethod.POST.toString(), "이름이 입력되지 않았습니다."))
+                        getUserRequest(EMAIL, "", PASSWORD),
+                        getErrorResponse("이름이 입력되지 않았습니다.")
                     ),
                     Arguments.of(
-                        Parser.toJson(new UserRequestData(EMAIL, NAME, null)),
-                        Parser.toJson(new ErrorResponse(USERS_URL, HttpMethod.POST.toString(), "비밀번호가 입력되지 않았습니다."))
+                        getUserRequest(EMAIL, NAME, null),
+                        getErrorResponse("비밀번호가 입력되지 않았습니다.")
                     ),
                     Arguments.of(
-                        Parser.toJson(new UserRequestData(EMAIL, NAME, "")),
-                        Parser.toJson(new ErrorResponse(USERS_URL, HttpMethod.POST.toString(), "최소 한개 이상의 대소문자와 숫자, 특수문자를 포함한 8자 이상의 비밀번호를 입력해야합니다."))
+                        getUserRequest(EMAIL, NAME, ""),
+                        getErrorResponse("최소 한개 이상의 대소문자와 숫자, 특수문자를 포함한 8자 이상의 비밀번호를 입력해야합니다.")
                     ),
                     Arguments.of(
-                        Parser.toJson(new UserRequestData(EMAIL, NAME, INVALID_PASSWORD_LOWER_CASE)),
-                        Parser.toJson(new ErrorResponse(USERS_URL, HttpMethod.POST.toString(), "최소 한개 이상의 대소문자와 숫자, 특수문자를 포함한 8자 이상의 비밀번호를 입력해야합니다."))
+                        getUserRequest(EMAIL, NAME, INVALID_PASSWORD_LOWER_CASE),
+                        getErrorResponse("최소 한개 이상의 대소문자와 숫자, 특수문자를 포함한 8자 이상의 비밀번호를 입력해야합니다.")
                     ),
                     Arguments.of(
-                        Parser.toJson(new UserRequestData(EMAIL, NAME, INVALID_PASSWORD_UPPER_CASE)),
-                        Parser.toJson(new ErrorResponse(USERS_URL, HttpMethod.POST.toString(), "최소 한개 이상의 대소문자와 숫자, 특수문자를 포함한 8자 이상의 비밀번호를 입력해야합니다."))
+                        getUserRequest(EMAIL, NAME, INVALID_PASSWORD_UPPER_CASE),
+                        getErrorResponse("최소 한개 이상의 대소문자와 숫자, 특수문자를 포함한 8자 이상의 비밀번호를 입력해야합니다.")
                     ),
                     Arguments.of(
-                        Parser.toJson(new UserRequestData(EMAIL, NAME, INVALID_PASSWORD_NUMBER)),
-                        Parser.toJson(new ErrorResponse(USERS_URL, HttpMethod.POST.toString(), "최소 한개 이상의 대소문자와 숫자, 특수문자를 포함한 8자 이상의 비밀번호를 입력해야합니다."))
+                        getUserRequest(EMAIL, NAME, INVALID_PASSWORD_NUMBER),
+                        getErrorResponse("최소 한개 이상의 대소문자와 숫자, 특수문자를 포함한 8자 이상의 비밀번호를 입력해야합니다.")
                     ),
                     Arguments.of(
-                        Parser.toJson(new UserRequestData(EMAIL, NAME, INVALID_PASSWORD_SPECIAL_CASE)),
-                        Parser.toJson(new ErrorResponse(USERS_URL, HttpMethod.POST.toString(), "최소 한개 이상의 대소문자와 숫자, 특수문자를 포함한 8자 이상의 비밀번호를 입력해야합니다."))
+                        getUserRequest(EMAIL, NAME, INVALID_PASSWORD_SPECIAL_CASE),
+                        getErrorResponse("최소 한개 이상의 대소문자와 숫자, 특수문자를 포함한 8자 이상의 비밀번호를 입력해야합니다.")
                     )
                 );
             }
@@ -156,30 +160,20 @@ public final class UserControllerTest {
         }
 
         @Nested
-        @TestInstance(TestInstance.Lifecycle.PER_CLASS)
         @DisplayName("등록하려는 사용자의 이메일이 이미 존재하는 경우")
         public final class Context_emailAlreadyExists {
-            private Stream<Arguments> methodSource() throws Exception {
-                return Stream.of(
-                    Arguments.of(
-                        Parser.toJson(USER_REQUEST),
-                        Parser.toJson(new ErrorResponse(USERS_URL, HttpMethod.POST.toString(), new UserEmailAlreadyExistException().getMessage()))
-                    )
-                );
-            }
-
             @BeforeEach
             private void beforeEach() {
+                USER.setPassword(PASSWORD, PASSWORD_ENCODER);
                 userRepository.save(USER);
             }
 
-            @MethodSource("methodSource")
+            @Test
             @DisplayName("이메일이 이미 존재함을 알려준다.")
-            @ParameterizedTest(name = "input=\"{0}\" output=\"{1}\"")
-            public void it_notifies_that_email_already_exists(final String input, final String output) throws Exception {
-                subject(input)
+            public void it_notifies_that_email_already_exists() throws Exception {
+                subject(getUserRequest(EMAIL, NAME, PASSWORD))
                     .andExpect(status().isBadRequest())
-                    .andExpect(content().string(output));
+                    .andExpect(content().string(getErrorResponse(new UserEmailAlreadyExistException().getMessage())));
             }
         }
     }
