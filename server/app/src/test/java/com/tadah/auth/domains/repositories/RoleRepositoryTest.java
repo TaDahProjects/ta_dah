@@ -16,6 +16,7 @@ import static com.tadah.auth.domains.entities.RoleTest.ROLE;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 @DataJpaTest
+@DisplayName("RoleRepository 클래스")
 public class RoleRepositoryTest {
     @Autowired
     private RoleRepository roleRepository;

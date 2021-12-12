@@ -1,8 +1,6 @@
 package com.tadah.user.controllers;
 
-import com.tadah.auth.domains.repositories.infra.JpaRoleRepository;
 import com.tadah.common.dtos.ErrorResponse;
-import com.tadah.user.domains.UserType;
 import com.tadah.user.domains.repositories.UserRepository;
 import com.tadah.user.domains.repositories.infra.JpaUserRepository;
 import com.tadah.user.dtos.UserRequestData;
@@ -49,10 +47,8 @@ public final class UserControllerTest {
     public static final String INVALID_PASSWORD_LOWER_CASE = "PASSWORD123!!";
     public static final String INVALID_PASSWORD_NUMBER = "Password!!";
     public static final String INVALID_PASSWORD_SPECIAL_CASE = "Password123";
-    private static final UserRequestData RIDER_REQUEST = new UserRequestData(EMAIL, NAME, PASSWORD, UserType.RIDER);
-    private static final UserRequestData DRIVER_REQUEST = new UserRequestData(EMAIL, NAME, PASSWORD, UserType.DRIVER);
-    private static final UserResponseData RIDER_RESPONSE = new UserResponseData(EMAIL, NAME, UserType.RIDER.name());
-    private static final UserResponseData DRIVER_RESPONSE = new UserResponseData(EMAIL, NAME, UserType.DRIVER.name());
+    private static final UserRequestData USER_REQUEST = new UserRequestData(EMAIL, NAME, PASSWORD);
+    private static final UserResponseData USER_RESPONSE = new UserResponseData(EMAIL, NAME);
     private static final String USERS_URL = "/users";
 
     @Autowired
@@ -64,23 +60,18 @@ public final class UserControllerTest {
     @Autowired
     private JpaUserRepository jpaUserRepository;
 
-    @Autowired
-    private JpaRoleRepository jpaRoleRepository;
-
     @AfterEach
     private void afterEach() {
         jpaUserRepository.deleteAll();
-        jpaRoleRepository.deleteAll();
     }
 
     @Nested
-    @DisplayName("createUser 메서드는")
+    @DisplayName("register 메서드는")
     @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-    public final class Describe_createUser {
+    public final class Describe_register {
         private Stream<Arguments> methodSource() throws Exception {
             return Stream.of(
-                Arguments.of(Parser.toJson(RIDER_REQUEST), Parser.toJson(RIDER_RESPONSE)),
-                Arguments.of(Parser.toJson(DRIVER_REQUEST), Parser.toJson(DRIVER_RESPONSE))
+                Arguments.of(Parser.toJson(USER_REQUEST), Parser.toJson(USER_RESPONSE))
             );
         }
 
@@ -108,112 +99,48 @@ public final class UserControllerTest {
             private Stream<Arguments> methodSource() throws Exception {
                 return Stream.of(
                     Arguments.of(
-                        Parser.toJson(new UserRequestData(null, NAME, PASSWORD, UserType.DRIVER)),
+                        Parser.toJson(new UserRequestData(null, NAME, PASSWORD)),
                         Parser.toJson(new ErrorResponse(USERS_URL, HttpMethod.POST.toString(), "이메일이 입력되지 않았습니다."))
                     ),
                     Arguments.of(
-                        Parser.toJson(new UserRequestData(null, NAME, PASSWORD, UserType.RIDER)),
-                        Parser.toJson(new ErrorResponse(USERS_URL, HttpMethod.POST.toString(), "이메일이 입력되지 않았습니다."))
-                    ),
-                    Arguments.of(
-                        Parser.toJson(new UserRequestData("", NAME, PASSWORD, UserType.DRIVER)),
+                        Parser.toJson(new UserRequestData("", NAME, PASSWORD)),
                         Parser.toJson(new ErrorResponse(USERS_URL, HttpMethod.POST.toString(), "유효하지 않은 이메일 형식입니다."))
                     ),
                     Arguments.of(
-                        Parser.toJson(new UserRequestData("", NAME, PASSWORD, UserType.RIDER)),
+                        Parser.toJson(new UserRequestData(INVALID_EMAIL, NAME, PASSWORD)),
                         Parser.toJson(new ErrorResponse(USERS_URL, HttpMethod.POST.toString(), "유효하지 않은 이메일 형식입니다."))
                     ),
                     Arguments.of(
-                        Parser.toJson(new UserRequestData(INVALID_EMAIL, NAME, PASSWORD, UserType.DRIVER)),
-                        Parser.toJson(new ErrorResponse(USERS_URL, HttpMethod.POST.toString(), "유효하지 않은 이메일 형식입니다."))
-                    ),
-                    Arguments.of(
-                        Parser.toJson(new UserRequestData(INVALID_EMAIL, NAME, PASSWORD, UserType.RIDER)),
-                        Parser.toJson(new ErrorResponse(USERS_URL, HttpMethod.POST.toString(), "유효하지 않은 이메일 형식입니다."))
-                    ),
-                    Arguments.of(
-                        Parser.toJson(new UserRequestData(EMAIL, null, PASSWORD, UserType.DRIVER)),
+                        Parser.toJson(new UserRequestData(EMAIL, null, PASSWORD)),
                         Parser.toJson(new ErrorResponse(USERS_URL, HttpMethod.POST.toString(), "이름이 입력되지 않았습니다."))
                     ),
                     Arguments.of(
-                        Parser.toJson(new UserRequestData(EMAIL, "", PASSWORD, UserType.DRIVER)),
+                        Parser.toJson(new UserRequestData(EMAIL, "", PASSWORD)),
                         Parser.toJson(new ErrorResponse(USERS_URL, HttpMethod.POST.toString(), "이름이 입력되지 않았습니다."))
                     ),
                     Arguments.of(
-                        Parser.toJson(new UserRequestData(EMAIL, null, PASSWORD, UserType.RIDER)),
-                        Parser.toJson(new ErrorResponse(USERS_URL, HttpMethod.POST.toString(), "이름이 입력되지 않았습니다."))
-                    ),
-                    Arguments.of(
-                        Parser.toJson(new UserRequestData(EMAIL, "", PASSWORD, UserType.RIDER)),
-                        Parser.toJson(new ErrorResponse(USERS_URL, HttpMethod.POST.toString(), "이름이 입력되지 않았습니다."))
-                    ),
-                    Arguments.of(
-                        Parser.toJson(new UserRequestData(EMAIL, NAME, null, UserType.DRIVER)),
+                        Parser.toJson(new UserRequestData(EMAIL, NAME, null)),
                         Parser.toJson(new ErrorResponse(USERS_URL, HttpMethod.POST.toString(), "비밀번호가 입력되지 않았습니다."))
                     ),
                     Arguments.of(
-                        Parser.toJson(new UserRequestData(EMAIL, NAME, null, UserType.RIDER)),
-                        Parser.toJson(new ErrorResponse(USERS_URL, HttpMethod.POST.toString(), "비밀번호가 입력되지 않았습니다."))
-                    ),
-                    Arguments.of(
-                        Parser.toJson(new UserRequestData(EMAIL, NAME, "", UserType.DRIVER)),
+                        Parser.toJson(new UserRequestData(EMAIL, NAME, "")),
                         Parser.toJson(new ErrorResponse(USERS_URL, HttpMethod.POST.toString(), "최소 한개 이상의 대소문자와 숫자, 특수문자를 포함한 8자 이상의 비밀번호를 입력해야합니다."))
                     ),
                     Arguments.of(
-                        Parser.toJson(new UserRequestData(EMAIL, NAME, "", UserType.RIDER)),
+                        Parser.toJson(new UserRequestData(EMAIL, NAME, INVALID_PASSWORD_LOWER_CASE)),
                         Parser.toJson(new ErrorResponse(USERS_URL, HttpMethod.POST.toString(), "최소 한개 이상의 대소문자와 숫자, 특수문자를 포함한 8자 이상의 비밀번호를 입력해야합니다."))
                     ),
                     Arguments.of(
-                        Parser.toJson(new UserRequestData(EMAIL, NAME, INVALID_PASSWORD_LOWER_CASE, UserType.DRIVER)),
+                        Parser.toJson(new UserRequestData(EMAIL, NAME, INVALID_PASSWORD_UPPER_CASE)),
                         Parser.toJson(new ErrorResponse(USERS_URL, HttpMethod.POST.toString(), "최소 한개 이상의 대소문자와 숫자, 특수문자를 포함한 8자 이상의 비밀번호를 입력해야합니다."))
                     ),
                     Arguments.of(
-                        Parser.toJson(new UserRequestData(EMAIL, NAME, INVALID_PASSWORD_LOWER_CASE, UserType.RIDER)),
+                        Parser.toJson(new UserRequestData(EMAIL, NAME, INVALID_PASSWORD_NUMBER)),
                         Parser.toJson(new ErrorResponse(USERS_URL, HttpMethod.POST.toString(), "최소 한개 이상의 대소문자와 숫자, 특수문자를 포함한 8자 이상의 비밀번호를 입력해야합니다."))
                     ),
                     Arguments.of(
-                        Parser.toJson(new UserRequestData(EMAIL, NAME, INVALID_PASSWORD_UPPER_CASE, UserType.DRIVER)),
+                        Parser.toJson(new UserRequestData(EMAIL, NAME, INVALID_PASSWORD_SPECIAL_CASE)),
                         Parser.toJson(new ErrorResponse(USERS_URL, HttpMethod.POST.toString(), "최소 한개 이상의 대소문자와 숫자, 특수문자를 포함한 8자 이상의 비밀번호를 입력해야합니다."))
-                    ),
-                    Arguments.of(
-                        Parser.toJson(new UserRequestData(EMAIL, NAME, INVALID_PASSWORD_UPPER_CASE, UserType.RIDER)),
-                        Parser.toJson(new ErrorResponse(USERS_URL, HttpMethod.POST.toString(), "최소 한개 이상의 대소문자와 숫자, 특수문자를 포함한 8자 이상의 비밀번호를 입력해야합니다."))
-                    ),
-                    Arguments.of(
-                        Parser.toJson(new UserRequestData(EMAIL, NAME, INVALID_PASSWORD_NUMBER, UserType.DRIVER)),
-                        Parser.toJson(new ErrorResponse(USERS_URL, HttpMethod.POST.toString(), "최소 한개 이상의 대소문자와 숫자, 특수문자를 포함한 8자 이상의 비밀번호를 입력해야합니다."))
-                    ),
-                    Arguments.of(
-                        Parser.toJson(new UserRequestData(EMAIL, NAME, INVALID_PASSWORD_NUMBER, UserType.RIDER)),
-                        Parser.toJson(new ErrorResponse(USERS_URL, HttpMethod.POST.toString(), "최소 한개 이상의 대소문자와 숫자, 특수문자를 포함한 8자 이상의 비밀번호를 입력해야합니다."))
-                    ),
-                    Arguments.of(
-                        Parser.toJson(new UserRequestData(EMAIL, NAME, INVALID_PASSWORD_SPECIAL_CASE, UserType.DRIVER)),
-                        Parser.toJson(new ErrorResponse(USERS_URL, HttpMethod.POST.toString(), "최소 한개 이상의 대소문자와 숫자, 특수문자를 포함한 8자 이상의 비밀번호를 입력해야합니다."))
-                    ),
-                    Arguments.of(
-                        Parser.toJson(new UserRequestData(EMAIL, NAME, INVALID_PASSWORD_SPECIAL_CASE, UserType.RIDER)),
-                        Parser.toJson(new ErrorResponse(USERS_URL, HttpMethod.POST.toString(), "최소 한개 이상의 대소문자와 숫자, 특수문자를 포함한 8자 이상의 비밀번호를 입력해야합니다."))
-                    ),
-                    Arguments.of(
-                        Parser.toJson(new UserRequestData(EMAIL, NAME, PASSWORD, null)),
-                        Parser.toJson(new ErrorResponse(USERS_URL, HttpMethod.POST.toString(), "사용자 타입이 입력되지 않았습니다."))
-                    ),
-                    Arguments.of(
-                        "{\"email\":\"test@test.com\",\"name\":\"name\",\"password\":\"password\",\"userType\":\"INVALID\"}",
-                        Parser.toJson(new ErrorResponse(USERS_URL, HttpMethod.POST.toString(), "유효하지 않은 입력형식입니다."))
-                    ),
-                    Arguments.of(
-                        "{\"email\":1,\"name\":\"name\",\"password\":\"password\",\"userType\":\"INVALID\"}",
-                        Parser.toJson(new ErrorResponse(USERS_URL, HttpMethod.POST.toString(), "유효하지 않은 입력형식입니다."))
-                    ),
-                    Arguments.of(
-                        "{\"email\":\"test@test.com\",\"name\":2,\"password\":\"password\",\"userType\":\"INVALID\"}",
-                        Parser.toJson(new ErrorResponse(USERS_URL, HttpMethod.POST.toString(), "유효하지 않은 입력형식입니다."))
-                    ),
-                    Arguments.of(
-                        "{\"email\":\"test@test.com\",\"name\":\"name\",\"password\":3,\"userType\":\"INVALID\"}",
-                        Parser.toJson(new ErrorResponse(USERS_URL, HttpMethod.POST.toString(), "유효하지 않은 입력형식입니다."))
                     )
                 );
             }
@@ -235,11 +162,7 @@ public final class UserControllerTest {
             private Stream<Arguments> methodSource() throws Exception {
                 return Stream.of(
                     Arguments.of(
-                        Parser.toJson(RIDER_REQUEST),
-                        Parser.toJson(new ErrorResponse(USERS_URL, HttpMethod.POST.toString(), new UserEmailAlreadyExistException().getMessage()))
-                    ),
-                    Arguments.of(
-                        Parser.toJson(DRIVER_REQUEST),
+                        Parser.toJson(USER_REQUEST),
                         Parser.toJson(new ErrorResponse(USERS_URL, HttpMethod.POST.toString(), new UserEmailAlreadyExistException().getMessage()))
                     )
                 );

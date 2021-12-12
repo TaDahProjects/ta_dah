@@ -5,7 +5,7 @@ import lombok.Generated;
 import lombok.Getter;
 
 /**
- * 인증 응답 데이터를 저장한다.
+ * 인증 결과를 저장한다.
  */
 @Generated
 @Getter

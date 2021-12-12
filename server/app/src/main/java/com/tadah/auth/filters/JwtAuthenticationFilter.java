@@ -21,7 +21,7 @@ import java.util.List;
 /**
  * 인증을 진행한다.
  */
-public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
+public final class JwtAuthenticationFilter extends BasicAuthenticationFilter {
     private static final String AUTHORIZATION_HEADER = "Authorization";
     private static final String TOKEN_PREFIX = "Bearer ";
 

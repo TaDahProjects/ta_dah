@@ -42,9 +42,9 @@ public final class JwtUtilTest {
     }
 
     @Nested
-    @DisplayName("verify 메서드는")
+    @DisplayName("decode 메서드는")
     @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-    public final class Describe_verify {
+    public final class Describe_decode {
         private Claims subject(final String token) {
             return JWT_UTIL.decode(token);
         }

@@ -49,8 +49,8 @@ public class AuthorizationServiceTest {
         }
 
         @Test
-        @DisplayName("권한을 저장한다.")
-        public void it_saves_a_role() {
+        @DisplayName("권한을 생성한다.")
+        public void it_creates_a_role() {
             assertThat(subject())
                 .matches(role -> ROLE.getName().equals(role.getName()))
                 .matches(role -> ROLE.getUserId().equals(role.getUserId()));

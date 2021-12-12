@@ -1,7 +1,5 @@
 package com.tadah.user.domains.entities;
 
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.Generated;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,7 +14,6 @@ import javax.validation.constraints.NotNull;
 @Entity
 @Getter
 @NoArgsConstructor
-@AllArgsConstructor(access = AccessLevel.PACKAGE)
 public final class User {
     @Id
     @GeneratedValue

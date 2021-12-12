@@ -13,7 +13,7 @@ import java.io.IOException;
 /**
  * JwtAuthenticationFilter에서 던져진 예외를 처리한다.
  */
-public class AuthenticationErrorFilter extends HttpFilter {
+public final class AuthenticationErrorFilter extends HttpFilter {
     @Override
     protected void doFilter(
         final HttpServletRequest request,

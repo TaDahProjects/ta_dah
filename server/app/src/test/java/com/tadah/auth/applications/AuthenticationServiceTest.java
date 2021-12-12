@@ -61,8 +61,8 @@ public class AuthenticationServiceTest {
     }
 
     @Nested
-    @DisplayName("publishToken 메서드는")
-    public final class Describe_publishToken {
+    @DisplayName("publish 메서드는")
+    public final class Describe_publish {
         private String subject(final String email, final String password) {
             return authenticationService.publish(email, password);
         }
@@ -103,8 +103,8 @@ public class AuthenticationServiceTest {
     }
 
     @Nested
-    @DisplayName("verifyToken 메서드는")
-    public final class Describe_verifyToken {
+    @DisplayName("verify 메서드는")
+    public final class Describe_verify {
         private User subject(final String token) {
             return authenticationService.verify(token);
         }

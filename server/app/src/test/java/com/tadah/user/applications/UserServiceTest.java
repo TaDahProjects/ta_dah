@@ -43,8 +43,8 @@ public class UserServiceTest {
     }
 
     @Nested
-    @DisplayName("registerUser 메서드는")
-    public final class Describe_registerUser {
+    @DisplayName("register 메서드는")
+    public final class Describe_register {
         private User subject() {
             return userService.register(USER, PASSWORD);
         }
@@ -74,7 +74,7 @@ public class UserServiceTest {
             @Test
             @DisplayName("UserEmailDuplicationException을 던진다.")
             public void it_throws_user_email_duplication_exception() {
-                assertThatThrownBy(Describe_registerUser.this::subject)
+                assertThatThrownBy(Describe_register.this::subject)
                     .isInstanceOf(UserEmailAlreadyExistException.class);
             }
         }
