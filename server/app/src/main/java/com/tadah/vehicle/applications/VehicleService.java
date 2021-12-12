@@ -3,6 +3,7 @@ package com.tadah.vehicle.applications;
 import com.tadah.vehicle.domains.entities.Vehicle;
 import com.tadah.vehicle.domains.repositories.VehicleRepository;
 import com.tadah.vehicle.exceptions.VehicleAlreadyExistException;
+import com.tadah.vehicle.exceptions.VehicleNotDrivingException;
 import com.tadah.vehicle.exceptions.VehicleNotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -73,6 +74,26 @@ public final class VehicleService {
 
         if (vehicle.isDriving()) {
             vehicle.toggleDriving();
+        }
+
+        return vehicleRepository.save(vehicle);
+    }
+
+    /**
+     * 차량의 위치를 업데이트한다.
+     *
+     * @param userId 차량의 소유자
+     * @param latitude 위도
+     * @param longitude 경도
+     * @return 위치를 업데이트한 차량 정보
+     * @throws VehicleNotFoundException 사용자가 차량을 소유하고 있지 않은 경우
+     * @throws VehicleNotDrivingException 차량 운행이 종료된 경우
+     */
+    public Vehicle updateLocation(final Long userId, final Double latitude, final Double longitude) {
+        final Vehicle vehicle = findVehicleAndUpdateLocation(userId, latitude, longitude);
+
+        if (!vehicle.isDriving()) {
+            throw new VehicleNotDrivingException();
         }
 
         return vehicleRepository.save(vehicle);

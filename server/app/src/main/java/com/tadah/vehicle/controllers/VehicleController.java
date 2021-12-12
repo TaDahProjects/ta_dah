@@ -7,6 +7,7 @@ import com.tadah.vehicle.applications.VehicleService;
 import com.tadah.vehicle.domains.entities.Vehicle;
 import com.tadah.vehicle.dtos.DrivingRequestData;
 import com.tadah.vehicle.exceptions.VehicleAlreadyExistException;
+import com.tadah.vehicle.exceptions.VehicleNotDrivingException;
 import com.tadah.vehicle.exceptions.VehicleNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -14,6 +15,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -97,5 +99,26 @@ public class VehicleController {
         final Double latitude = drivingRequestData.getLatitude();
         final Double longitude = drivingRequestData.getLongitude();
         vehicleService.stopDriving(userId, latitude, longitude);
+    }
+
+    /**
+     * 차량 위치를 업데이트한다.
+     *
+     * @param user 차량의 소유자
+     * @param drivingRequestData 업데이트할 차량의 위치 정보
+     * @throws VehicleNotDrivingException 차량 운행이 종료된 경우
+     * @throws VehicleNotFoundException 사용자가 차량을 소유하고 있지 않은 경우
+     */
+    @PutMapping("/driving")
+    @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("isAuthenticated() and hasAuthority('DRIVER')")
+    public void updateLocation(
+        @AuthenticationPrincipal final User user,
+        @RequestBody @Valid final DrivingRequestData drivingRequestData
+    ) {
+        final Long userId = user.getId();
+        final Double latitude = drivingRequestData.getLatitude();
+        final Double longitude = drivingRequestData.getLongitude();
+        vehicleService.updateLocation(userId, latitude, longitude);
     }
 }
