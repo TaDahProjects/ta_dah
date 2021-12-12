@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -76,5 +77,25 @@ public class VehicleController {
         final Double latitude = drivingRequestData.getLatitude();
         final Double longitude = drivingRequestData.getLongitude();
         vehicleService.startDriving(userId, latitude, longitude);
+    }
+
+    /**
+     * 차량 운행을 종료한다.
+     *
+     * @param user 차량의 소유자
+     * @param drivingRequestData 차량 운행 종료 위치 정보
+     * @throws VehicleNotFoundException 사용자가 차량을 소유하고 있지 않은 경우
+     */
+    @DeleteMapping("/driving")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("isAuthenticated() and hasAuthority('DRIVER')")
+    public void stopDriving(
+        @AuthenticationPrincipal final User user,
+        @RequestBody @Valid final DrivingRequestData drivingRequestData
+    ) {
+        final Long userId = user.getId();
+        final Double latitude = drivingRequestData.getLatitude();
+        final Double longitude = drivingRequestData.getLongitude();
+        vehicleService.stopDriving(userId, latitude, longitude);
     }
 }
