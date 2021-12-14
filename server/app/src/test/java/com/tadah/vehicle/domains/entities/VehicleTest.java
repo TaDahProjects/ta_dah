@@ -22,6 +22,18 @@ public final class VehicleTest {
         return VEHICLE.getLongitude() == null ? LONGITUDE : VEHICLE.getLongitude() + 1;
     }
 
+    public static Vehicle setDriving(final Vehicle vehicle, final boolean isDriving) {
+        if (vehicle.isDriving() != isDriving) {
+            vehicle.toggleDriving();
+        }
+        return vehicle;
+    }
+
+    public static Vehicle getVehicle(final boolean isDriving) {
+        return setDriving(VEHICLE, isDriving);
+    }
+
+
     @Nested
     @DisplayName("toggleDriving 메서드는")
     public final class Describe_toggleDriving {

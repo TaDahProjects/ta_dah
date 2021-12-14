@@ -16,7 +16,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import static com.tadah.user.domains.entities.UserTest.EMAIL;
 import static com.tadah.user.domains.entities.UserTest.NAME;
 import static com.tadah.user.domains.entities.UserTest.PASSWORD;
-import static com.tadah.user.domains.entities.UserTest.USER;
+import static com.tadah.user.domains.repositories.UserRepositoryTest.USER_WITHOUT_PASSWORD;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 
@@ -46,7 +46,7 @@ public class UserServiceTest {
     @DisplayName("register 메서드는")
     public final class Describe_register {
         private User subject() {
-            return userService.register(USER, PASSWORD);
+            return userService.register(USER_WITHOUT_PASSWORD, PASSWORD);
         }
 
         @Nested

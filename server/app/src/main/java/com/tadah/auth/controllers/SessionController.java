@@ -3,6 +3,8 @@ package com.tadah.auth.controllers;
 import com.tadah.auth.applications.AuthenticationService;
 import com.tadah.auth.dtos.SessionRequestData;
 import com.tadah.auth.dtos.SessionResponseData;
+import com.tadah.user.domains.entities.User;
+import com.tadah.user.dtos.UserResponseData;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -26,6 +28,10 @@ public final class SessionController {
     public SessionController(final AuthenticationService authenticationService) {
         this.authenticationService = authenticationService;
     }
+
+    private SessionResponseData toDto(final String token) {
+        return new SessionResponseData(token);
+    }
     
     /**
      * JWT를 발행한다.
@@ -38,6 +44,6 @@ public final class SessionController {
     @ResponseStatus(HttpStatus.CREATED)
     public SessionResponseData login(@RequestBody @Valid final SessionRequestData requestData) {
         final String token = authenticationService.publish(requestData.getEmail(), requestData.getPassword());
-        return new SessionResponseData(token);
+        return toDto(token);
     }
 }

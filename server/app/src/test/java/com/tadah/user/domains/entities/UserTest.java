@@ -15,9 +15,14 @@ public final class UserTest {
     public static final String EMAIL = "test@test.com";
     public static final String NAME = "name";
     public static final String PASSWORD = "Password123!!";
-    public static final User USER = new User(EMAIL, NAME);
 
-    public static final PasswordEncoder PASSWORD_ENCODER = new BCryptPasswordEncoder();
+
+    private static final User USER = new User(EMAIL, NAME);
+    private static final PasswordEncoder PASSWORD_ENCODER = new BCryptPasswordEncoder();
+    public static User getUser() {
+        USER.setPassword(PASSWORD, PASSWORD_ENCODER);
+        return USER;
+    }
 
     @Nested
     @DisplayName("setPassword 메서드는")
