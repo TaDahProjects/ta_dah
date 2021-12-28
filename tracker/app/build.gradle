@@ -61,7 +61,7 @@ dependencies {
 
 application {
     // Define the main class for the application.
-    mainClass = 'com.tadah.App'
+    mainClass = 'com.tadah.Tracker'
 }
 
 tasks.named('test') {
