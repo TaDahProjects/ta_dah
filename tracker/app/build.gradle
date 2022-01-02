@@ -13,6 +13,9 @@ plugins {
     // Spring
     id 'org.springframework.boot' version '2.3.5.RELEASE'
     id 'io.spring.dependency-management' version '1.0.10.RELEASE'
+
+    // Jacoco
+    id 'jacoco'
 }
 
 repositories {
@@ -53,6 +56,9 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     runtimeOnly 'com.h2database:h2'
 
+    // AWS Kinesis Client
+    implementation group: 'software.amazon.kinesis', name: 'amazon-kinesis-client', version: '2.3.9'
+
     // Spring Boot Test
     testImplementation('org.springframework.boot:spring-boot-starter-test') {
         exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
@@ -67,4 +73,26 @@ application {
 tasks.named('test') {
     // Use junit platform for unit tests.
     useJUnitPlatform()
+}
+
+jacoco {
+    toolVersion = "0.8.7"
+}
+
+jacocoTestCoverageVerification {
+    violationRules {
+        rule {
+            element = "CLASS"
+
+            limit {
+                counter = 'LINE'
+                minimum = 1
+            }
+
+            limit {
+                counter = 'BRANCH'
+                minimum = 1
+            }
+        }
+    }
 }
