@@ -19,6 +19,9 @@ public class Tracker implements CommandLineRunner {
         this.applicationContext = applicationContext;
    }
 
+    /**
+     * Kinesis 레코드를 수신한다.
+     */
     @Override
     public void run(String... args) {
         final ConfigsBuilder configsBuilder = applicationContext.getBean(ConfigsBuilder.class);
