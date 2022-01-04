@@ -1,4 +1,4 @@
-package com.tadah.location.kinesis;
+package com.tadah.driving.kinesis;
 
 import org.springframework.stereotype.Component;
 import software.amazon.kinesis.processor.ShardRecordProcessor;

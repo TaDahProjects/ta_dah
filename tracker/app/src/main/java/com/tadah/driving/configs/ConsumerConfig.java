@@ -1,6 +1,6 @@
-package com.tadah.location.configs;
+package com.tadah.driving.configs;
 
-import com.tadah.location.kinesis.ConsumerProcessorFactory;
+import com.tadah.driving.kinesis.ConsumerProcessorFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
