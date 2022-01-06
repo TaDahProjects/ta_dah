@@ -18,6 +18,9 @@ import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
+/**
+ * 좌표계 변환을 담당한다
+ */
 @Component
 public final class CoordinateUtil {
     private static final ProjectedCoordinateReferenceSystem EPSG_5179 = CrsRegistry.getProjectedCoordinateReferenceSystemForEPSG(5179);
@@ -32,6 +35,13 @@ public final class CoordinateUtil {
         geometryFactory = JTSFactoryFinder.getGeometryFactory();
     }
 
+    /**
+     * 좌표계 변환을 수행한다
+     *
+     * @param latitude 위도
+     * @param longitude 경도
+     * @return EPSG 5179 좌표
+     */
     public Optional<Point<C2D>> transform(final Double latitude, final Double longitude) {
         try {
             final Coordinate sourceCoordinate = new Coordinate(latitude, longitude);
