@@ -19,8 +19,11 @@ plugins {
 }
 
 repositories {
-    // Use Maven Central for resolving dependencies.
-    mavenCentral()
+    maven { url "https://maven.geo-solutions.it/" }
+    maven { url "https://repo.osgeo.org/repository/release/" }
+    mavenCentral().content {
+        excludeModule("javax.media", "jai_core")
+    }
 }
 
 dependencies {
@@ -47,13 +50,18 @@ dependencies {
 
     // Spring Validation
     implementation 'org.springframework.boot:spring-boot-starter-validation'
-    
+
     // Lombok
     compileOnly 'org.projectlombok:lombok:1.18.16'
     annotationProcessor 'org.projectlombok:lombok:1.18.16'
 
     // Spring Data JPA
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+
+    // Geo Tools
+    implementation 'org.geotools:gt-swing:26.1.06'
+    implementation 'org.geotools:gt-shapefile:26.1.06'
+    implementation 'org.geotools:gt-epsg-hsql:26.1.06'
 
     // Hibernate Spatial
     implementation 'org.hibernate:hibernate-spatial:5.6.0.Final'
