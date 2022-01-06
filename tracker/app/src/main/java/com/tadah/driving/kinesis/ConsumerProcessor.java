@@ -1,4 +1,4 @@
-package com.tadah.location.kinesis;
+package com.tadah.driving.kinesis;
 
 import software.amazon.kinesis.lifecycle.events.InitializationInput;
 import software.amazon.kinesis.lifecycle.events.LeaseLostInput;
