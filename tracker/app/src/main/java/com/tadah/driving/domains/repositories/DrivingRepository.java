@@ -27,4 +27,20 @@ public interface DrivingRepository {
      */
     @Query(value = "select * from driving where user_id = :userId and is_driving = true", nativeQuery = true)
     Optional<Driving> findDriving(final Long userId);
+
+    /**
+     * 현재 위치를 업데이트한다.
+     *
+     * @param id 업데이트할 운행 정보 아이디
+     * @param location 업데이트할 현재 위치
+     */
+    @Modifying
+    @Transactional
+    @Query(
+        nativeQuery = true,
+        value = "update driving set path = st_addpoint(" +
+            "(case when st_isempty(path) then st_addpoint(path, :location) else path end)" +
+            ", :location) where id = :id"
+    )
+    void updateLocation(@Param(value = "id") final Long id, @Param(value = "location") final Point<C2D> location);
 }

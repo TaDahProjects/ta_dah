@@ -16,6 +16,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import java.util.Optional;
 
 import static com.tadah.dirving.domains.entities.DrivingTest.DRIVING;
+import static com.tadah.dirving.domains.entities.DrivingTest.POINT;
 import static com.tadah.dirving.domains.entities.DrivingTest.USER_ID;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -86,6 +87,32 @@ public class DrivingRepositoryTest {
                 assertThat(subject())
                     .isEmpty();
             }
+        }
+    }
+
+    @Nested
+    @DisplayName("updateLocation 메서드는")
+    public final class Describe_updateLocation {
+        private Long id;
+
+        private void subject(final Long id) {
+            drivingRepository.updateLocation(id, POINT);
+        }
+
+        @BeforeEach
+        private void beforeEach() {
+            id = new Describe_save().subject().getId();
+        }
+
+        @Test
+        @DisplayName("현재위치를 업데이트한다.")
+        public void it_updates_a_current_location() {
+            subject(id);
+
+            assertThat(jpaDrivingRepository.findById(id))
+                .isPresent()
+                .get()
+                .matches(driving -> driving.getPath().getEndPosition().equals(POINT.getPosition()));
         }
     }
 }
