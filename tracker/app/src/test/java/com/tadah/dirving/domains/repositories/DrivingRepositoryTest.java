@@ -4,14 +4,19 @@ import com.tadah.driving.domains.entities.Driving;
 import com.tadah.driving.domains.repositories.DrivingRepository;
 import com.tadah.driving.domains.repositories.infra.JpaDrivingRepository;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
+import java.util.Optional;
+
 import static com.tadah.dirving.domains.entities.DrivingTest.DRIVING;
+import static com.tadah.dirving.domains.entities.DrivingTest.USER_ID;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
@@ -45,6 +50,42 @@ public class DrivingRepositoryTest {
                 .isPresent()
                 .get()
                 .matches(driving -> DRIVING.getUserId().equals(driving.getUserId()));
+        }
+    }
+
+    @Nested
+    @DisplayName("findDriving 메서드는")
+    public final class Describe_findDriving {
+        private Optional<Driving> subject() {
+            return drivingRepository.findDriving(USER_ID);
+        }
+
+        @Nested
+        @DisplayName("드라이버가 운행을 시작한 경우")
+        @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+        public final class Context_startDriving {
+            @BeforeEach
+            private void beforeEach() {
+                new Describe_save().subject();
+            }
+
+            @Test
+            @DisplayName("운행정보를 찾는다.")
+            public void it_finds_a_driving_data() {
+                assertThat(subject())
+                    .isPresent();
+            }
+        }
+
+        @Nested
+        @DisplayName("드라이버가 운행을 종료한 경우")
+        public final class Context_stopDriving {
+            @Test
+            @DisplayName("운행을 종료하였음을 알려준다.")
+            public void it_notifies_that_driving_is_closed() {
+                assertThat(subject())
+                    .isEmpty();
+            }
         }
     }
 }
