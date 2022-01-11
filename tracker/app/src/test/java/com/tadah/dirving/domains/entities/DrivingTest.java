@@ -23,11 +23,10 @@ public final class DrivingTest {
     public static final Double Y = 967246.4762861007;
 
     private static final C2D POSITION = new C2D(X, Y);
-
-    public static final Point<C2D> POINT = Geometries.mkPoint(POSITION, COORDINATE_REFERENCE_SYSTEM);
-    public static final Driving DRIVING = new Driving(USER_ID, POINT);
     public static final Point<C2D> BEFORE_MAP_MATCH = Geometries.mkPoint(POSITION, COORDINATE_REFERENCE_SYSTEM);
     public static final Point<C2D> AFTER_MAP_MATCH = Geometries.mkPoint(new C2D(432633.8046912643, 664900.2020061786), COORDINATE_REFERENCE_SYSTEM);
+
+    public static final Driving DRIVING = new Driving(USER_ID, AFTER_MAP_MATCH);
 
     @Nested
     @DisplayName("stopDriving 메서드는")
@@ -39,7 +38,7 @@ public final class DrivingTest {
         @Test
         @DisplayName("운행을 종료시킨다")
         public void it_stops_the_driving() {
-            final Driving driving = new Driving(USER_ID, POINT);
+            final Driving driving = new Driving(USER_ID, AFTER_MAP_MATCH);
 
             subject(driving);
 

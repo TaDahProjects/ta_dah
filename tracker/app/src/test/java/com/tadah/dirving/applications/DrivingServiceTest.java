@@ -72,7 +72,7 @@ public class DrivingServiceTest {
 
         @BeforeAll
         private void beforeAll() {
-            driving = drivingRepository.save(new Driving(USER_ID, AFTER_MAP_MATCH));
+            driving = drivingRepository.save(DRIVING);
         }
 
         @AfterAll

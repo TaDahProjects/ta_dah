@@ -19,7 +19,6 @@ import java.util.Optional;
 import static com.tadah.dirving.domains.entities.DrivingTest.AFTER_MAP_MATCH;
 import static com.tadah.dirving.domains.entities.DrivingTest.BEFORE_MAP_MATCH;
 import static com.tadah.dirving.domains.entities.DrivingTest.DRIVING;
-import static com.tadah.dirving.domains.entities.DrivingTest.POINT;
 import static com.tadah.dirving.domains.entities.DrivingTest.USER_ID;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -99,7 +98,7 @@ public class DrivingRepositoryTest {
         private Long id;
 
         private void subject(final Long id) {
-            drivingRepository.update(id, POINT);
+            drivingRepository.update(id, AFTER_MAP_MATCH);
         }
 
         @BeforeEach
@@ -115,7 +114,7 @@ public class DrivingRepositoryTest {
             assertThat(jpaDrivingRepository.findById(id))
                 .isPresent()
                 .get()
-                .matches(driving -> driving.getPath().getEndPosition().equals(POINT.getPosition()));
+                .matches(driving -> driving.getPath().getEndPosition().equals(AFTER_MAP_MATCH.getPosition()));
         }
     }
 
