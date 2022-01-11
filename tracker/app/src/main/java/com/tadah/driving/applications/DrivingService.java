@@ -1,11 +1,14 @@
 package com.tadah.driving.applications;
 
+import com.tadah.driving.domains.entities.Driving;
 import com.tadah.driving.domains.repositories.DrivingRepository;
 import com.tadah.driving.utils.CoordinateUtil;
 import org.geolatte.geom.C2D;
 import org.geolatte.geom.Point;
 import org.opengis.referencing.operation.TransformException;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 public final class DrivingService {
@@ -28,5 +31,15 @@ public final class DrivingService {
     public Point<C2D> transForm(final Double latitude, final Double longitude) throws TransformException {
         final Point<C2D> point = coordinateUtil.fromGps(latitude, longitude);
         return drivingRepository.mapMatch(point).getPoint();
+    }
+
+    /**
+     * 차량 운행정보를 가져온다
+     *
+     * @param userId 드라이버 아이디
+     * @return 차량 운행 정보
+     */
+    public Optional<Driving> get(final Long userId) {
+        return drivingRepository.find(userId);
     }
 }
