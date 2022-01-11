@@ -11,14 +11,14 @@ import org.junit.jupiter.api.Test;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.operation.TransformException;
 
-import static com.tadah.dirving.domains.entities.DrivingTest.POINT;
+import static com.tadah.dirving.domains.entities.DrivingTest.LATITUDE;
+import static com.tadah.dirving.domains.entities.DrivingTest.LONGITUDE;
+import static com.tadah.dirving.domains.entities.DrivingTest.X;
+import static com.tadah.dirving.domains.entities.DrivingTest.Y;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 @DisplayName("CoordinateUtil 클래스")
 public final class CoordinateUtilTest {
-    private static final Double LATITUDE = 28.6D;
-    private static final Double LONGITUDE = 122.71D;
-
     private final CoordinateUtil coordinateUtil;
 
     public CoordinateUtilTest() throws FactoryException {
@@ -36,8 +36,8 @@ public final class CoordinateUtilTest {
         @DisplayName("GPS 데이터의 좌표계를 변환한다")
         public void it_converts_the_coordinate_system_of_gps_data() throws TransformException {
             assertThat(subject())
-                .matches(point -> point.getPosition().getX() == POINT.getPosition().getX())
-                .matches(point -> point.getPosition().getY() == POINT.getPosition().getY());
+                .matches(point -> point.getPosition().getX() == X)
+                .matches(point -> point.getPosition().getY() == Y);
         }
     }
 
@@ -45,7 +45,7 @@ public final class CoordinateUtilTest {
     @DisplayName("toGps 메서드는")
     public final class Describe_toGps {
         private Point<G2D> subject() throws TransformException {
-            return coordinateUtil.toGps(POINT.getPosition().getX(), POINT.getPosition().getY());
+            return coordinateUtil.toGps(X, Y);
         }
 
         @Test
