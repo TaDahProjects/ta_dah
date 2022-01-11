@@ -27,7 +27,7 @@ public interface DrivingRepository {
      * @return 운행 정보
      */
     @Query(value = "select * from driving where user_id = :userId and is_driving = true", nativeQuery = true)
-    Optional<Driving> findDriving(final Long userId);
+    Optional<Driving> find(final Long userId);
 
     /**
      * 운행정보를 업데이트한다.

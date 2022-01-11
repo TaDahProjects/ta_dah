@@ -58,10 +58,10 @@ public class DrivingRepositoryTest {
     }
 
     @Nested
-    @DisplayName("findDriving 메서드는")
-    public final class Describe_findDriving {
+    @DisplayName("find 메서드는")
+    public final class Describe_find {
         private Optional<Driving> subject() {
-            return drivingRepository.findDriving(USER_ID);
+            return drivingRepository.find(USER_ID);
         }
 
         @Nested
