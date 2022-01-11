@@ -93,7 +93,7 @@ public class DrivingServiceTest {
         public final class Context_stopDriving {
             @BeforeAll
             private void beforeAll() {
-                driving.setDriving(false);
+                driving.stopDriving();
                 drivingRepository.save(driving);
             }
 

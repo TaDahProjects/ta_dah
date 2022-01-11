@@ -7,6 +7,10 @@ import org.geolatte.geom.Point;
 import org.geolatte.geom.crs.CoordinateReferenceSystem;
 import org.geolatte.geom.crs.CrsRegistry;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 @DisplayName("Driving 클래스")
 public final class DrivingTest {
@@ -24,4 +28,23 @@ public final class DrivingTest {
     public static final Driving DRIVING = new Driving(USER_ID, POINT);
     public static final Point<C2D> BEFORE_MAP_MATCH = Geometries.mkPoint(POSITION, COORDINATE_REFERENCE_SYSTEM);
     public static final Point<C2D> AFTER_MAP_MATCH = Geometries.mkPoint(new C2D(432633.8046912643, 664900.2020061786), COORDINATE_REFERENCE_SYSTEM);
+
+    @Nested
+    @DisplayName("stopDriving 메서드는")
+    public final class Describe_stopDriving {
+        private void subject(final Driving driving) {
+            driving.stopDriving();
+        }
+
+        @Test
+        @DisplayName("운행을 종료시킨다")
+        public void it_stops_the_driving() {
+            final Driving driving = new Driving(USER_ID, POINT);
+
+            subject(driving);
+
+            assertThat(driving.isDriving())
+                .isFalse();
+        }
+    }
 }
