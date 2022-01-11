@@ -4,10 +4,13 @@ import com.tadah.driving.dto.LocationData;
 import lombok.Generated;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.geolatte.geom.C2D;
 import org.geolatte.geom.Geometries;
 import org.geolatte.geom.LineString;
 import org.geolatte.geom.Point;
+import org.geolatte.geom.PositionSequenceBuilder;
+import org.geolatte.geom.PositionSequenceBuilders;
 import org.geolatte.geom.crs.CoordinateReferenceSystem;
 import org.geolatte.geom.crs.CrsRegistry;
 
@@ -30,7 +33,9 @@ import javax.persistence.SqlResultSetMappings;
 @NoArgsConstructor
 @NamedNativeQuery(
     name = "Driving.mapMatch",
-    query = "select edge.id as id, st_astext(st_closestpoint(edge.geom, :point), 5179) as location from (select gid as id, geom as geom from ad0022 order by st_distance(:point, geom) limit 1) as edge",
+    query = "select edge.id as id, st_astext(st_closestpoint(edge.geom, :point), 5179) as location" +
+        " from (select gid as id, geom as geom from ad0022 order by st_distance(:point, geom) limit 1)" +
+        " as edge",
     resultSetMapping = "Driving.mapMatch"
 )
 @SqlResultSetMappings({
@@ -48,26 +53,29 @@ import javax.persistence.SqlResultSetMappings;
     )
 })
 public final class Driving {
-  private static final CoordinateReferenceSystem<C2D> COORDINATE_REFERENCE_SYSTEM = CrsRegistry.getProjectedCoordinateReferenceSystemForEPSG(5179);
-
   @Id
   @GeneratedValue
   private Long id;
 
   private Long userId;
 
+  @Setter
   private boolean isDriving = true;
-
-  @Column(columnDefinition = "geometry(Point,5179)")
-  private Point<C2D> currentLocation;
 
   @Column(columnDefinition = "geometry(LineString,5179)")
   private LineString<C2D> path;
 
+  private static LineString<C2D> getLineString(final C2D point) {
+      final PositionSequenceBuilder<C2D> positionSequenceBuilder = PositionSequenceBuilders.fixedSized(2, C2D.class);
+      positionSequenceBuilder.add(point);
+      positionSequenceBuilder.add(point);
+      return Geometries.mkLineString(
+          positionSequenceBuilder.toPositionSequence(),
+          CrsRegistry.getProjectedCoordinateReferenceSystemForEPSG(5179));
+  }
 
-  public Driving(final Long userId, final Point<C2D> currentLocation) {
+  public Driving(final Long userId, final Point<C2D> point) {
     this.userId = userId;
-    this.currentLocation = currentLocation;
-    this.path = Geometries.mkEmptyLineString(COORDINATE_REFERENCE_SYSTEM);
+    this.path = getLineString(point.getPosition());
   }
 }
