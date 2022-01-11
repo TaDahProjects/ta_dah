@@ -42,4 +42,14 @@ public final class DrivingService {
     public Optional<Driving> get(final Long userId) {
         return drivingRepository.find(userId);
     }
+
+    /**
+     * 차량 운행을 시작한다
+     *
+     * @param driving 시작할 운행 정보
+     * @return 시작한 운행 정보
+     */
+    public Driving start(final Driving driving) {
+        return drivingRepository.save(driving);
+    }
 }

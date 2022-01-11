@@ -24,6 +24,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import java.util.Optional;
 
 import static com.tadah.dirving.domains.entities.DrivingTest.AFTER_MAP_MATCH;
+import static com.tadah.dirving.domains.entities.DrivingTest.DRIVING;
 import static com.tadah.dirving.domains.entities.DrivingTest.LATITUDE;
 import static com.tadah.dirving.domains.entities.DrivingTest.LONGITUDE;
 import static com.tadah.dirving.domains.entities.DrivingTest.USER_ID;
@@ -90,9 +91,10 @@ public class DrivingServiceTest {
 
         @Nested
         @DisplayName("운행이 종료된 경우")
+        @TestInstance(TestInstance.Lifecycle.PER_CLASS)
         public final class Context_stopDriving {
-            @BeforeEach
-            private void beforeEach() {
+            @BeforeAll
+            private void beforeAll() {
                 drivingRepository.update(id, AFTER_MAP_MATCH, false);
             }
 
@@ -102,6 +104,27 @@ public class DrivingServiceTest {
                 assertThat(subject())
                     .isEmpty();
             }
+        }
+    }
+
+    @Nested
+    @DisplayName("start 메서드는")
+    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+    public final class Describe_start {
+        private Driving subject() {
+            return drivingService.start(DRIVING);
+        }
+
+        @AfterAll
+        private void afterAll() {
+            jpaDrivingRepository.deleteAll();
+        }
+
+        @Test
+        @DisplayName("운행을 시작한다")
+        public void it_starts_the_driving() {
+            assertThat(subject())
+                .matches(driving -> driving.getUserId().equals(USER_ID));
         }
     }
 }
