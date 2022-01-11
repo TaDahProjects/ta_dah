@@ -1,7 +1,9 @@
 package com.tadah.driving.domains.repositories;
 
 import com.tadah.driving.domains.entities.Driving;
+import com.tadah.driving.dto.LocationData;
 import org.geolatte.geom.C2D;
+import org.geolatte.geom.Geometry;
 import org.geolatte.geom.Point;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -43,4 +45,13 @@ public interface DrivingRepository {
             ", :location) where id = :id"
     )
     void updateLocation(@Param(value = "id") final Long id, @Param(value = "location") final Point<C2D> location);
+
+    /**
+     * 맵매칭을 수행한다
+     *
+     * @param point 맵매칭을 수행할 위치
+     * @return 맵매칭을 수행한 위치
+     */
+    @Query(nativeQuery = true)
+    LocationData mapMatch(@Param("point") final Geometry<C2D> point);
 }

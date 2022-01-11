@@ -3,6 +3,9 @@ package com.tadah.dirving.domains.repositories;
 import com.tadah.driving.domains.entities.Driving;
 import com.tadah.driving.domains.repositories.DrivingRepository;
 import com.tadah.driving.domains.repositories.infra.JpaDrivingRepository;
+import com.tadah.driving.dto.LocationData;
+import org.geolatte.geom.C2D;
+import org.geolatte.geom.Geometry;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -15,6 +18,8 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import java.util.Optional;
 
+import static com.tadah.dirving.domains.entities.DrivingTest.AFTER_MAP_MATCH;
+import static com.tadah.dirving.domains.entities.DrivingTest.BEFORE_MAP_MATCH;
 import static com.tadah.dirving.domains.entities.DrivingTest.DRIVING;
 import static com.tadah.dirving.domains.entities.DrivingTest.POINT;
 import static com.tadah.dirving.domains.entities.DrivingTest.USER_ID;
@@ -113,6 +118,21 @@ public class DrivingRepositoryTest {
                 .isPresent()
                 .get()
                 .matches(driving -> driving.getPath().getEndPosition().equals(POINT.getPosition()));
+        }
+    }
+
+    @Nested
+    @DisplayName("mapMatch 메서드는")
+    public final class Describe_mapMatch {
+        private LocationData subject(final Geometry<C2D> location) {
+            return drivingRepository.mapMatch(location);
+        }
+
+        @Test
+        @DisplayName("가장 가까운 도로 정보를 찾는다.")
+        public void it_finds_a_closest_edge() {
+            assertThat(subject(BEFORE_MAP_MATCH))
+                .matches(locationData -> locationData.getLocation().equals(AFTER_MAP_MATCH));
         }
     }
 }
