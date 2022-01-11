@@ -99,7 +99,7 @@ public class DrivingRepositoryTest {
         private Long id;
 
         private void subject(final Long id) {
-            drivingRepository.update(id, POINT, false);
+            drivingRepository.update(id, POINT);
         }
 
         @BeforeEach
@@ -115,8 +115,7 @@ public class DrivingRepositoryTest {
             assertThat(jpaDrivingRepository.findById(id))
                 .isPresent()
                 .get()
-                .matches(driving -> driving.getPath().getEndPosition().equals(POINT.getPosition()))
-                .matches(driving -> !driving.isDriving());
+                .matches(driving -> driving.getPath().getEndPosition().equals(POINT.getPosition()));
         }
     }
 

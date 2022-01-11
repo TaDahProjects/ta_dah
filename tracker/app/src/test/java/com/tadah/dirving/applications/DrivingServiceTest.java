@@ -8,9 +8,7 @@ import com.tadah.driving.utils.CoordinateUtil;
 import org.geolatte.geom.C2D;
 import org.geolatte.geom.Point;
 import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -66,7 +64,7 @@ public class DrivingServiceTest {
     @DisplayName("get 메서드는")
     @TestInstance(TestInstance.Lifecycle.PER_CLASS)
     public final class Describe_get {
-        private Long id;
+        private Driving driving;
 
         private Optional<Driving> subject() {
             return drivingService.get(USER_ID);
@@ -74,7 +72,7 @@ public class DrivingServiceTest {
 
         @BeforeAll
         private void beforeAll() {
-            id = drivingRepository.save(new Driving(USER_ID, AFTER_MAP_MATCH)).getId();
+            driving = drivingRepository.save(new Driving(USER_ID, AFTER_MAP_MATCH));
         }
 
         @AfterAll
@@ -95,7 +93,8 @@ public class DrivingServiceTest {
         public final class Context_stopDriving {
             @BeforeAll
             private void beforeAll() {
-                drivingRepository.update(id, AFTER_MAP_MATCH, false);
+                driving.setDriving(false);
+                drivingRepository.save(driving);
             }
 
             @Test
