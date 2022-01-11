@@ -16,12 +16,9 @@ import org.geolatte.geom.crs.CrsRegistry;
 @Getter
 @NoArgsConstructor
 public class PointData {
-    private Long id;
-
     private Point<C2D> point;
 
-    public PointData(final Long id, final String point) {
-        this.id = id;
+    public PointData(final String point) {
         this.point = Geometries.mkPoint(
             Wkt.fromWkt(point, CrsRegistry.getProjectedCoordinateReferenceSystemForEPSG(5179)).getPositionN(0),
             CrsRegistry.getProjectedCoordinateReferenceSystemForEPSG(5179));

@@ -32,8 +32,8 @@ import javax.persistence.SqlResultSetMappings;
 @NoArgsConstructor
 @NamedNativeQuery(
     name = "Driving.mapMatch",
-    query = "select edge.id as id, st_astext(st_closestpoint(edge.geom, :point), 5179) as point" +
-        " from (select gid as id, geom as geom from ad0022 order by st_distance(:point, geom) limit 1)" +
+    query = "select st_astext(st_closestpoint(edge.geom, :point), 5179) as point" +
+        " from (select geom as geom from ad0022 order by st_distance(:point, geom) limit 1)" +
         " as edge",
     resultSetMapping = "Driving.mapMatch"
 )
@@ -44,7 +44,6 @@ import javax.persistence.SqlResultSetMappings;
             @ConstructorResult(
                 targetClass = PointData.class,
                 columns = {
-                    @ColumnResult(name = "id", type = Long.class),
                     @ColumnResult(name = "point", type = String.class)
                 }
             )
