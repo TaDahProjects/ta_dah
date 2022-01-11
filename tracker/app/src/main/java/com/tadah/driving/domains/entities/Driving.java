@@ -1,6 +1,6 @@
 package com.tadah.driving.domains.entities;
 
-import com.tadah.driving.dto.LocationData;
+import com.tadah.driving.dto.PointData;
 import lombok.Generated;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,7 +11,6 @@ import org.geolatte.geom.LineString;
 import org.geolatte.geom.Point;
 import org.geolatte.geom.PositionSequenceBuilder;
 import org.geolatte.geom.PositionSequenceBuilders;
-import org.geolatte.geom.crs.CoordinateReferenceSystem;
 import org.geolatte.geom.crs.CrsRegistry;
 
 import javax.persistence.Column;
@@ -33,7 +32,7 @@ import javax.persistence.SqlResultSetMappings;
 @NoArgsConstructor
 @NamedNativeQuery(
     name = "Driving.mapMatch",
-    query = "select edge.id as id, st_astext(st_closestpoint(edge.geom, :point), 5179) as location" +
+    query = "select edge.id as id, st_astext(st_closestpoint(edge.geom, :point), 5179) as point" +
         " from (select gid as id, geom as geom from ad0022 order by st_distance(:point, geom) limit 1)" +
         " as edge",
     resultSetMapping = "Driving.mapMatch"
@@ -43,10 +42,10 @@ import javax.persistence.SqlResultSetMappings;
         name = "Driving.mapMatch",
         classes = {
             @ConstructorResult(
-                targetClass = LocationData.class,
+                targetClass = PointData.class,
                 columns = {
                     @ColumnResult(name = "id", type = Long.class),
-                    @ColumnResult(name = "location", type = String.class)
+                    @ColumnResult(name = "point", type = String.class)
                 }
             )
         }

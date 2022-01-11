@@ -3,7 +3,7 @@ package com.tadah.dirving.domains.repositories;
 import com.tadah.driving.domains.entities.Driving;
 import com.tadah.driving.domains.repositories.DrivingRepository;
 import com.tadah.driving.domains.repositories.infra.JpaDrivingRepository;
-import com.tadah.driving.dto.LocationData;
+import com.tadah.driving.dto.PointData;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -123,7 +123,7 @@ public class DrivingRepositoryTest {
     @Nested
     @DisplayName("mapMatch 메서드는")
     public final class Describe_mapMatch {
-        private LocationData subject() {
+        private PointData subject() {
             return drivingRepository.mapMatch(BEFORE_MAP_MATCH);
         }
 
@@ -131,7 +131,7 @@ public class DrivingRepositoryTest {
         @DisplayName("가장 가까운 도로 정보를 찾는다.")
         public void it_finds_a_closest_edge() {
             assertThat(subject())
-                .matches(locationData -> locationData.getLocation().equals(AFTER_MAP_MATCH));
+                .matches(pointData -> pointData.getPoint().equals(AFTER_MAP_MATCH));
         }
     }
 }
