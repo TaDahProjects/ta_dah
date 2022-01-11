@@ -25,6 +25,7 @@ public final class DrivingTest {
     private static final C2D POSITION = new C2D(X, Y);
     public static final Point<C2D> BEFORE_MAP_MATCH = Geometries.mkPoint(POSITION, COORDINATE_REFERENCE_SYSTEM);
     public static final Point<C2D> AFTER_MAP_MATCH = Geometries.mkPoint(new C2D(432633.8046912643, 664900.2020061786), COORDINATE_REFERENCE_SYSTEM);
+    public static final Point<C2D> POINT = Geometries.mkPoint(new C2D(321053.4421835386, 527648.6820867717), COORDINATE_REFERENCE_SYSTEM);
 
     public static final Driving DRIVING = new Driving(USER_ID, AFTER_MAP_MATCH);
 

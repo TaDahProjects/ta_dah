@@ -52,4 +52,14 @@ public final class DrivingService {
     public Driving start(final Driving driving) {
         return drivingRepository.save(driving);
     }
+
+    /**
+     * 위치 정보를 업데이트한다
+     *
+     * @param driving 차량 운행 정보
+     * @param point 업데이트할 위치 정보
+     */
+    public void update(final Driving driving, Point<C2D> point) {
+        drivingRepository.update(driving.getId(), point);
+    }
 }

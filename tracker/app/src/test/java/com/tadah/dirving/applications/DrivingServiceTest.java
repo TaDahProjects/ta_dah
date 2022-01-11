@@ -25,11 +25,12 @@ import static com.tadah.dirving.domains.entities.DrivingTest.AFTER_MAP_MATCH;
 import static com.tadah.dirving.domains.entities.DrivingTest.DRIVING;
 import static com.tadah.dirving.domains.entities.DrivingTest.LATITUDE;
 import static com.tadah.dirving.domains.entities.DrivingTest.LONGITUDE;
+import static com.tadah.dirving.domains.entities.DrivingTest.POINT;
 import static com.tadah.dirving.domains.entities.DrivingTest.USER_ID;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
-@DisplayName("DrivingRepository 클래스")
+@DisplayName("DrivingService 클래스")
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 public class DrivingServiceTest {
     private final DrivingService drivingService;
@@ -124,6 +125,38 @@ public class DrivingServiceTest {
         public void it_starts_the_driving() {
             assertThat(subject())
                 .matches(driving -> driving.getUserId().equals(USER_ID));
+        }
+    }
+
+    @Nested
+    @DisplayName("update 메서드는")
+    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+    public final class Describe_update {
+        private Driving driving;
+
+        private void subject() {
+            drivingService.update(driving, POINT);
+        }
+
+        @BeforeAll
+        private void beforeEach() {
+            driving = drivingRepository.save(DRIVING);
+        }
+
+        @AfterAll
+        private void afterAll() {
+            jpaDrivingRepository.deleteAll();
+        }
+
+        @Test
+        @DisplayName("위치정보를 업데이트한다")
+        public void it_updates_the_location_data() {
+            subject();
+
+            assertThat(jpaDrivingRepository.findById(driving.getId()))
+                .isPresent()
+                .get()
+                .matches(driving -> driving.getPath().getEndPosition().equals(POINT.getPosition()));
         }
     }
 }
