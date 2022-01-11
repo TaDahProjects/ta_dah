@@ -54,6 +54,17 @@ public final class DrivingService {
     }
 
     /**
+     * 차량 운행을 종료한다
+     *
+     * @param driving 종료할 운행 정보
+     * @return 종료한 운행 정보
+     */
+    public Driving stop(final Driving driving) {
+        driving.stopDriving();
+        return drivingRepository.save(driving);
+    }
+
+    /**
      * 위치 정보를 업데이트한다
      *
      * @param driving 차량 운행 정보

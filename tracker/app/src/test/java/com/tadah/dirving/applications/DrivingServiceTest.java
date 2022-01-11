@@ -9,6 +9,7 @@ import org.geolatte.geom.C2D;
 import org.geolatte.geom.Point;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -125,6 +126,38 @@ public class DrivingServiceTest {
         public void it_starts_the_driving() {
             assertThat(subject())
                 .matches(driving -> driving.getUserId().equals(USER_ID));
+        }
+    }
+
+    @Nested
+    @DisplayName("stop 메서드는")
+    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+    public final class Describe_stop {
+        private Driving driving;
+
+        private Driving subject() {
+            return drivingService.stop(driving);
+        }
+
+        @BeforeAll
+        private void beforeAll() {
+            driving = drivingService.start(DRIVING);
+        }
+
+        @AfterAll
+        private void afterAll() {
+            jpaDrivingRepository.deleteAll();
+        }
+
+        @Test
+        @DisplayName("운행을 시작한다")
+        public void it_starts_the_driving() {
+            subject();
+
+            assertThat(jpaDrivingRepository.findById(driving.getId()))
+                .isPresent()
+                .get()
+                .matches(driving -> !driving.isDriving());
         }
     }
 
