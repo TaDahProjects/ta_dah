@@ -34,20 +34,18 @@ public interface DrivingRepository {
      *
      * @param id 업데이트할 운행 정보 아이디
      * @param point 현재 위치
-     * @param isDriving 운행 여부
      */
     @Modifying
     @Transactional
     @Query(
         nativeQuery = true,
         value = "update driving " +
-            "set path = st_addpoint((case when st_isempty(path) then st_addpoint(path, :point) else path end), :point), is_driving = :isDriving " +
+            "set path = st_addpoint((case when st_isempty(path) then st_addpoint(path, :point) else path end), :point) " +
             "where id = :id"
     )
     void update(
         @Param(value = "id") final Long id,
-        @Param(value = "point") final Point<C2D> point,
-        @Param(value = "isDriving") final boolean isDriving);
+        @Param(value = "point") final Point<C2D> point);
 
     /**
      * 맵매칭을 수행한다

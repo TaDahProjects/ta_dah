@@ -57,7 +57,6 @@ public final class Driving {
 
   private Long userId;
 
-  @Setter
   private boolean isDriving = true;
 
   @Column(columnDefinition = "geometry(LineString,5179)")
@@ -75,5 +74,9 @@ public final class Driving {
   public Driving(final Long userId, final Point<C2D> point) {
     this.userId = userId;
     this.path = getLineString(point.getPosition());
+  }
+
+  public void stopDriving() {
+      isDriving = false;
   }
 }
