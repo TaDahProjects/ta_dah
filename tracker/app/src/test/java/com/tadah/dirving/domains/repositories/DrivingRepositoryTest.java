@@ -4,7 +4,8 @@ import com.tadah.driving.domains.entities.Driving;
 import com.tadah.driving.domains.repositories.DrivingRepository;
 import com.tadah.driving.domains.repositories.infra.JpaDrivingRepository;
 import com.tadah.driving.dto.PointData;
-import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -33,16 +34,17 @@ public class DrivingRepositoryTest {
     @Autowired
     private JpaDrivingRepository jpaDrivingRepository;
 
-    @AfterEach
-    private void afterEach() {
-        jpaDrivingRepository.deleteAll();
-    }
-
     @Nested
     @DisplayName("save 메서드는")
+    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
     public final class Describe_save {
         private Driving subject() {
             return drivingRepository.save(DRIVING);
+        }
+
+        @AfterAll
+        private void afterAll() {
+            jpaDrivingRepository.deleteAll();
         }
 
         @Test
@@ -59,31 +61,41 @@ public class DrivingRepositoryTest {
 
     @Nested
     @DisplayName("find 메서드는")
+    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
     public final class Describe_find {
+        private Driving driving;
+
         private Optional<Driving> subject() {
             return drivingRepository.find(USER_ID);
         }
 
-        @Nested
-        @DisplayName("드라이버가 운행을 시작한 경우")
-        @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-        public final class Context_startDriving {
-            @BeforeEach
-            private void beforeEach() {
-                new Describe_save().subject();
-            }
+        @BeforeAll
+        private void beforeAll() {
+            driving = new Describe_save().subject();
+        }
 
-            @Test
-            @DisplayName("운행정보를 찾는다.")
-            public void it_finds_a_driving_data() {
-                assertThat(subject())
-                    .isPresent();
-            }
+        @AfterAll
+        private void afterAll() {
+            jpaDrivingRepository.deleteAll();
+        }
+
+        @Test
+        @DisplayName("운행정보를 찾는다.")
+        public void it_finds_a_driving_data() {
+            assertThat(subject())
+                .isPresent();
         }
 
         @Nested
         @DisplayName("드라이버가 운행을 종료한 경우")
+        @TestInstance(TestInstance.Lifecycle.PER_CLASS)
         public final class Context_stopDriving {
+            @BeforeAll
+            private void beforeAll() {
+                driving.stopDriving();
+                drivingRepository.save(driving);
+            }
+
             @Test
             @DisplayName("운행을 종료하였음을 알려준다.")
             public void it_notifies_that_driving_is_closed() {
@@ -95,24 +107,30 @@ public class DrivingRepositoryTest {
 
     @Nested
     @DisplayName("update 메서드는")
+    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
     public final class Describe_update {
-        private Long id;
+        private Driving driving;
 
-        private void subject(final Long id) {
-            drivingRepository.update(id, POINT);
+        private void subject() {
+            drivingRepository.update(driving.getId(), POINT);
         }
 
-        @BeforeEach
-        private void beforeEach() {
-            id = new Describe_save().subject().getId();
+        @BeforeAll
+        private void beforeAll() {
+            driving = new Describe_save().subject();
+        }
+
+        @AfterAll
+        private void afterAll() {
+            jpaDrivingRepository.deleteAll();
         }
 
         @Test
-        @DisplayName("현재위치를 업데이트한다.")
-        public void it_updates_a_current_location() {
-            subject(id);
+        @DisplayName("위치정보를 업데이트한다")
+        public void it_updates_the_location_data() {
+            subject();
 
-            assertThat(jpaDrivingRepository.findById(id))
+            assertThat(jpaDrivingRepository.findById(driving.getId()))
                 .isPresent()
                 .get()
                 .matches(driving -> driving.getPath().getEndPosition().equals(POINT.getPosition()));

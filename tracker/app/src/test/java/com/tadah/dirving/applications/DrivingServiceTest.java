@@ -9,7 +9,6 @@ import org.geolatte.geom.C2D;
 import org.geolatte.geom.Point;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -172,7 +171,7 @@ public class DrivingServiceTest {
         }
 
         @BeforeAll
-        private void beforeEach() {
+        private void beforeAll() {
             driving = drivingRepository.save(DRIVING);
         }
 
