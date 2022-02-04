@@ -1,4 +1,4 @@
-package com.tadah.driving.dto;
+package com.tadah.driving.dtos;
 
 import lombok.Generated;
 import lombok.Getter;

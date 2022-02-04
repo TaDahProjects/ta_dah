@@ -2,7 +2,7 @@ package com.tadah.driving.domains.repositories;
 
 import com.tadah.driving.domains.entities.Driving;
 import com.tadah.driving.domains.repositories.infra.JpaDrivingRepository;
-import com.tadah.driving.dto.PointData;
+import com.tadah.driving.dtos.PointData;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;

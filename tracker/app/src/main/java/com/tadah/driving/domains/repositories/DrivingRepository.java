@@ -1,7 +1,7 @@
 package com.tadah.driving.domains.repositories;
 
 import com.tadah.driving.domains.entities.Driving;
-import com.tadah.driving.dto.PointData;
+import com.tadah.driving.dtos.PointData;
 import org.geolatte.geom.C2D;
 import org.geolatte.geom.Point;
 import org.springframework.data.jpa.repository.Modifying;
