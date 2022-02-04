@@ -1,6 +1,5 @@
-package com.tadah.dirving.domains.entities;
+package com.tadah.driving.domains.entities;
 
-import com.tadah.driving.domains.entities.Driving;
 import org.geolatte.geom.C2D;
 import org.geolatte.geom.Geometries;
 import org.geolatte.geom.Point;

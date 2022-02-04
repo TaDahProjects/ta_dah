@@ -1,6 +1,5 @@
-package com.tadah.dirving.utils;
+package com.tadah.driving.utils;
 
-import com.tadah.driving.utils.CoordinateUtil;
 import org.assertj.core.data.Offset;
 import org.geolatte.geom.C2D;
 import org.geolatte.geom.G2D;
@@ -11,10 +10,10 @@ import org.junit.jupiter.api.Test;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.operation.TransformException;
 
-import static com.tadah.dirving.domains.entities.DrivingTest.LATITUDE;
-import static com.tadah.dirving.domains.entities.DrivingTest.LONGITUDE;
-import static com.tadah.dirving.domains.entities.DrivingTest.X;
-import static com.tadah.dirving.domains.entities.DrivingTest.Y;
+import static com.tadah.driving.domains.entities.DrivingTest.LATITUDE;
+import static com.tadah.driving.domains.entities.DrivingTest.LONGITUDE;
+import static com.tadah.driving.domains.entities.DrivingTest.X;
+import static com.tadah.driving.domains.entities.DrivingTest.Y;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 @DisplayName("CoordinateUtil 클래스")

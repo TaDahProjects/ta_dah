@@ -1,6 +1,5 @@
-package com.tadah.dirving.applications;
+package com.tadah.driving.applications;
 
-import com.tadah.driving.applications.DrivingService;
 import com.tadah.driving.domains.entities.Driving;
 import com.tadah.driving.domains.repositories.DrivingRepository;
 import com.tadah.driving.domains.repositories.infra.JpaDrivingRepository;
@@ -21,12 +20,12 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import java.util.Optional;
 
-import static com.tadah.dirving.domains.entities.DrivingTest.AFTER_MAP_MATCH;
-import static com.tadah.dirving.domains.entities.DrivingTest.DRIVING;
-import static com.tadah.dirving.domains.entities.DrivingTest.LATITUDE;
-import static com.tadah.dirving.domains.entities.DrivingTest.LONGITUDE;
-import static com.tadah.dirving.domains.entities.DrivingTest.POINT;
-import static com.tadah.dirving.domains.entities.DrivingTest.USER_ID;
+import static com.tadah.driving.domains.entities.DrivingTest.AFTER_MAP_MATCH;
+import static com.tadah.driving.domains.entities.DrivingTest.DRIVING;
+import static com.tadah.driving.domains.entities.DrivingTest.LATITUDE;
+import static com.tadah.driving.domains.entities.DrivingTest.LONGITUDE;
+import static com.tadah.driving.domains.entities.DrivingTest.POINT;
+import static com.tadah.driving.domains.entities.DrivingTest.USER_ID;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
