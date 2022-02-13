@@ -9,11 +9,15 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import static com.tadah.driving.domains.entities.DrivingTest.AFTER_MAP_MATCH;
 import static com.tadah.driving.domains.entities.DrivingTest.BEFORE_MAP_MATCH;
@@ -109,8 +113,14 @@ public class DrivingRepositoryTest {
     public final class Describe_update {
         private Driving driving;
 
-        private void subject() {
-            drivingRepository.update(driving.getId(), POINT);
+        private void subject(final boolean isDriving) {
+            drivingRepository.update(driving.getId(), POINT, isDriving);
+        }
+
+        private Stream<Arguments> methodSource() {
+            return Stream.of(
+                Arguments.of(true),
+                Arguments.of(false));
         }
 
         @BeforeAll
@@ -123,14 +133,16 @@ public class DrivingRepositoryTest {
             jpaDrivingRepository.deleteAll();
         }
 
-        @Test
+        @MethodSource("methodSource")
         @DisplayName("위치정보를 업데이트한다")
-        public void it_updates_the_location_data() {
-            subject();
+        @ParameterizedTest(name = "isDriving : \"{0}\"")
+        public void it_updates_the_location_data(final boolean isDriving) {
+            subject(isDriving);
 
             assertThat(jpaDrivingRepository.findById(driving.getId()))
                 .isPresent()
                 .get()
+                .matches(driving -> driving.isDriving() == isDriving)
                 .matches(driving -> driving.getPath().getEndPosition().equals(POINT.getPosition()));
         }
     }

@@ -133,8 +133,8 @@ public class DrivingServiceTest {
     public final class Describe_stop {
         private Driving driving;
 
-        private Driving subject() {
-            return drivingService.stop(driving);
+        private void subject() {
+            drivingService.stop(driving, POINT);
         }
 
         @BeforeAll
