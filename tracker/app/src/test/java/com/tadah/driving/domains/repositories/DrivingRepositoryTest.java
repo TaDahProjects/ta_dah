@@ -1,26 +1,29 @@
-package com.tadah.dirving.domains.repositories;
+package com.tadah.driving.domains.repositories;
 
 import com.tadah.driving.domains.entities.Driving;
-import com.tadah.driving.domains.repositories.DrivingRepository;
 import com.tadah.driving.domains.repositories.infra.JpaDrivingRepository;
-import com.tadah.driving.dto.PointData;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
+import com.tadah.driving.dtos.PointData;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import java.util.Optional;
+import java.util.stream.Stream;
 
-import static com.tadah.dirving.domains.entities.DrivingTest.AFTER_MAP_MATCH;
-import static com.tadah.dirving.domains.entities.DrivingTest.BEFORE_MAP_MATCH;
-import static com.tadah.dirving.domains.entities.DrivingTest.DRIVING;
-import static com.tadah.dirving.domains.entities.DrivingTest.POINT;
-import static com.tadah.dirving.domains.entities.DrivingTest.USER_ID;
+import static com.tadah.driving.domains.entities.DrivingTest.AFTER_MAP_MATCH;
+import static com.tadah.driving.domains.entities.DrivingTest.BEFORE_MAP_MATCH;
+import static com.tadah.driving.domains.entities.DrivingTest.DRIVING;
+import static com.tadah.driving.domains.entities.DrivingTest.POINT;
+import static com.tadah.driving.domains.entities.DrivingTest.USER_ID;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
@@ -33,16 +36,17 @@ public class DrivingRepositoryTest {
     @Autowired
     private JpaDrivingRepository jpaDrivingRepository;
 
-    @AfterEach
-    private void afterEach() {
-        jpaDrivingRepository.deleteAll();
-    }
-
     @Nested
     @DisplayName("save 메서드는")
+    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
     public final class Describe_save {
         private Driving subject() {
             return drivingRepository.save(DRIVING);
+        }
+
+        @AfterAll
+        private void afterAll() {
+            jpaDrivingRepository.deleteAll();
         }
 
         @Test
@@ -59,31 +63,41 @@ public class DrivingRepositoryTest {
 
     @Nested
     @DisplayName("find 메서드는")
+    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
     public final class Describe_find {
+        private Driving driving;
+
         private Optional<Driving> subject() {
             return drivingRepository.find(USER_ID);
         }
 
-        @Nested
-        @DisplayName("드라이버가 운행을 시작한 경우")
-        @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-        public final class Context_startDriving {
-            @BeforeEach
-            private void beforeEach() {
-                new Describe_save().subject();
-            }
+        @BeforeAll
+        private void beforeAll() {
+            driving = new Describe_save().subject();
+        }
 
-            @Test
-            @DisplayName("운행정보를 찾는다.")
-            public void it_finds_a_driving_data() {
-                assertThat(subject())
-                    .isPresent();
-            }
+        @AfterAll
+        private void afterAll() {
+            jpaDrivingRepository.deleteAll();
+        }
+
+        @Test
+        @DisplayName("운행정보를 찾는다.")
+        public void it_finds_a_driving_data() {
+            assertThat(subject())
+                .isPresent();
         }
 
         @Nested
         @DisplayName("드라이버가 운행을 종료한 경우")
+        @TestInstance(TestInstance.Lifecycle.PER_CLASS)
         public final class Context_stopDriving {
+            @BeforeAll
+            private void beforeAll() {
+                driving.stopDriving();
+                drivingRepository.save(driving);
+            }
+
             @Test
             @DisplayName("운행을 종료하였음을 알려준다.")
             public void it_notifies_that_driving_is_closed() {
@@ -95,26 +109,40 @@ public class DrivingRepositoryTest {
 
     @Nested
     @DisplayName("update 메서드는")
+    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
     public final class Describe_update {
-        private Long id;
+        private Driving driving;
 
-        private void subject(final Long id) {
-            drivingRepository.update(id, POINT);
+        private void subject(final boolean isDriving) {
+            drivingRepository.update(driving.getId(), POINT, isDriving);
         }
 
-        @BeforeEach
-        private void beforeEach() {
-            id = new Describe_save().subject().getId();
+        private Stream<Arguments> methodSource() {
+            return Stream.of(
+                Arguments.of(true),
+                Arguments.of(false));
         }
 
-        @Test
-        @DisplayName("현재위치를 업데이트한다.")
-        public void it_updates_a_current_location() {
-            subject(id);
+        @BeforeAll
+        private void beforeAll() {
+            driving = new Describe_save().subject();
+        }
 
-            assertThat(jpaDrivingRepository.findById(id))
+        @AfterAll
+        private void afterAll() {
+            jpaDrivingRepository.deleteAll();
+        }
+
+        @MethodSource("methodSource")
+        @DisplayName("위치정보를 업데이트한다")
+        @ParameterizedTest(name = "isDriving : \"{0}\"")
+        public void it_updates_the_location_data(final boolean isDriving) {
+            subject(isDriving);
+
+            assertThat(jpaDrivingRepository.findById(driving.getId()))
                 .isPresent()
                 .get()
+                .matches(driving -> driving.isDriving() == isDriving)
                 .matches(driving -> driving.getPath().getEndPosition().equals(POINT.getPosition()));
         }
     }

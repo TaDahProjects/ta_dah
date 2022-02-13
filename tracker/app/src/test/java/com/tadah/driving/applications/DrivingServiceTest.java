@@ -1,6 +1,5 @@
-package com.tadah.dirving.applications;
+package com.tadah.driving.applications;
 
-import com.tadah.driving.applications.DrivingService;
 import com.tadah.driving.domains.entities.Driving;
 import com.tadah.driving.domains.repositories.DrivingRepository;
 import com.tadah.driving.domains.repositories.infra.JpaDrivingRepository;
@@ -9,7 +8,6 @@ import org.geolatte.geom.C2D;
 import org.geolatte.geom.Point;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -22,12 +20,12 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import java.util.Optional;
 
-import static com.tadah.dirving.domains.entities.DrivingTest.AFTER_MAP_MATCH;
-import static com.tadah.dirving.domains.entities.DrivingTest.DRIVING;
-import static com.tadah.dirving.domains.entities.DrivingTest.LATITUDE;
-import static com.tadah.dirving.domains.entities.DrivingTest.LONGITUDE;
-import static com.tadah.dirving.domains.entities.DrivingTest.POINT;
-import static com.tadah.dirving.domains.entities.DrivingTest.USER_ID;
+import static com.tadah.driving.domains.entities.DrivingTest.AFTER_MAP_MATCH;
+import static com.tadah.driving.domains.entities.DrivingTest.DRIVING;
+import static com.tadah.driving.domains.entities.DrivingTest.LATITUDE;
+import static com.tadah.driving.domains.entities.DrivingTest.LONGITUDE;
+import static com.tadah.driving.domains.entities.DrivingTest.POINT;
+import static com.tadah.driving.domains.entities.DrivingTest.USER_ID;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
@@ -135,8 +133,8 @@ public class DrivingServiceTest {
     public final class Describe_stop {
         private Driving driving;
 
-        private Driving subject() {
-            return drivingService.stop(driving);
+        private void subject() {
+            drivingService.stop(driving, POINT);
         }
 
         @BeforeAll
@@ -172,7 +170,7 @@ public class DrivingServiceTest {
         }
 
         @BeforeAll
-        private void beforeEach() {
+        private void beforeAll() {
             driving = drivingRepository.save(DRIVING);
         }
 

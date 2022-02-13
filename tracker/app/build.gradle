@@ -11,8 +11,8 @@ plugins {
     id 'application'
 
     // Spring
-    id 'org.springframework.boot' version '2.3.5.RELEASE'
-    id 'io.spring.dependency-management' version '1.0.10.RELEASE'
+    id 'org.springframework.boot' version '2.4.1'
+    id 'io.spring.dependency-management' version '1.0.11.RELEASE'
 
     // Jacoco
     id 'jacoco'
@@ -26,9 +26,19 @@ repositories {
     }
 }
 
+ext {
+    set('springCloudVersion', "Hoxton.SR12")
+}
+
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+    }
+}
+
 dependencies {
     // Use JUnit Jupiter API for testing.
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.2'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
 
     // Use JUnit Jupiter Engine for testing.
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
@@ -66,8 +76,8 @@ dependencies {
     // Hibernate Spatial
     implementation 'org.hibernate:hibernate-spatial:5.6.0.Final'
 
-    // AWS Kinesis Client
-    implementation group: 'software.amazon.kinesis', name: 'amazon-kinesis-client', version: '2.3.9'
+    // Spring Cloud Stream Kinesis
+    implementation 'org.springframework.cloud:spring-cloud-stream-binder-kinesis:2.2.0'
 
     // Spring Boot Test
     testImplementation('org.springframework.boot:spring-boot-starter-test') {

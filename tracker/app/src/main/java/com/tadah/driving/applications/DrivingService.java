@@ -57,11 +57,10 @@ public final class DrivingService {
      * 차량 운행을 종료한다
      *
      * @param driving 종료할 운행 정보
-     * @return 종료한 운행 정보
+     * @param point 종료 지점
      */
-    public Driving stop(final Driving driving) {
-        driving.stopDriving();
-        return drivingRepository.save(driving);
+    public void stop(final Driving driving, final Point<C2D> point) {
+        drivingRepository.update(driving.getId(), point, false);
     }
 
     /**
@@ -70,7 +69,7 @@ public final class DrivingService {
      * @param driving 차량 운행 정보
      * @param point 업데이트할 위치 정보
      */
-    public void update(final Driving driving, Point<C2D> point) {
-        drivingRepository.update(driving.getId(), point);
+    public void update(final Driving driving, final Point<C2D> point) {
+        drivingRepository.update(driving.getId(), point, true);
     }
 }

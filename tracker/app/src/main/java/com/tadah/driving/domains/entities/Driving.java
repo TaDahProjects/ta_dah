@@ -1,10 +1,9 @@
 package com.tadah.driving.domains.entities;
 
-import com.tadah.driving.dto.PointData;
+import com.tadah.driving.dtos.PointData;
 import lombok.Generated;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import org.geolatte.geom.C2D;
 import org.geolatte.geom.Geometries;
 import org.geolatte.geom.LineString;
