@@ -25,7 +25,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 @DataJpaTest
 @DisplayName("UserRepository 클래스")
 public class UserRepositoryTest {
-    public static final User USER_WITHOUT_PASSWORD = new User(EMAIL, NAME);
+    private static final User USER_WITHOUT_PASSWORD = new User(EMAIL, NAME);
 
     @Autowired
     private UserRepository userRepository;
