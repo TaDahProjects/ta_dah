@@ -36,8 +36,8 @@ public class UserRepositoryTest {
     @Autowired
     private JpaUserRepository jpaUserRepository;
 
-    @AfterEach
-    private void afterEach() {
+    @BeforeEach
+    public void beforeEach() {
         jpaUserRepository.deleteAll();
     }
 
@@ -62,7 +62,6 @@ public class UserRepositoryTest {
         @Test
         @DisplayName("사용자 정보를 저장한다.")
         public void it_saves_a_user_data() {
-//            USER.setPassword(PASSWORD, passwordEncoder);
             final User savedUser = subject(getUser());
             assertThat(new Describe_findById().subject(savedUser.getId()))
                 .isPresent()
@@ -85,7 +84,7 @@ public class UserRepositoryTest {
         @DisplayName("이메일에 해당하는 사용자가 있는 경우")
         public final class Context_userExist {
             @BeforeEach
-            private void beforeEach() {
+            public void beforeEach() {
                 new Describe_save().subject(getUser());
             }
 
@@ -131,7 +130,7 @@ public class UserRepositoryTest {
         @DisplayName("이메일에 해당하는 사용자가 있는 경우")
         public final class Context_userExist {
             @BeforeEach
-            private void beforeEach() {
+            public void beforeEach() {
                 new Describe_save().subject(getUser());
             }
 
@@ -168,7 +167,7 @@ public class UserRepositoryTest {
             private Long userId;
 
             @BeforeEach
-            private void beforeEach() {
+            public void beforeEach() {
                 userId = new Describe_save().subject(getUser()).getId();
             }
 
