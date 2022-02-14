@@ -2,7 +2,6 @@ package com.tadah.vehicle.applications;
 
 import com.tadah.vehicle.domains.entities.Vehicle;
 import com.tadah.vehicle.domains.repositories.VehicleRepository;
-import com.tadah.vehicle.exceptions.VehicleAlreadyExistException;
 import com.tadah.vehicle.exceptions.VehicleNotDrivingException;
 import com.tadah.vehicle.exceptions.VehicleNotFoundException;
 import org.springframework.stereotype.Service;
