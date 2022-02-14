@@ -155,8 +155,7 @@ public final class VehicleControllerTest {
             @DisplayName("차량이 이미 존재함을 알려준다.")
             public void it_notifies_that_vehicle_already_exists() throws Exception {
                 subject(token)
-                    .andExpect(status().isBadRequest())
-                    .andExpect(content().string(getErrorResponse()));
+                    .andExpect(status().isForbidden());
             }
         }
     }

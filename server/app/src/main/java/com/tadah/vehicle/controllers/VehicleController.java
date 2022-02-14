@@ -43,22 +43,15 @@ public class VehicleController {
         this.authorizationService = authorizationService;
     }
 
-    private Vehicle toEntity(final User user) {
-        return new Vehicle(user.getId());
-    }
-
     /**
      * 차량 생성을 수행한다.
-     * @throws VehicleAlreadyExistException 차량이 이미 존재하는 경우
      * @param user 생성할 차량의 소유자
      */
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("isAuthenticated() and !hasAuthority('DRIVER')")
     public void create(@AuthenticationPrincipal final User user) {
-        final Vehicle vehicle = toEntity(user);
         authorizationService.create(new Role(user.getId(), DRIVER_ROLE));
-        vehicleService.create(vehicle);
     }
 
     /**
