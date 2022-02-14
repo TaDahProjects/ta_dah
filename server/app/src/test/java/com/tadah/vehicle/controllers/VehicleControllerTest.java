@@ -13,7 +13,6 @@ import com.tadah.vehicle.domains.entities.Vehicle;
 import com.tadah.vehicle.domains.repositories.VehicleRepository;
 import com.tadah.vehicle.domains.repositories.infra.JpaVehicleRepository;
 import com.tadah.vehicle.dtos.DrivingRequestData;
-import com.tadah.vehicle.exceptions.VehicleAlreadyExistException;
 import com.tadah.vehicle.exceptions.VehicleNotDrivingException;
 import com.tadah.vehicle.exceptions.VehicleNotFoundException;
 import org.junit.jupiter.api.AfterAll;
@@ -105,10 +104,6 @@ public final class VehicleControllerTest {
     @DisplayName("create 메서드는")
     @TestInstance(TestInstance.Lifecycle.PER_CLASS)
     public final class Describe_create extends LoginFailTest {
-        private String getErrorResponse() throws Exception {
-            return Parser.toJson(new ErrorResponse(VEHICLES_URL, HttpMethod.POST.toString(), new VehicleAlreadyExistException().getMessage()));
-        }
-
         public Describe_create() {
             super(mockMvc, post(VEHICLES_URL));
         }
@@ -155,8 +150,7 @@ public final class VehicleControllerTest {
             @DisplayName("차량이 이미 존재함을 알려준다.")
             public void it_notifies_that_vehicle_already_exists() throws Exception {
                 subject(token)
-                    .andExpect(status().isBadRequest())
-                    .andExpect(content().string(getErrorResponse()));
+                    .andExpect(status().isForbidden());
             }
         }
     }
