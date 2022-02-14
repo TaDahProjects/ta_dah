@@ -45,37 +45,6 @@ public class VehicleServiceTest {
         jpaVehicleRepository.deleteAll();
     }
 
-    @Nested
-    @DisplayName("create 메서드는")
-    public final class Describe_create {
-        private Vehicle subject() {
-            return vehicleService.create(VEHICLE);
-        }
-
-        @Test
-        @DisplayName("차량을 생성한다.")
-        public void it_creates_a_vehicles() {
-            assertThat(subject())
-                .isInstanceOf(Vehicle.class)
-                .matches(vehicle -> VEHICLE.getUserId().equals(vehicle.getUserId()));
-        }
-
-        @Nested
-        @DisplayName("차량이 이미 존재하는 경우")
-        public final class Context_vehicleAlreadyExists {
-            @BeforeEach
-            private void beforeEach() {
-                subject();
-            }
-
-            @Test
-            @DisplayName("VehicleAlreadyExistException을 던진다.")
-            public void it_throws_vehicle_already_exist_exception() {
-                assertThatThrownBy(Describe_create.this::subject)
-                    .isInstanceOf(VehicleAlreadyExistException.class);
-            }
-        }
-    }
 
     @Nested
     @DisplayName("startDriving 메서드는")
