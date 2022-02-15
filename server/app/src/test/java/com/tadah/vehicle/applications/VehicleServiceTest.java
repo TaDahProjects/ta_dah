@@ -5,7 +5,6 @@ import com.tadah.vehicle.domains.repositories.VehicleRepository;
 import com.tadah.vehicle.domains.repositories.infra.JpaVehicleRepository;
 import com.tadah.vehicle.dtos.DrivingDataProto;
 import com.tadah.vehicle.exceptions.SendMessageFailException;
-import com.tadah.vehicle.exceptions.VehicleNotFoundException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

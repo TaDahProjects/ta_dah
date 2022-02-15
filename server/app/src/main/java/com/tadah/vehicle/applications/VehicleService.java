@@ -4,7 +4,6 @@ import com.tadah.vehicle.dtos.DrivingDataProto;
 import com.tadah.vehicle.domains.entities.Vehicle;
 import com.tadah.vehicle.domains.repositories.VehicleRepository;
 import com.tadah.vehicle.exceptions.SendMessageFailException;
-import com.tadah.vehicle.exceptions.VehicleNotFoundException;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 
@@ -25,15 +24,6 @@ public final class VehicleService {
     ) {
         this.blockingQueue = blockingQueue;
         this.vehicleRepository = vehicleRepository;
-    }
-
-    private Vehicle findVehicleAndUpdateLocation(final Long userId, final Double latitude, final Double longitude) {
-        final Vehicle vehicle = vehicleRepository.findByUserId(userId)
-            .orElseThrow(VehicleNotFoundException::new);
-
-        vehicle.updateLocation(latitude, longitude);
-
-        return vehicle;
     }
 
     private boolean sendData(final DrivingDataProto.DrivingData drivingData) {

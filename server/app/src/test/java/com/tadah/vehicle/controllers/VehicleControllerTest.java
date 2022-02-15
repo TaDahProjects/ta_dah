@@ -15,7 +15,6 @@ import com.tadah.vehicle.domains.repositories.VehicleRepository;
 import com.tadah.vehicle.domains.repositories.infra.JpaVehicleRepository;
 import com.tadah.vehicle.dtos.DrivingRequestData;
 import com.tadah.vehicle.exceptions.SendMessageFailException;
-import com.tadah.vehicle.exceptions.VehicleNotFoundException;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
