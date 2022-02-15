@@ -19,12 +19,8 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import java.util.concurrent.BlockingQueue;
 
 import static com.tadah.user.domains.entities.UserTest.USER_ID;
-import static com.tadah.vehicle.domains.entities.VehicleTest.LATITUDE;
-import static com.tadah.vehicle.domains.entities.VehicleTest.LONGITUDE;
 import static com.tadah.vehicle.domains.entities.VehicleTest.getLatitude;
 import static com.tadah.vehicle.domains.entities.VehicleTest.getLongitude;
-import static com.tadah.vehicle.domains.entities.VehicleTest.getVehicle;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.Mockito.atMostOnce;
 import static org.mockito.Mockito.mock;
@@ -45,6 +41,12 @@ public class VehicleServiceTest {
         .setLatitude(getLatitude())
         .setLongitude(getLongitude())
         .setDrivingStatus(DrivingDataProto.DrivingStatus.DRIVING)
+        .build();
+    public static final DrivingDataProto.DrivingData STOP_DRIVING = DrivingDataProto.DrivingData.newBuilder()
+        .setUserId(USER_ID)
+        .setLatitude(getLatitude())
+        .setLongitude(getLongitude())
+        .setDrivingStatus(DrivingDataProto.DrivingStatus.STOP)
         .build();
 
     private final BlockingQueue<DrivingDataProto.DrivingData> blockingQueue;
@@ -119,37 +121,40 @@ public class VehicleServiceTest {
     @Nested
     @DisplayName("stopDriving 메서드는")
     public final class Describe_stopDriving {
-        private Vehicle subject(final Double latitude, final Double longitude) {
-            return vehicleService.stopDriving(USER_ID, latitude, longitude);
+        private void subject(final Double latitude, final Double longitude) {
+            vehicleService.stopDriving(USER_ID, latitude, longitude);
+        }
+
+        @BeforeEach
+        private void beforeEach() {
+            mockSendData(true, STOP_DRIVING);
+        }
+
+        @AfterEach
+        private void afterEach() {
+            verifySendData(STOP_DRIVING);
         }
 
         @Nested
-        @DisplayName("차량이 존재하는 경우")
-        public final class Context_vehicleExist {
-            @DisplayName("차량의 운행을 종료한다.")
-            @ValueSource(booleans = {true, false})
-            @ParameterizedTest(name = "isDriving = {0}")
-            public void it_starts_the_driving(final boolean isDriving) {
-                vehicleRepository.save(getVehicle(isDriving));
-
-                final Double latitude = getLatitude();
-                final Double longitude = getLongitude();
-                assertThat(subject(latitude, longitude))
-                    .matches(vehicle -> !vehicle.isDriving())
-                    .matches(vehicle -> latitude.equals(vehicle.getLatitude()))
-                    .matches(vehicle -> longitude.equals(vehicle.getLongitude()));
+        @DisplayName("메시지 전송에 실패한 경우")
+        public final class Context_sendMessageFail {
+            @BeforeEach
+            private void beforeEach() {
+                mockSendData(false, STOP_DRIVING);
             }
-        }
 
-        @Nested
-        @DisplayName("차량이 존재하지 않는 경우")
-        public final class Context_vehicleNotExist {
             @Test
-            @DisplayName("VehicleNotFoundException을 던진다.")
-            public void it_throws_vehicle_not_found_exception() {
-                assertThatThrownBy(() -> subject(LATITUDE, LONGITUDE))
-                    .isInstanceOf(VehicleNotFoundException.class);
+            @DisplayName("SendMessageFailException을 던진다")
+            public void it_throws_a_send_message_fail_exception() {
+                assertThatThrownBy(() -> subject(getLatitude(), getLongitude()))
+                    .isInstanceOf(SendMessageFailException.class);
             }
+        }
+
+        @Test
+        @DisplayName("차량 운행 종료 메시지를 전송한다")
+        public void it_stops_the_driving() {
+            subject(getLatitude(), getLongitude());
         }
     }
 
