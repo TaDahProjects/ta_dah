@@ -454,36 +454,11 @@ public final class VehicleControllerTest {
             }
 
             @Nested
-            @DisplayName("차량이 존재하지 않는 경우")
-            public final class Context_vehicleNotExist {
-                @Test
-                @DisplayName("차량이 존재하지 않음을 알려준다.")
-                public void it_notifies_that_vehicle_not_exist() throws Exception {
-                    subject(token, getDrivingRequest(LATITUDE, LONGITUDE))
-                        .andExpect(status().isNotFound())
-                        .andExpect(content().string(getErrorResponse(new VehicleNotFoundException().getMessage())));
-                }
-            }
-
-            @Nested
-            @DisplayName("차량이 존재하는 경우")
-            @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-            public final class Context_vehicleExist {
-                @BeforeAll
-                private void beforeAll() {
-                    vehicleRepository.save(new Vehicle(userId));
-                }
-
-                @AfterAll
-                private void afterAll() {
-                    jpaVehicleRepository.deleteAll();
-                }
-
-                @Test
-                @DisplayName("차량 운행을 종료한다.")
-                public void it_stops_the_driving() throws Exception {
-                    subject(token, getDrivingRequest(LATITUDE, LONGITUDE))
-                        .andExpect(status().isNoContent());
+            @DisplayName("유효한 데이터를 입력한 경우")
+            public final class Context_validData {
+                @Nested
+                @DisplayName("메시지 전송에 실패하면")
+                public final class Context_sendMessageFail {
                 }
             }
         }
