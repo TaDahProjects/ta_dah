@@ -15,7 +15,6 @@ import com.tadah.vehicle.domains.repositories.VehicleRepository;
 import com.tadah.vehicle.domains.repositories.infra.JpaVehicleRepository;
 import com.tadah.vehicle.dtos.DrivingRequestData;
 import com.tadah.vehicle.exceptions.SendMessageFailException;
-import com.tadah.vehicle.exceptions.VehicleNotDrivingException;
 import com.tadah.vehicle.exceptions.VehicleNotFoundException;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
@@ -46,10 +45,8 @@ import java.util.stream.Stream;
 
 import static com.tadah.user.domains.entities.UserTest.USER_ID;
 import static com.tadah.user.domains.entities.UserTest.getUser;
-import static com.tadah.vehicle.applications.VehicleServiceTest.START_DRIVING;
 import static com.tadah.vehicle.domains.entities.VehicleTest.LATITUDE;
 import static com.tadah.vehicle.domains.entities.VehicleTest.LONGITUDE;
-import static com.tadah.vehicle.domains.entities.VehicleTest.setDriving;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.Mockito.atMostOnce;
 import static org.mockito.Mockito.doNothing;
@@ -180,9 +177,9 @@ public final class VehicleControllerTest {
             return Parser.toJson(new ErrorResponse(VEHICLES_URL + DRIVING_URL, HttpMethod.POST.toString(), errorMessage));
         }
 
-        private void verifyStartDriving(final Long userId, final Double latitude, final Double longitude) {
+        private void verifyStartDriving() {
             verify(vehicleService, atMostOnce())
-                .startDriving(userId, latitude, longitude);
+                .startDriving(USER_ID, LATITUDE, LONGITUDE);
         }
 
         public Describe_startDriving() throws Exception {
@@ -307,7 +304,7 @@ public final class VehicleControllerTest {
                 
                 @AfterEach
                 private void afterEach() {
-                    verifyStartDriving(USER_ID, LATITUDE, LONGITUDE);
+                    verifyStartDriving();
                 }
 
                 @Nested
@@ -611,54 +608,11 @@ public final class VehicleControllerTest {
             }
 
             @Nested
-            @DisplayName("차량이 존재하지 않는 경우")
-            public final class Context_vehicleNotExist {
-                @Test
-                @DisplayName("차량이 존재하지 않음을 알려준다.")
-                public void it_notifies_that_vehicle_not_exist() throws Exception {
-                    subject(token, getDrivingRequest(LATITUDE, LONGITUDE))
-                        .andExpect(status().isNotFound())
-                        .andExpect(content().string(getErrorResponse(new VehicleNotFoundException().getMessage())));
-                }
-            }
-
-            @Nested
-            @DisplayName("차량이 존재하는 경우")
-            @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-            public final class Context_vehicleExist {
-                @BeforeAll
-                private void beforeAll() {
-                    vehicleRepository.save(setDriving(new Vehicle(userId), true));
-                }
-
-                @AfterAll
-                private void afterAll() {
-                    jpaVehicleRepository.deleteAll();
-                }
-
-                @Test
-                @DisplayName("차량 위치를 업데이트한다.")
-                public void it_updates_the_location() throws Exception {
-                    subject(token, getDrivingRequest(LATITUDE, LONGITUDE))
-                        .andExpect(status().isOk());
-                }
-
+            @DisplayName("유효한 데이터를 입력한 경우")
+            public final class Context_validData {
                 @Nested
-                @DisplayName("차량 운행이 종료 되면")
-                @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-                public final class Context_notDriving {
-                    @BeforeAll
-                    private void beforeAll() throws Exception {
-                        new Describe_stopDriving().subject(token, getDrivingRequest(LATITUDE, LONGITUDE));
-                    }
-
-                    @Test
-                    @DisplayName("차량 위치를 업데이트할수 없음을 알려준다.")
-                    public void it_notifies_that_driver_can_not_update_locations() throws Exception {
-                        subject(token, getDrivingRequest(LATITUDE, LONGITUDE))
-                            .andExpect(status().isConflict())
-                            .andExpect(content().string(getErrorResponse(new VehicleNotDrivingException().getMessage())));
-                    }
+                @DisplayName("메시지 전송에 실패하면")
+                public final class Context_sendMessageFail {
                 }
             }
         }
