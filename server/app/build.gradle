@@ -106,6 +106,10 @@ jacocoTestCoverageVerification {
                 counter = 'BRANCH'
                 minimum = 1
             }
+
+            excludes = [
+                   "*.*Proto*"
+            ]
         }
     }
 }
