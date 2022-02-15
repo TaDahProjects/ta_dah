@@ -1,8 +1,6 @@
 package com.tadah.vehicle.applications;
 
 import com.tadah.vehicle.dtos.DrivingDataProto;
-import com.tadah.vehicle.domains.entities.Vehicle;
-import com.tadah.vehicle.domains.repositories.VehicleRepository;
 import com.tadah.vehicle.exceptions.SendMessageFailException;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
@@ -15,15 +13,10 @@ import java.util.function.Supplier;
  */
 @Service
 public final class VehicleService {
-    private final VehicleRepository vehicleRepository;
     private final BlockingQueue<DrivingDataProto.DrivingData> blockingQueue;
 
-    public VehicleService(
-        final VehicleRepository vehicleRepository,
-        final BlockingQueue<DrivingDataProto.DrivingData> blockingQueue
-    ) {
+    public VehicleService(final BlockingQueue<DrivingDataProto.DrivingData> blockingQueue) {
         this.blockingQueue = blockingQueue;
-        this.vehicleRepository = vehicleRepository;
     }
 
     private boolean sendData(final DrivingDataProto.DrivingData drivingData) {

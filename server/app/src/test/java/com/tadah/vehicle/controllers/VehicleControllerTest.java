@@ -10,9 +10,6 @@ import com.tadah.user.domains.repositories.infra.JpaUserRepository;
 import com.tadah.utils.LoginFailTest;
 import com.tadah.utils.Parser;
 import com.tadah.vehicle.applications.VehicleService;
-import com.tadah.vehicle.domains.entities.Vehicle;
-import com.tadah.vehicle.domains.repositories.VehicleRepository;
-import com.tadah.vehicle.domains.repositories.infra.JpaVehicleRepository;
 import com.tadah.vehicle.dtos.DrivingRequestData;
 import com.tadah.vehicle.exceptions.SendMessageFailException;
 import org.junit.jupiter.api.AfterAll;
@@ -44,8 +41,8 @@ import java.util.stream.Stream;
 
 import static com.tadah.user.domains.entities.UserTest.USER_ID;
 import static com.tadah.user.domains.entities.UserTest.getUser;
-import static com.tadah.vehicle.domains.entities.VehicleTest.LATITUDE;
-import static com.tadah.vehicle.domains.entities.VehicleTest.LONGITUDE;
+import static com.tadah.vehicle.applications.VehicleServiceTest.LATITUDE;
+import static com.tadah.vehicle.applications.VehicleServiceTest.LONGITUDE;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.Mockito.atMostOnce;
 import static org.mockito.Mockito.doNothing;
@@ -90,13 +87,7 @@ public final class VehicleControllerTest {
     private RoleRepository roleRepository;
 
     @Autowired
-    private VehicleRepository vehicleRepository;
-
-    @Autowired
     private JpaRoleRepository jpaRoleRepository;
-
-    @Autowired
-    private JpaVehicleRepository jpaVehicleRepository;
 
     @Autowired
     private JpaUserRepository jpaUserRepository;

@@ -1,8 +1,5 @@
 package com.tadah.vehicle.applications;
 
-import com.tadah.vehicle.domains.entities.Vehicle;
-import com.tadah.vehicle.domains.repositories.VehicleRepository;
-import com.tadah.vehicle.domains.repositories.infra.JpaVehicleRepository;
 import com.tadah.vehicle.dtos.DrivingDataProto;
 import com.tadah.vehicle.exceptions.SendMessageFailException;
 import org.junit.jupiter.api.AfterEach;
@@ -10,55 +7,46 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import java.util.concurrent.BlockingQueue;
 
 import static com.tadah.user.domains.entities.UserTest.USER_ID;
-import static com.tadah.vehicle.domains.entities.VehicleTest.getLatitude;
-import static com.tadah.vehicle.domains.entities.VehicleTest.getLongitude;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.Mockito.atMostOnce;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@DataJpaTest
 @DisplayName("VehicleService 클래스")
 public class VehicleServiceTest {
+    public static final Double LATITUDE = 37.487964946;
+    public static final Double LONGITUDE = 127.065536349;
+
     public static final DrivingDataProto.DrivingData START_DRIVING = DrivingDataProto.DrivingData.newBuilder()
         .setUserId(USER_ID)
-        .setLatitude(getLatitude())
-        .setLongitude(getLongitude())
+        .setLatitude(LATITUDE)
+        .setLongitude(LONGITUDE)
         .setDrivingStatus(DrivingDataProto.DrivingStatus.START)
         .build();
     public static final DrivingDataProto.DrivingData UPDATE_DRIVING = DrivingDataProto.DrivingData.newBuilder()
         .setUserId(USER_ID)
-        .setLatitude(getLatitude())
-        .setLongitude(getLongitude())
+        .setLatitude(LATITUDE)
+        .setLongitude(LONGITUDE)
         .setDrivingStatus(DrivingDataProto.DrivingStatus.DRIVING)
         .build();
     public static final DrivingDataProto.DrivingData STOP_DRIVING = DrivingDataProto.DrivingData.newBuilder()
         .setUserId(USER_ID)
-        .setLatitude(getLatitude())
-        .setLongitude(getLongitude())
+        .setLatitude(LATITUDE)
+        .setLongitude(LONGITUDE)
         .setDrivingStatus(DrivingDataProto.DrivingStatus.STOP)
         .build();
 
     private final BlockingQueue<DrivingDataProto.DrivingData> blockingQueue;
     private final VehicleService vehicleService;
-    private final VehicleRepository vehicleRepository;
 
-    @Autowired
-    private JpaVehicleRepository jpaVehicleRepository;
-
-    public VehicleServiceTest(@Autowired final VehicleRepository vehicleRepository) {
-        this.vehicleRepository = vehicleRepository;
+    public VehicleServiceTest() {
         this.blockingQueue = mock(BlockingQueue.class);
-        this.vehicleService = new VehicleService(vehicleRepository, blockingQueue);
+        this.vehicleService = new VehicleService(blockingQueue);
     }
 
     private void mockSendData(final boolean isSuccess, final DrivingDataProto.DrivingData drivingData) {
@@ -70,12 +58,6 @@ public class VehicleServiceTest {
         verify(blockingQueue, atMostOnce())
             .offer(drivingData);
     }
-
-    @AfterEach
-    private void afterEach() {
-        jpaVehicleRepository.deleteAll();
-    }
-
 
     @Nested
     @DisplayName("startDriving 메서드는")
@@ -105,7 +87,7 @@ public class VehicleServiceTest {
             @Test
             @DisplayName("SendMessageFailException을 던진다")
             public void it_throws_a_send_message_fail_exception() {
-                assertThatThrownBy(() -> subject(getLatitude(), getLongitude()))
+                assertThatThrownBy(() -> subject(LATITUDE, LONGITUDE))
                     .isInstanceOf(SendMessageFailException.class);
             }
         }
@@ -113,7 +95,7 @@ public class VehicleServiceTest {
         @Test
         @DisplayName("차량 운행을 시작 메시지를 전송한다")
         public void it_starts_the_driving() {
-            subject(getLatitude(), getLongitude());
+            subject(LATITUDE, LONGITUDE);
         }
     }
 
@@ -145,7 +127,7 @@ public class VehicleServiceTest {
             @Test
             @DisplayName("SendMessageFailException을 던진다")
             public void it_throws_a_send_message_fail_exception() {
-                assertThatThrownBy(() -> subject(getLatitude(), getLongitude()))
+                assertThatThrownBy(() -> subject(LATITUDE, LONGITUDE))
                     .isInstanceOf(SendMessageFailException.class);
             }
         }
@@ -153,7 +135,7 @@ public class VehicleServiceTest {
         @Test
         @DisplayName("차량 운행 종료 메시지를 전송한다")
         public void it_stops_the_driving() {
-            subject(getLatitude(), getLongitude());
+            subject(LATITUDE, LONGITUDE);
         }
     }
 
@@ -185,7 +167,7 @@ public class VehicleServiceTest {
             @Test
             @DisplayName("SendMessageFailException을 던진다")
             public void it_throws_a_send_message_fail_exception() {
-                assertThatThrownBy(() -> subject(getLatitude(), getLongitude()))
+                assertThatThrownBy(() -> subject(LATITUDE, LONGITUDE))
                     .isInstanceOf(SendMessageFailException.class);
             }
         }
@@ -193,7 +175,7 @@ public class VehicleServiceTest {
         @Test
         @DisplayName("차량 운행 정보를 업데이트한다")
         public void it_updates_the_driving_data() {
-            subject(getLatitude(), getLongitude());
+            subject(LATITUDE, LONGITUDE);
         }
     }
 }
