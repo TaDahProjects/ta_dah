@@ -28,5 +28,5 @@ jobs:
         working-directory: ${{ env.working-directory }}
 
       - name: Spring Test
-        run: ./gradlew test jacocoTestCoverageVerification
+        run: STREAM_NAME=${{ secrets.STREAM_NAME }} AWS_PRODUCER_ACCESS_KEY=${{ secrets.AWS_PRODUCER_ACCESS_KEY }} AWS_PRODUCER_SECRET_KEY=${{ secrets.AWS_PRODUCER_SECRET_KEY }} AWS_REGION=${{ secrets.AWS_REGION }} JWT_SECRET=${{ secrets.JWT_SECRET }} ./gradlew test jacocoTestCoverageVerification
         working-directory: ${{ env.working-directory }}
