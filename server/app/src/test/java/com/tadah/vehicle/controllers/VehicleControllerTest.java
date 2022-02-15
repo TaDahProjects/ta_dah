@@ -9,10 +9,10 @@ import com.tadah.user.domains.repositories.UserRepository;
 import com.tadah.user.domains.repositories.infra.JpaUserRepository;
 import com.tadah.utils.LoginFailTest;
 import com.tadah.utils.Parser;
+import com.tadah.vehicle.applications.VehicleService;
 import com.tadah.vehicle.domains.entities.Vehicle;
 import com.tadah.vehicle.domains.repositories.VehicleRepository;
 import com.tadah.vehicle.domains.repositories.infra.JpaVehicleRepository;
-import com.tadah.vehicle.dtos.DrivingDataProto;
 import com.tadah.vehicle.dtos.DrivingRequestData;
 import com.tadah.vehicle.exceptions.SendMessageFailException;
 import com.tadah.vehicle.exceptions.VehicleNotDrivingException;
@@ -33,7 +33,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -42,9 +42,9 @@ import org.springframework.test.web.servlet.ResultActions;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.BlockingQueue;
 import java.util.stream.Stream;
 
+import static com.tadah.user.domains.entities.UserTest.USER_ID;
 import static com.tadah.user.domains.entities.UserTest.getUser;
 import static com.tadah.vehicle.applications.VehicleServiceTest.START_DRIVING;
 import static com.tadah.vehicle.domains.entities.VehicleTest.LATITUDE;
@@ -52,9 +52,10 @@ import static com.tadah.vehicle.domains.entities.VehicleTest.LONGITUDE;
 import static com.tadah.vehicle.domains.entities.VehicleTest.setDriving;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.Mockito.atMostOnce;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -104,27 +105,17 @@ public final class VehicleControllerTest {
     @Autowired
     private JpaUserRepository jpaUserRepository;
 
-    @MockBean
-    private BlockingQueue<DrivingDataProto.DrivingData> blockingQueue;
+    @SpyBean
+    private VehicleService vehicleService;
+
+    @BeforeEach
+    private void beforeEach() {
+        reset(vehicleService);
+    }
 
     @AfterAll
     private void afterAll() {
         jpaUserRepository.deleteAll();
-    }
-
-    @BeforeEach
-    private void beforeEach() {
-        reset(blockingQueue);
-    }
-
-    private void mockSendData(final boolean isSuccess, final DrivingDataProto.DrivingData drivingData) {
-        when(blockingQueue.offer(drivingData))
-            .thenReturn(isSuccess);
-    }
-
-    private void verifySendData(final DrivingDataProto.DrivingData drivingData) {
-        verify(blockingQueue, atMostOnce())
-            .offer(drivingData);
     }
 
     @Nested
@@ -187,6 +178,11 @@ public final class VehicleControllerTest {
     public final class Describe_startDriving extends LoginFailTest {
         public String getErrorResponse(final String errorMessage) throws Exception {
             return Parser.toJson(new ErrorResponse(VEHICLES_URL + DRIVING_URL, HttpMethod.POST.toString(), errorMessage));
+        }
+
+        private void verifyStartDriving(final Long userId, final Double latitude, final Double longitude) {
+            verify(vehicleService, atMostOnce())
+                .startDriving(userId, latitude, longitude);
         }
 
         public Describe_startDriving() throws Exception {
@@ -304,12 +300,14 @@ public final class VehicleControllerTest {
             public final class Context_validData {
                 @BeforeEach
                 private void beforeEach() {
-                    mockSendData(true, START_DRIVING);
+                    doNothing()
+                        .when(vehicleService)
+                        .startDriving(USER_ID, LATITUDE, LONGITUDE);
                 }
-
+                
                 @AfterEach
                 private void afterEach() {
-                    verifySendData(START_DRIVING);
+                    verifyStartDriving(USER_ID, LATITUDE, LONGITUDE);
                 }
 
                 @Nested
@@ -317,7 +315,9 @@ public final class VehicleControllerTest {
                 public final class Context_sendMessageFail {
                     @BeforeEach
                     private void beforeEach() {
-                        mockSendData(false, START_DRIVING);
+                        doThrow(new SendMessageFailException())
+                            .when(vehicleService)
+                            .startDriving(USER_ID, LATITUDE, LONGITUDE);
                     }
 
                     @Test
