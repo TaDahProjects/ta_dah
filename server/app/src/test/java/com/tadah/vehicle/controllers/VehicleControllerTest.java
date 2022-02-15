@@ -12,7 +12,9 @@ import com.tadah.utils.Parser;
 import com.tadah.vehicle.domains.entities.Vehicle;
 import com.tadah.vehicle.domains.repositories.VehicleRepository;
 import com.tadah.vehicle.domains.repositories.infra.JpaVehicleRepository;
+import com.tadah.vehicle.dtos.DrivingDataProto;
 import com.tadah.vehicle.dtos.DrivingRequestData;
+import com.tadah.vehicle.exceptions.SendMessageFailException;
 import com.tadah.vehicle.exceptions.VehicleNotDrivingException;
 import com.tadah.vehicle.exceptions.VehicleNotFoundException;
 import org.junit.jupiter.api.AfterAll;
@@ -31,6 +33,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -39,13 +42,19 @@ import org.springframework.test.web.servlet.ResultActions;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.BlockingQueue;
 import java.util.stream.Stream;
 
 import static com.tadah.user.domains.entities.UserTest.getUser;
+import static com.tadah.vehicle.applications.VehicleServiceTest.START_DRIVING;
 import static com.tadah.vehicle.domains.entities.VehicleTest.LATITUDE;
 import static com.tadah.vehicle.domains.entities.VehicleTest.LONGITUDE;
 import static com.tadah.vehicle.domains.entities.VehicleTest.setDriving;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.mockito.Mockito.atMostOnce;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -95,9 +104,27 @@ public final class VehicleControllerTest {
     @Autowired
     private JpaUserRepository jpaUserRepository;
 
+    @MockBean
+    private BlockingQueue<DrivingDataProto.DrivingData> blockingQueue;
+
     @AfterAll
     private void afterAll() {
         jpaUserRepository.deleteAll();
+    }
+
+    @BeforeEach
+    private void beforeEach() {
+        reset(blockingQueue);
+    }
+
+    private void mockSendData(final boolean isSuccess, final DrivingDataProto.DrivingData drivingData) {
+        when(blockingQueue.offer(drivingData))
+            .thenReturn(isSuccess);
+    }
+
+    private void verifySendData(final DrivingDataProto.DrivingData drivingData) {
+        verify(blockingQueue, atMostOnce())
+            .offer(drivingData);
     }
 
     @Nested
@@ -275,6 +302,33 @@ public final class VehicleControllerTest {
             @Nested
             @DisplayName("유효한 데이터를 입력한 경우")
             public final class Context_validData {
+                @BeforeEach
+                private void beforeEach() {
+                    mockSendData(true, START_DRIVING);
+                }
+
+                @AfterEach
+                private void afterEach() {
+                    verifySendData(START_DRIVING);
+                }
+
+                @Nested
+                @DisplayName("메시지 전송에 실패하면")
+                public final class Context_sendMessageFail {
+                    @BeforeEach
+                    private void beforeEach() {
+                        mockSendData(false, START_DRIVING);
+                    }
+
+                    @Test
+                    @DisplayName("문제가 발생했음을 알려준다.")
+                    public void it_notifies_that_error_occurred() throws Exception {
+                        subject(token, getDrivingRequest(LATITUDE, LONGITUDE))
+                            .andExpect(status().isInternalServerError())
+                            .andExpect(content().string(getErrorResponse(new SendMessageFailException().getMessage())));
+                    }
+                }
+
                 @Test
                 @DisplayName("차량 운행을 시작한다.")
                 public void it_starts_the_driving() throws Exception {

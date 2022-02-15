@@ -65,6 +65,10 @@ public class VehicleController {
         @AuthenticationPrincipal final User user,
         @RequestBody @Valid final DrivingRequestData drivingRequestData
     ) {
+        final Long userId = user.getId();
+        final Double latitude = drivingRequestData.getLatitude();
+        final Double longitude = drivingRequestData.getLongitude();
+        this.vehicleService.startDriving(userId, latitude, longitude);
     }
 
     /**
