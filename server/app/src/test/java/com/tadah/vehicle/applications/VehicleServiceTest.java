@@ -5,7 +5,6 @@ import com.tadah.vehicle.domains.repositories.VehicleRepository;
 import com.tadah.vehicle.domains.repositories.infra.JpaVehicleRepository;
 import com.tadah.vehicle.dtos.DrivingDataProto;
 import com.tadah.vehicle.exceptions.SendMessageFailException;
-import com.tadah.vehicle.exceptions.VehicleNotDrivingException;
 import com.tadah.vehicle.exceptions.VehicleNotFoundException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -40,6 +39,12 @@ public class VehicleServiceTest {
         .setLatitude(getLatitude())
         .setLongitude(getLongitude())
         .setDrivingStatus(DrivingDataProto.DrivingStatus.START)
+        .build();
+    public static final DrivingDataProto.DrivingData UPDATE_DRIVING = DrivingDataProto.DrivingData.newBuilder()
+        .setUserId(USER_ID)
+        .setLatitude(getLatitude())
+        .setLongitude(getLongitude())
+        .setDrivingStatus(DrivingDataProto.DrivingStatus.DRIVING)
         .build();
 
     private final BlockingQueue<DrivingDataProto.DrivingData> blockingQueue;
@@ -149,56 +154,42 @@ public class VehicleServiceTest {
     }
 
     @Nested
-    @DisplayName("updateLocation 메서드는")
-    public final class Describe_updateLocation {
-        private Vehicle subject(final Double latitude, final Double longitude) {
-            return vehicleService.updateLocation(USER_ID, latitude, longitude);
+    @DisplayName("updateDriving 메서드는")
+    public final class Describe_updateDriving {
+        private void subject(final Double latitude, final Double longitude) {
+            vehicleService.updateDriving(USER_ID, latitude, longitude);
+        }
+
+        @BeforeEach
+        private void beforeEach() {
+            mockSendData(true, UPDATE_DRIVING);
+        }
+
+        @AfterEach
+        private void afterEach() {
+            verifySendData(UPDATE_DRIVING);
         }
 
         @Nested
-        @DisplayName("차량이 존재하는 경우")
-        public final class Context_vehicleExist {
+        @DisplayName("메시지 전송에 실패한 경우")
+        public final class Context_sendMessageFail {
             @BeforeEach
             private void beforeEach() {
-                vehicleRepository.save(getVehicle(true));
+                mockSendData(false, UPDATE_DRIVING);
             }
 
             @Test
-            @DisplayName("차량의 위치를 업데이트한다.")
-            public void it_updates_the_location_of_the_vehicle() {
-                final Double latitude = getLatitude();
-                final Double longitude = getLongitude();
-                assertThat(subject(latitude, longitude))
-                    .matches(vehicle -> latitude.equals(vehicle.getLatitude()))
-                    .matches(vehicle -> longitude.equals(vehicle.getLongitude()));
+            @DisplayName("SendMessageFailException을 던진다")
+            public void it_throws_a_send_message_fail_exception() {
+                assertThatThrownBy(() -> subject(getLatitude(), getLongitude()))
+                    .isInstanceOf(SendMessageFailException.class);
             }
         }
 
-        @Nested
-        @DisplayName("차량 운행이 종료된 경우")
-        public final class Context_notDriving {
-            @BeforeEach
-            private void beforeEach() {
-                vehicleRepository.save(getVehicle(false));
-            }
-
-            @Test
-            @DisplayName("VehicleNotDrivingException을 던진다.")
-            public void it_throws_vehicle_not_driving_exception() {
-                assertThatThrownBy(() -> subject(LATITUDE, LONGITUDE))
-                    .isInstanceOf(VehicleNotDrivingException.class);
-            }
-        }
-
-        @Nested
-        @DisplayName("차량이 존재하지 않는 경우")
-        public final class Context_vehicleNotExist {
-            @Test
-            @DisplayName("VehicleNotFoundException을 던진다.")
-            public void it_throws_vehicle_not_found_exception() {
-                assertThatThrownBy(() -> subject(LATITUDE, LONGITUDE))
-                    .isInstanceOf(VehicleNotFoundException.class);
-            }
+        @Test
+        @DisplayName("차량 운행 정보를 업데이트한다")
+        public void it_updates_the_driving_data() {
+            subject(getLatitude(), getLongitude());
         }
     }
 }
