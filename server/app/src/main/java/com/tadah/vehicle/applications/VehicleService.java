@@ -73,6 +73,27 @@ public final class VehicleService {
     }
 
     /**
+     * 차량의 운행정보를 업데이트한다
+     *
+     * @param userId 차량의 소유자
+     * @param latitude 위도
+     * @param longitude 경도
+     * @throws SendMessageFailException 메시지 전송이 실패한 경우
+     */
+    public void updateDriving(final Long userId, final Double latitude, final Double longitude) {
+        final DrivingDataProto.DrivingData drivingData = DrivingDataProto.DrivingData.newBuilder()
+            .setUserId(userId)
+            .setLatitude(latitude)
+            .setLongitude(longitude)
+            .setDrivingStatus(DrivingDataProto.DrivingStatus.DRIVING)
+            .build();
+
+        if (!sendData(drivingData)) {
+            throw new SendMessageFailException();
+        }
+    }
+
+    /**
      * 차량 운행을 종료한다.
      *
      * @param userId 차량의 소유자
@@ -86,26 +107,6 @@ public final class VehicleService {
 
         if (vehicle.isDriving()) {
             vehicle.toggleDriving();
-        }
-
-        return vehicleRepository.save(vehicle);
-    }
-
-    /**
-     * 차량의 위치를 업데이트한다.
-     *
-     * @param userId 차량의 소유자
-     * @param latitude 위도
-     * @param longitude 경도
-     * @return 위치를 업데이트한 차량 정보
-     * @throws VehicleNotFoundException 사용자가 차량을 소유하고 있지 않은 경우
-     * @throws VehicleNotDrivingException 차량 운행이 종료된 경우
-     */
-    public Vehicle updateLocation(final Long userId, final Double latitude, final Double longitude) {
-        final Vehicle vehicle = findVehicleAndUpdateLocation(userId, latitude, longitude);
-
-        if (!vehicle.isDriving()) {
-            throw new VehicleNotDrivingException();
         }
 
         return vehicleRepository.save(vehicle);
