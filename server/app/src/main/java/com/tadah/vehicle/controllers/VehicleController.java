@@ -76,6 +76,7 @@ public class VehicleController {
      *
      * @param user 차량의 소유자
      * @param drivingRequestData 차량 운행 종료 위치 정보
+     * @throws SendMessageFailException 메시지 전송이 실패한 경우
      */
     @DeleteMapping("/driving")
     @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -84,6 +85,10 @@ public class VehicleController {
         @AuthenticationPrincipal final User user,
         @RequestBody @Valid final DrivingRequestData drivingRequestData
     ) {
+        final Long userId = user.getId();
+        final Double latitude = drivingRequestData.getLatitude();
+        final Double longitude = drivingRequestData.getLongitude();
+        this.vehicleService.stopDriving(userId, latitude, longitude);
     }
 
     /**
@@ -94,7 +99,7 @@ public class VehicleController {
      * @throws SendMessageFailException 메시지 전송이 실패한 경우
      */
     @PutMapping("/driving")
-    @ResponseStatus(HttpStatus.OK)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("isAuthenticated() and hasAuthority('DRIVER')")
     public void updateDriving (
         @AuthenticationPrincipal final User user,
