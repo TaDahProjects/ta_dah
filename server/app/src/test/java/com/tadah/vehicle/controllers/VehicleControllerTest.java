@@ -116,6 +116,11 @@ public final class VehicleControllerTest {
                     .header(AUTHORIZATION_HEADER, TOKEN_PREFIX + token));
         }
 
+        @AfterEach
+        private void afterEach() {
+            jpaRoleRepository.deleteAll();
+        }
+
         @Test
         @DisplayName("차량을 생성한다.")
         public void it_creates_a_vehicles() throws Exception {
@@ -138,12 +143,7 @@ public final class VehicleControllerTest {
         public final class Context_vehicleAlreadyExists {
             @BeforeEach
             private void beforeEach() {
-                vehicleRepository.save(new Vehicle(userId));
-            }
-
-            @AfterEach
-            private void afterEach() {
-                jpaVehicleRepository.deleteAll();
+                roleRepository.save(new Role(userId, DRIVER_ROLE));
             }
 
             @Test
@@ -273,31 +273,8 @@ public final class VehicleControllerTest {
             }
 
             @Nested
-            @DisplayName("차량이 존재하지 않는 경우")
-            public final class Context_vehicleNotExist {
-                @Test
-                @DisplayName("차량이 존재하지 않음을 알려준다.")
-                public void it_notifies_that_vehicle_not_exist() throws Exception {
-                    subject(token, getDrivingRequest(LATITUDE, LONGITUDE))
-                        .andExpect(status().isNotFound())
-                        .andExpect(content().string(getErrorResponse(new VehicleNotFoundException().getMessage())));
-                }
-            }
-
-            @Nested
-            @DisplayName("차량이 존재하는 경우")
-            @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-            public final class Context_vehicleExist {
-                @BeforeAll
-                private void beforeAll() {
-                    vehicleRepository.save(new Vehicle(userId));
-                }
-
-                @AfterAll
-                private void afterAll() {
-                    jpaVehicleRepository.deleteAll();
-                }
-
+            @DisplayName("유효한 데이터를 입력한 경우")
+            public final class Context_validData {
                 @Test
                 @DisplayName("차량 운행을 시작한다.")
                 public void it_starts_the_driving() throws Exception {
