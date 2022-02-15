@@ -10,12 +10,8 @@ import com.tadah.user.domains.repositories.infra.JpaUserRepository;
 import com.tadah.utils.LoginFailTest;
 import com.tadah.utils.Parser;
 import com.tadah.vehicle.applications.VehicleService;
-import com.tadah.vehicle.domains.entities.Vehicle;
-import com.tadah.vehicle.domains.repositories.VehicleRepository;
-import com.tadah.vehicle.domains.repositories.infra.JpaVehicleRepository;
 import com.tadah.vehicle.dtos.DrivingRequestData;
 import com.tadah.vehicle.exceptions.SendMessageFailException;
-import com.tadah.vehicle.exceptions.VehicleNotFoundException;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -45,8 +41,8 @@ import java.util.stream.Stream;
 
 import static com.tadah.user.domains.entities.UserTest.USER_ID;
 import static com.tadah.user.domains.entities.UserTest.getUser;
-import static com.tadah.vehicle.domains.entities.VehicleTest.LATITUDE;
-import static com.tadah.vehicle.domains.entities.VehicleTest.LONGITUDE;
+import static com.tadah.vehicle.applications.VehicleServiceTest.LATITUDE;
+import static com.tadah.vehicle.applications.VehicleServiceTest.LONGITUDE;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.Mockito.atMostOnce;
 import static org.mockito.Mockito.doNothing;
@@ -91,13 +87,7 @@ public final class VehicleControllerTest {
     private RoleRepository roleRepository;
 
     @Autowired
-    private VehicleRepository vehicleRepository;
-
-    @Autowired
     private JpaRoleRepository jpaRoleRepository;
-
-    @Autowired
-    private JpaVehicleRepository jpaVehicleRepository;
 
     @Autowired
     private JpaUserRepository jpaUserRepository;
@@ -363,6 +353,11 @@ public final class VehicleControllerTest {
             );
         }
 
+        private void verifyUpdateDriving() {
+            verify(vehicleService, atMostOnce())
+                .stopDriving(USER_ID, LATITUDE, LONGITUDE);
+        }
+
         @Nested
         @DisplayName("권한이 없는 경우")
         public final class Context_emptyRole {
@@ -454,33 +449,41 @@ public final class VehicleControllerTest {
             }
 
             @Nested
-            @DisplayName("차량이 존재하지 않는 경우")
-            public final class Context_vehicleNotExist {
+            @DisplayName("유효한 데이터를 입력한 경우")
+            public final class Context_validData {
+                @BeforeEach
+                private void beforeEach() {
+                    doNothing()
+                        .when(vehicleService)
+                        .stopDriving(USER_ID, LATITUDE, LONGITUDE);
+                }
+
+                @AfterEach
+                private void afterEach() {
+                    verifyUpdateDriving();
+                }
+
+                @Nested
+                @DisplayName("메시지 전송에 실패하면")
+                public final class Context_sendMessageFail {
+                    @BeforeEach
+                    private void beforeEach() {
+                        doThrow(new SendMessageFailException())
+                            .when(vehicleService)
+                            .stopDriving(USER_ID, LATITUDE, LONGITUDE);
+                    }
+
+                    @Test
+                    @DisplayName("문제가 발생했음을 알려준다.")
+                    public void it_notifies_that_error_occurred() throws Exception {
+                        subject(token, getDrivingRequest(LATITUDE, LONGITUDE))
+                            .andExpect(status().isInternalServerError())
+                            .andExpect(content().string(getErrorResponse(new SendMessageFailException().getMessage())));
+                    }
+                }
+
                 @Test
-                @DisplayName("차량이 존재하지 않음을 알려준다.")
-                public void it_notifies_that_vehicle_not_exist() throws Exception {
-                    subject(token, getDrivingRequest(LATITUDE, LONGITUDE))
-                        .andExpect(status().isNotFound())
-                        .andExpect(content().string(getErrorResponse(new VehicleNotFoundException().getMessage())));
-                }
-            }
-
-            @Nested
-            @DisplayName("차량이 존재하는 경우")
-            @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-            public final class Context_vehicleExist {
-                @BeforeAll
-                private void beforeAll() {
-                    vehicleRepository.save(new Vehicle(userId));
-                }
-
-                @AfterAll
-                private void afterAll() {
-                    jpaVehicleRepository.deleteAll();
-                }
-
-                @Test
-                @DisplayName("차량 운행을 종료한다.")
+                @DisplayName("차량 운행을 종료한다")
                 public void it_stops_the_driving() throws Exception {
                     subject(token, getDrivingRequest(LATITUDE, LONGITUDE))
                         .andExpect(status().isNoContent());
@@ -650,7 +653,7 @@ public final class VehicleControllerTest {
                 @DisplayName("차량 운행 정보를 업데이트한다.")
                 public void it_updates_a_driving_data() throws Exception {
                     subject(token, getDrivingRequest(LATITUDE, LONGITUDE))
-                        .andExpect(status().isOk());
+                        .andExpect(status().isNoContent());
                 }
             }
         }
