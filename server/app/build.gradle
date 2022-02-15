@@ -15,6 +15,16 @@ repositories {
     mavenCentral()
 }
 
+ext {
+    set('springCloudVersion', "Hoxton.SR12")
+}
+
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+    }
+}
+
 dependencies {
     // Use JUnit Jupiter API for testing.
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.2'
@@ -34,11 +44,17 @@ dependencies {
     // This dependency is used by the application.
     implementation 'com.google.guava:guava:29.0-jre'
 
+    // ProtoBuf
+    implementation group: 'com.google.protobuf', name: 'protobuf-java', version: '3.19.4'
+
     // Spring Web
     implementation 'org.springframework.boot:spring-boot-starter-web'
 
     // Spring Validation
     implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+    // Spring Cloud Stream Kinesis
+    implementation 'org.springframework.cloud:spring-cloud-stream-binder-kinesis:2.2.0'
 
     // JWT
     implementation 'io.jsonwebtoken:jjwt-api:0.11.2'
