@@ -57,17 +57,19 @@ public final class VehicleService {
      * @param userId 차량의 소유자
      * @param latitude 운행 시작 위도
      * @param longitude 운행 시작 경도
-     * @throws VehicleNotFoundException 사용자가 차량을 소유하고 있지 않은 경우
-     * @return 운행을 시작한 차량 정보
+     * @throws SendMessageFailException 메시지 전송이 실패한 경우
      */
-    public Vehicle startDriving(final Long userId, final Double latitude, final Double longitude) {
-        final Vehicle vehicle = findVehicleAndUpdateLocation(userId, latitude, longitude);
+    public void startDriving(final Long userId, final Double latitude, final Double longitude) {
+        final DrivingDataProto.DrivingData drivingData = DrivingDataProto.DrivingData.newBuilder()
+            .setUserId(userId)
+            .setLatitude(latitude)
+            .setLongitude(longitude)
+            .setDrivingStatus(DrivingDataProto.DrivingStatus.START)
+            .build();
 
-        if (!vehicle.isDriving()) {
-            vehicle.toggleDriving();
+        if (!sendData(drivingData)) {
+            throw new SendMessageFailException();
         }
-
-        return vehicleRepository.save(vehicle);
     }
 
     /**
