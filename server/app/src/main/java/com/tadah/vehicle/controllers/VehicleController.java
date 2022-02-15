@@ -96,13 +96,18 @@ public class VehicleController {
      *
      * @param user 차량의 소유자
      * @param drivingRequestData 업데이트할 차량의 위치 정보
+     * @throws VehicleNotFoundException 사용자가 차량을 소유하고 있지 않은 경우
      */
     @PutMapping("/driving")
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("isAuthenticated() and hasAuthority('DRIVER')")
-    public void updateDriving(
+    public void updateDriving (
         @AuthenticationPrincipal final User user,
         @RequestBody @Valid final DrivingRequestData drivingRequestData
     ) {
+        final Long userId = user.getId();
+        final Double latitude = drivingRequestData.getLatitude();
+        final Double longitude = drivingRequestData.getLongitude();
+        this.vehicleService.updateDriving(userId, latitude, longitude);
     }
 }
