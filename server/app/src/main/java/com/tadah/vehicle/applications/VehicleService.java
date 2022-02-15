@@ -4,7 +4,6 @@ import com.tadah.vehicle.dtos.DrivingDataProto;
 import com.tadah.vehicle.domains.entities.Vehicle;
 import com.tadah.vehicle.domains.repositories.VehicleRepository;
 import com.tadah.vehicle.exceptions.SendMessageFailException;
-import com.tadah.vehicle.exceptions.VehicleNotDrivingException;
 import com.tadah.vehicle.exceptions.VehicleNotFoundException;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;

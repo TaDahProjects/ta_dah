@@ -5,7 +5,7 @@ import com.tadah.auth.domains.entities.Role;
 import com.tadah.user.domains.entities.User;
 import com.tadah.vehicle.applications.VehicleService;
 import com.tadah.vehicle.dtos.DrivingRequestData;
-import com.tadah.vehicle.exceptions.VehicleNotDrivingException;
+import com.tadah.vehicle.exceptions.SendMessageFailException;
 import com.tadah.vehicle.exceptions.VehicleNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -57,6 +57,7 @@ public class VehicleController {
      *
      * @param user 차량의 소유자
      * @param drivingRequestData 차량 운행 시작 위치 정보
+     * @throws SendMessageFailException 메시지 전송이 실패한 경우
      */
     @PostMapping("/driving")
     @ResponseStatus(HttpStatus.CREATED)
@@ -96,7 +97,7 @@ public class VehicleController {
      *
      * @param user 차량의 소유자
      * @param drivingRequestData 업데이트할 차량의 위치 정보
-     * @throws VehicleNotFoundException 사용자가 차량을 소유하고 있지 않은 경우
+     * @throws SendMessageFailException 메시지 전송이 실패한 경우
      */
     @PutMapping("/driving")
     @ResponseStatus(HttpStatus.OK)
