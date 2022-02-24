@@ -9,9 +9,10 @@ import com.tadah.user.domains.repositories.UserRepository;
 import com.tadah.user.domains.repositories.infra.JpaUserRepository;
 import com.tadah.utils.LoginFailTest;
 import com.tadah.utils.Parser;
-import com.tadah.vehicle.applications.VehicleService;
+import com.tadah.vehicle.dtos.DrivingDataProto;
 import com.tadah.vehicle.dtos.DrivingRequestData;
 import com.tadah.vehicle.exceptions.SendMessageFailException;
+import com.tadah.vehicle.utils.KinesisProducer;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -39,16 +40,17 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Stream;
 
-import static com.tadah.user.domains.entities.UserTest.USER_ID;
 import static com.tadah.user.domains.entities.UserTest.getUser;
 import static com.tadah.vehicle.applications.VehicleServiceTest.LATITUDE;
 import static com.tadah.vehicle.applications.VehicleServiceTest.LONGITUDE;
+import static com.tadah.vehicle.applications.VehicleServiceTest.START_DRIVING;
+import static com.tadah.vehicle.applications.VehicleServiceTest.STOP_DRIVING;
+import static com.tadah.vehicle.applications.VehicleServiceTest.UPDATE_DRIVING;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.Mockito.atMostOnce;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -83,6 +85,9 @@ public final class VehicleControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
+    @SpyBean
+    private KinesisProducer kinesisProducer;
+
     @Autowired
     private RoleRepository roleRepository;
 
@@ -92,17 +97,24 @@ public final class VehicleControllerTest {
     @Autowired
     private JpaUserRepository jpaUserRepository;
 
-    @SpyBean
-    private VehicleService vehicleService;
-
     @BeforeEach
     private void beforeEach() {
-        reset(vehicleService);
+        reset(kinesisProducer);
     }
 
     @AfterAll
     private void afterAll() {
         jpaUserRepository.deleteAll();
+    }
+
+    private void verifyMock(final DrivingDataProto.DrivingData drivingData) {
+        verify(kinesisProducer, atMostOnce())
+            .sendData(drivingData);
+    }
+
+    private void mockSendData(final DrivingDataProto.DrivingData drivingData, final boolean isSuccess) {
+        when(kinesisProducer.sendData(drivingData))
+            .thenReturn(isSuccess);
     }
 
     @Nested
@@ -165,11 +177,6 @@ public final class VehicleControllerTest {
     public final class Describe_startDriving extends LoginFailTest {
         public String getErrorResponse(final String errorMessage) throws Exception {
             return Parser.toJson(new ErrorResponse(VEHICLES_URL + DRIVING_URL, HttpMethod.POST.toString(), errorMessage));
-        }
-
-        private void verifyStartDriving() {
-            verify(vehicleService, atMostOnce())
-                .startDriving(USER_ID, LATITUDE, LONGITUDE);
         }
 
         public Describe_startDriving() throws Exception {
@@ -287,14 +294,12 @@ public final class VehicleControllerTest {
             public final class Context_validData {
                 @BeforeEach
                 private void beforeEach() {
-                    doNothing()
-                        .when(vehicleService)
-                        .startDriving(USER_ID, LATITUDE, LONGITUDE);
+                    mockSendData(START_DRIVING, true);
                 }
-                
+
                 @AfterEach
                 private void afterEach() {
-                    verifyStartDriving();
+                    verifyMock(START_DRIVING);
                 }
 
                 @Nested
@@ -302,9 +307,7 @@ public final class VehicleControllerTest {
                 public final class Context_sendMessageFail {
                     @BeforeEach
                     private void beforeEach() {
-                        doThrow(new SendMessageFailException())
-                            .when(vehicleService)
-                            .startDriving(USER_ID, LATITUDE, LONGITUDE);
+                        mockSendData(START_DRIVING, false);
                     }
 
                     @Test
@@ -351,11 +354,6 @@ public final class VehicleControllerTest {
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(requestBody)
             );
-        }
-
-        private void verifyUpdateDriving() {
-            verify(vehicleService, atMostOnce())
-                .stopDriving(USER_ID, LATITUDE, LONGITUDE);
         }
 
         @Nested
@@ -453,14 +451,12 @@ public final class VehicleControllerTest {
             public final class Context_validData {
                 @BeforeEach
                 private void beforeEach() {
-                    doNothing()
-                        .when(vehicleService)
-                        .stopDriving(USER_ID, LATITUDE, LONGITUDE);
+                    mockSendData(STOP_DRIVING, true);
                 }
 
                 @AfterEach
                 private void afterEach() {
-                    verifyUpdateDriving();
+                    verifyMock(STOP_DRIVING);
                 }
 
                 @Nested
@@ -468,9 +464,7 @@ public final class VehicleControllerTest {
                 public final class Context_sendMessageFail {
                     @BeforeEach
                     private void beforeEach() {
-                        doThrow(new SendMessageFailException())
-                            .when(vehicleService)
-                            .stopDriving(USER_ID, LATITUDE, LONGITUDE);
+                        mockSendData(STOP_DRIVING, false);
                     }
 
                     @Test
@@ -494,7 +488,6 @@ public final class VehicleControllerTest {
 
     @Nested
     @DisplayName("updateDriving 메서드는")
-    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
     public final class Describe_updateDriving extends LoginFailTest {
         public String getErrorResponse(final String errorMessage) throws Exception {
             return Parser.toJson(new ErrorResponse(VEHICLES_URL + DRIVING_URL, HttpMethod.PUT.toString(), errorMessage));
@@ -518,11 +511,6 @@ public final class VehicleControllerTest {
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(requestBody)
             );
-        }
-
-        private void verifyUpdateDriving() {
-            verify(vehicleService, atMostOnce())
-                .updateDriving(USER_ID, LATITUDE, LONGITUDE);
         }
 
         @Nested
@@ -620,14 +608,12 @@ public final class VehicleControllerTest {
             public final class Context_validData {
                 @BeforeEach
                 private void beforeEach() {
-                    doNothing()
-                        .when(vehicleService)
-                        .updateDriving(USER_ID, LATITUDE, LONGITUDE);
+                    mockSendData(UPDATE_DRIVING, true);
                 }
 
                 @AfterEach
                 private void afterEach() {
-                    verifyUpdateDriving();
+                    verifyMock(UPDATE_DRIVING);
                 }
 
                 @Nested
@@ -635,9 +621,7 @@ public final class VehicleControllerTest {
                 public final class Context_sendMessageFail {
                     @BeforeEach
                     private void beforeEach() {
-                        doThrow(new SendMessageFailException())
-                            .when(vehicleService)
-                            .updateDriving(USER_ID, LATITUDE, LONGITUDE);
+                        mockSendData(UPDATE_DRIVING, false);
                     }
 
                     @Test

@@ -13,7 +13,7 @@ cloud:
   aws:
     credentials:
       accessKey: ${AWS_PRODUCER_ACCESS_KEY}
-      secretKey: ${AWS_PROCUDER_SECRET_KEY}
+      secretKey: ${AWS_PRODUCER_SECRET_KEY}
     region:
       static: ${AWS_REGION}
 server:
