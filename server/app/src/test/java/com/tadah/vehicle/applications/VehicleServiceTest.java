@@ -2,11 +2,16 @@ package com.tadah.vehicle.applications;
 
 import com.tadah.vehicle.dtos.DrivingDataProto;
 import com.tadah.vehicle.exceptions.SendMessageFailException;
+import com.tadah.vehicle.utils.KinesisProducer;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.concurrent.BlockingQueue;
 
@@ -18,6 +23,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @DisplayName("VehicleService 클래스")
+@ExtendWith(MockitoExtension.class)
 public class VehicleServiceTest {
     public static final Double LATITUDE = 37.487964946;
     public static final Double LONGITUDE = 127.065536349;
@@ -41,22 +47,20 @@ public class VehicleServiceTest {
         .setDrivingStatus(DrivingDataProto.DrivingStatus.STOP)
         .build();
 
-    private final BlockingQueue<DrivingDataProto.DrivingData> blockingQueue;
-    private final VehicleService vehicleService;
+    @Mock
+    private KinesisProducer kinesisProducer;
 
-    public VehicleServiceTest() {
-        this.blockingQueue = mock(BlockingQueue.class);
-        this.vehicleService = new VehicleService(blockingQueue);
-    }
+    @InjectMocks
+    private VehicleService vehicleService;
 
     private void mockSendData(final boolean isSuccess, final DrivingDataProto.DrivingData drivingData) {
-        when(blockingQueue.offer(drivingData))
+        when(kinesisProducer.sendData(drivingData))
             .thenReturn(isSuccess);
     }
 
     private void verifySendData(final DrivingDataProto.DrivingData drivingData) {
-        verify(blockingQueue, atMostOnce())
-            .offer(drivingData);
+        verify(kinesisProducer, atMostOnce())
+            .sendData(drivingData);
     }
 
     @Nested

@@ -2,35 +2,18 @@ package com.tadah.vehicle.applications;
 
 import com.tadah.vehicle.dtos.DrivingDataProto;
 import com.tadah.vehicle.exceptions.SendMessageFailException;
-import org.springframework.context.annotation.Bean;
+import com.tadah.vehicle.utils.KinesisProducer;
 import org.springframework.stereotype.Service;
-
-import java.util.concurrent.BlockingQueue;
-import java.util.function.Supplier;
 
 /**
  * 차량 조회, 생성, 운행여부 수정, 위치 정보 업데이트를 담당한다.
  */
 @Service
 public final class VehicleService {
-    private final BlockingQueue<DrivingDataProto.DrivingData> blockingQueue;
+    private final KinesisProducer kinesisProducer;
 
-    public VehicleService(final BlockingQueue<DrivingDataProto.DrivingData> blockingQueue) {
-        this.blockingQueue = blockingQueue;
-    }
-
-    private boolean sendData(final DrivingDataProto.DrivingData drivingData) {
-        return this.blockingQueue.offer(drivingData);
-    }
-
-    /**
-     * AWS Kinesis Data Stream Producer를 등록한다
-     *
-     * @return AWS Kinesis Data Stream Producer
-     */
-    @Bean
-    public Supplier<DrivingDataProto.DrivingData> produceDriving() {
-        return this.blockingQueue::poll;
+    public VehicleService(final KinesisProducer kinesisProducer) {
+        this.kinesisProducer = kinesisProducer;
     }
 
     /**
@@ -49,7 +32,7 @@ public final class VehicleService {
             .setDrivingStatus(DrivingDataProto.DrivingStatus.START)
             .build();
 
-        if (!sendData(drivingData)) {
+        if (!kinesisProducer.sendData(drivingData)) {
             throw new SendMessageFailException();
         }
     }
@@ -70,7 +53,7 @@ public final class VehicleService {
             .setDrivingStatus(DrivingDataProto.DrivingStatus.DRIVING)
             .build();
 
-        if (!sendData(drivingData)) {
+        if (!kinesisProducer.sendData(drivingData)) {
             throw new SendMessageFailException();
         }
     }
@@ -91,9 +74,8 @@ public final class VehicleService {
             .setDrivingStatus(DrivingDataProto.DrivingStatus.STOP)
             .build();
 
-        if (!sendData(drivingData)) {
+        if (!kinesisProducer.sendData(drivingData)) {
             throw new SendMessageFailException();
         }
-
     }
 }
