@@ -6,6 +6,9 @@ on:
       - main
     paths:
       - server/**
+    paths-ignore:
+      - "test/**"
+      - "**/*.md"
 jobs:
   build:
     name: Ta-Dah Server Build
