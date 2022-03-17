@@ -7,7 +7,7 @@ on:
     paths:
       - server/**
     paths-ignore:
-      - "test/**"
+      - "server/test/**"
       - "**/*.md"
 jobs:
   build:
