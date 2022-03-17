@@ -10,7 +10,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 @SpringBootApplication
 public class TaDah {
-
     public static void main(String[] args) {
         SpringApplication.run(TaDah.class, args);
     }
