@@ -4,11 +4,8 @@ on:
   pull_request:
     branches:
       - main
-#    paths:
-#      - server/**
-    paths-ignore:
-      - "server/test/**"
-      - "**/*.md"
+    paths:
+      - server/**
 jobs:
   build:
     name: Ta-Dah Server Build
