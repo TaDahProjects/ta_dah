@@ -11,6 +11,7 @@ on:
       - "**/*.md"
 jobs:
   build:
+    if: github.ref != 'refs/heads/ttttt'
     name: Ta-Dah Server Build
     runs-on: ubuntu-latest
     environment: SERVER_TEST
