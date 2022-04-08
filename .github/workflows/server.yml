@@ -1,6 +1,9 @@
 name: Ta-Dah Server CI/CD
 
 on:
+  push:
+    branches:
+      - main
   pull_request:
     branches:
       - main
@@ -11,7 +14,7 @@ on:
       - "**/*.md"
 jobs:
   build:
-    if: github.ref != 'refs/heads/ttttt'
+    if: ${{ github.event_name != 'push'}}
     name: Ta-Dah Server Build
     runs-on: ubuntu-latest
     environment: SERVER_TEST
