@@ -18,7 +18,6 @@ public class Tracker {
     public CoordinateUtil getCoordinateUtil() throws FactoryException {
         return new CoordinateUtil();
     }
-
     @Bean
     public static MessageConverter getMessageConverter() {
         return new ProtobufMessageConverter();
